@@ -104,6 +104,24 @@
       "languageVersion": "2.16"
     },
     {
+      "name": "firebase_database",
+      "rootUri": "file:///C:/Users/wandr/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_database-9.1.7",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
+      "name": "firebase_database_platform_interface",
+      "rootUri": "file:///C:/Users/wandr/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_database_platform_interface-0.2.2+7",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
+      "name": "firebase_database_web",
+      "rootUri": "file:///C:/Users/wandr/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_database_web-0.2.1+9",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
       "name": "firebase_storage",
       "rootUri": "file:///C:/Users/wandr/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_storage-10.3.11",
       "packageUri": "lib/",
@@ -290,7 +308,7 @@
       "languageVersion": "3.5"
     }
   ],
-  "generated": "2025-02-15T19:00:09.775148Z",
+  "generated": "2025-02-16T04:02:15.796348Z",
   "generator": "pub",
   "generatorVersion": "3.5.2",
   "flutterRoot": "file:///C:/src/flutter",
