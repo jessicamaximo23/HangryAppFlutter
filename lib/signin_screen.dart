@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hangry_app_flutter/signup_screen.dart';
+import 'package:hangry_app_flutter/main.dart';
+import 'package:hangry_app_flutter/resetpassword_screen.dart';
+
 
 class SignInScreen extends StatefulWidget {
   @override
@@ -94,6 +98,7 @@ class _SignInScreenState extends State<SignInScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.yellow, // Cor personalizada
               minimumSize: Size(250, 50),
+            ),
               child: Text(
                 'Sign In',
                 style: TextStyle(
@@ -101,7 +106,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   color: Colors.black,
                 ),
               ),
-            ),
+          ),
             SizedBox(height: 10),
             TextButton(
               onPressed: () {
