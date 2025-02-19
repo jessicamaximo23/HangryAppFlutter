@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hangry_app_flutter/signup_screen.dart';
 import 'package:hangry_app_flutter/main.dart';
 import 'package:hangry_app_flutter/resetpassword_screen.dart';
+import 'package:hangry_app_flutter/activity_main.dart';
 
 
 class SignInScreen extends StatefulWidget {
