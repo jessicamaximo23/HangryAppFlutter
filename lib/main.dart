@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hangry_app_flutter/splash_screen.dart';
 
 void main() {
   runApp(MyApp());
