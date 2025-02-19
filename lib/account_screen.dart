@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hangry_app_flutter/signup_screen.dart';
 
 void main() {
   runApp(AccountScreen());
 }
 
 class AccountScreen extends StatelessWidget {
+  const AccountScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,7 +19,7 @@ class AccountScreen extends StatelessWidget {
               children: <Widget>[
                 // Logo Image
                 Image.asset(
-                  'assets/logobackground.png', // Caminho da imagem
+                  'images/assets/logobackground.png', // Caminho da imagem
                   width: 200,
                   height: 150,
                 ),
@@ -25,7 +27,7 @@ class AccountScreen extends StatelessWidget {
 
                 // Central Image
                 Image.asset(
-                  'assets/image1.png', // Caminho da imagem
+                  'images/assets/image1.png', // Caminho da imagem
                   width: 200,
                   height: 200,
                 ),
@@ -49,9 +51,7 @@ class AccountScreen extends StatelessWidget {
                     children: <Widget>[
                       // Driver Button
                       ElevatedButton(
-                        onPressed: () {
-                          // Ação ao pressionar o botão Driver
-                        },
+                        onPressed: () => _redirectToSignUp(context, "driver"),
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.blue, backgroundColor: Colors.yellow, // Substitua pela cor correta
                           minimumSize: Size(120, 36),
@@ -62,9 +62,7 @@ class AccountScreen extends StatelessWidget {
 
                       // User Button
                       ElevatedButton(
-                        onPressed: () {
-                          // Ação ao pressionar o botão User
-                        },
+                        onPressed: ()=> _redirectToSignUp(context, "user"),
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.blue, backgroundColor: Colors.yellow, // Substitua pela cor correta
                           minimumSize: Size(120, 36),
@@ -75,9 +73,7 @@ class AccountScreen extends StatelessWidget {
 
                       // Restaurant Button
                       ElevatedButton(
-                        onPressed: () {
-                          // Ação ao pressionar o botão Restaurant
-                        },
+                        onPressed: ()=> _redirectToSignUp(context, "restaurant"),
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.blue, backgroundColor: Colors.yellow, // Substitua pela cor correta
                           minimumSize: Size(150, 36),
@@ -107,6 +103,14 @@ class AccountScreen extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+  void _redirectToSignUp(BuildContext context, String accountType) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SignUpScreen(accountType: accountType),
       ),
     );
   }
