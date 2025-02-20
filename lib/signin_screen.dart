@@ -1,10 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hangry_app_flutter/signup_screen.dart';
 import 'package:hangry_app_flutter/main.dart';
 import 'package:hangry_app_flutter/resetpassword_screen.dart';
 import 'package:hangry_app_flutter/activity_main.dart';
-
 
 class SignInScreen extends StatefulWidget {
   @override
@@ -115,7 +115,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SignUpScreen(),
+                    builder: (context) => SignUpScreen(accountType: "user"),
                   ),
                 );
               },
