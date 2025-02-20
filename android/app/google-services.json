@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "119077890778",
+    "firebase_url": "https://hangry-app-aff01-default-rtdb.firebaseio.com",
+    "project_id": "hangry-app-aff01",
+    "storage_bucket": "hangry-app-aff01.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:119077890778:android:776637c77bb0808642d3e3",
+        "android_client_info": {
+          "package_name": "com.example.hangry_app_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCj5Q7LuAGZGCLyQoi3WD0Qwygjyo49SoE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:119077890778:android:f3e58e5343eb6aaa42d3e3",
+        "android_client_info": {
+          "package_name": "com.example.hangryappandroid"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCj5Q7LuAGZGCLyQoi3WD0Qwygjyo49SoE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -132,11 +132,3 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 }
-
-  void main() {
-    runApp(MaterialApp(
-      home: SignUpScreen(),
-    ));
-  }
-}
-
