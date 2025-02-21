@@ -79,6 +79,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Sign Up'),
       ),
@@ -86,11 +87,55 @@ class _SignUpScreenState extends State<SignUpScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
+            Image.asset(
+              'images/assets/logobackground.png',
+              width: 200,
+              height: 150,
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Create Account',
+              style: TextStyle(
+                fontSize: 35,
+                fontWeight: FontWeight.bold,
+                color: Colors.black, // Correspondente ao azul
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Enter your email and password to create your account.',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignInScreen(accountType: widget.accountType)),
+                );
+              },
+              child: Text(
+                'Already have an account?',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFFFFC107), // Correspondente ao amarelo
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            SizedBox(height: 20),
+
+            SizedBox(height: 20),
             TextField(
               controller: _nameController,
               decoration: const InputDecoration(
                 labelText: 'Name',
                 border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               ),
             ),
             const SizedBox(height: 20),
@@ -99,6 +144,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               decoration: const InputDecoration(
                 labelText: 'Email',
                 border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               ),
               keyboardType: TextInputType.emailAddress,
             ),
@@ -108,23 +154,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
               decoration: const InputDecoration(
                 labelText: 'Password',
                 border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               ),
               obscureText: true,
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _validateFields,
-              child: const Text('Sign Up'),
-            ),
-            const SizedBox(height: 20),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SignInScreen(accountType: widget.accountType)),
-                );
-              },
-              child: const Text('Already have an account? Sign In'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFFFFC107),
+                minimumSize: Size(250, 50),
+              ),
+              child: Text('Sign Up'),
             ),
           ],
         ),

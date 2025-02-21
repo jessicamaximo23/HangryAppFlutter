@@ -33,8 +33,9 @@ class _SignInScreenState extends State<SignInScreen> {
         padding: EdgeInsets.all(20),
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              SizedBox(height: 20),
             Image.asset(
             'images/assets/logobackground.png',
             width: 200,
@@ -44,33 +45,44 @@ class _SignInScreenState extends State<SignInScreen> {
           Text(
             'Sign in',
             style: TextStyle(
-              fontSize: 20,
+              fontFamily: 'RammettoOne-Regular',
+              fontSize: 35,
               fontWeight: FontWeight.bold,
-              color: Colors.blue, // Cor personalizada
+              color: hangryBlue, // Cor personalizada
             ),
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 10),
           Text(
             'Enter your email address to sign in.',
             style: TextStyle(
+              fontFamily: 'RammettoOne-Regular',
               fontSize: 14,
               color: Colors.grey,
             ),
+            textAlign: TextAlign.left,
           ),
           Text(
             'Enjoy your food.',
             style: TextStyle(
+              fontFamily: 'RammettoOne-Regular',
               fontSize: 14,
               color: Colors.grey,
             ),
+            textAlign: TextAlign.left,
           ),
           SizedBox(height: 20),
           TextField(
             controller: _emailController,
             decoration: InputDecoration(
-              labelText: 'Email',
-              border: OutlineInputBorder(),
+              labelText: 'Email Adress',
               hintText: 'Enter your email',
+              border: InputBorder.none, // Removendo a borda
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey), // Linha simples
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.blue), // Cor da linha quando o campo estiver focado
+              ),
             ),
             keyboardType: TextInputType.emailAddress,
           ),
@@ -79,8 +91,14 @@ class _SignInScreenState extends State<SignInScreen> {
             controller: _passwordController,
             decoration: InputDecoration(
               labelText: 'Password',
-              border: OutlineInputBorder(),
               hintText: 'Enter your password',
+              border: InputBorder.none, // Removendo a borda
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey), // Linha simples
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.blue), // Cor da linha quando o campo estiver focado
+              ),
             ),
             obscureText: true,
           ),
@@ -97,7 +115,7 @@ class _SignInScreenState extends State<SignInScreen> {
             child: Text(
               'Forgot Password?',
               style: TextStyle(
-                color: Colors.blue,
+                color: Colors.grey,
               ),
             ),
           ),
@@ -126,13 +144,28 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                 );
               },
-              child: Text(
-                'Don\'t have an account? Click here',
-                style: TextStyle(
-                  color: Colors.yellow, // Cor personalizada
+              child: Wrap(
+                alignment: WrapAlignment.center, // Garante que o Row ocupe apenas o espaço necessário
+                children: [
+                  Text(
+                    'Don\'t have an account? ',
+                    style: TextStyle(
+                      fontSize: 25,
+                      color: Colors.black, // Cor personalizada
+                    ),
+                  ),
+                  SizedBox(width: 10), // Espaçamento entre as duas partes do texto
+                  Text(
+                    'Create one here!',
+                    style: TextStyle(
+                      color: Colors.orange, // Cor personalizada
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold, // Deixar a segunda parte mais destacada, se desejar
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
             ],
           ),
         ),
@@ -159,13 +192,10 @@ class _SignInScreenState extends State<SignInScreen> {
         email: email,
         password: password,
       );
-
       // get user UID
       String uid = userCredential.user!.uid;
-
       // Referencing user in database
       DatabaseReference ref = FirebaseDatabase.instance.ref('users/$uid');
-
       // Search for user data on database
       DatabaseEvent event = await ref.once();
       DataSnapshot snapshot = event.snapshot;
