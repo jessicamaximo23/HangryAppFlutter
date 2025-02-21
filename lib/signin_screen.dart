@@ -1,10 +1,12 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hangry_app_flutter/restaurant_screen.dart';
 import 'package:hangry_app_flutter/signup_screen.dart';
-import 'package:hangry_app_flutter/main.dart';
 import 'package:hangry_app_flutter/resetpassword_screen.dart';
-import 'package:hangry_app_flutter/activity_main.dart';
+import 'package:hangry_app_flutter/user_screen.dart';
+
+import 'driver_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   final String accountType;
@@ -82,7 +84,6 @@ class _SignInScreenState extends State<SignInScreen> {
           SizedBox(height: 10),
           TextButton(
             onPressed: () {
-              // Navegar para a tela de resetar senha
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -93,7 +94,7 @@ class _SignInScreenState extends State<SignInScreen> {
             child: Text(
               'Forgot Password?',
               style: TextStyle(
-                color: Colors.blue, // Cor personalizada
+                color: Colors.blue,
               ),
             ),
           ),
@@ -115,7 +116,6 @@ class _SignInScreenState extends State<SignInScreen> {
             SizedBox(height: 10),
             TextButton(
               onPressed: () {
-                // Navegar para a tela de Sign Up
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -157,12 +157,49 @@ class _SignInScreenState extends State<SignInScreen> {
         password: password,
       );
 
-      // Navegar para a tela principal após o login
+      // get user UID
+      String uid = userCredential.user!.uid;
+
+      // Referencing user in database
+      DatabaseReference ref = FirebaseDatabase.instance.ref('users/$uid');
+
+      // Search for user data on database
+      DatabaseEvent event = await ref.once();
+      DataSnapshot snapshot = event.snapshot;
+
+      if (!snapshot.exists) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User data not found')),
+        );
+        return;
+      }
+
+      Map<dynamic, dynamic> userData = snapshot.value as Map<dynamic, dynamic>;
+      String accountType = userData['accountType'];
+
+      // Direcionamento com base no accountType
+      Widget nextScreen;
+      switch (accountType) {
+        case 'user':
+          nextScreen = UserScreen();
+          break;
+        case 'driver':
+          nextScreen = DriverScreen();
+          break;
+        case 'restaurant':
+          nextScreen = RestaurantScreen();
+          break;
+        default:
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Invalid account type')),
+          );
+          return;
+      }
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => MainScreen(),
-        ),
+          builder: (context) => nextScreen),
       );
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
