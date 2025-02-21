@@ -9,81 +9,62 @@ void main() {
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({Key? key}) : super(key: key);
+
+  //Same colors for all apps
+  final Color hangryYellow = const Color(0xFFFCBF49);
+  final Color hangryBlue = const Color(0xFF003049);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        backgroundColor: Colors.white,
         body: Center(
           child: Container(
             padding: EdgeInsets.all(20.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // Logo Image
                 Image.asset(
                   'images/assets/logobackground.png', // Caminho da imagem
-                  width: 200,
-                  height: 150,
+                  width: 150,
+                  height: 100,
                 ),
-                SizedBox(height: 24.0), // Espaçamento
-
-                // Central Image
+                SizedBox(height: 16.0), // Espaçamento
+                Text(
+                  'Welcome to Hangry!',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontFamily: 'RammettoOne-Regular',
+                    color: hangryBlue,
+                  ),
+                ),
                 Image.asset(
-                  'images/assets/image1.png', // Caminho da imagem
+                  'images/assets/image1.png',
                   width: 200,
                   height: 200,
                 ),
-                SizedBox(height: 16.0), // Espaçamento
+                SizedBox(height: 16.0),
 
                 // Choose your account Text
                 Text(
                   'Choose your account',
                   style: TextStyle(
                     fontSize: 20.0,
-                    color: Colors.blue, // Substitua pela cor correta
+                    fontFamily: 'RammettoOne-Regular',
+                    color: Colors.grey,
                   ),
                 ),
-                SizedBox(height: 16.0), // Espaçamento
-
-                // Horizontal Scroll View with Buttons
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      // Driver Button
-                      ElevatedButton(
-                        onPressed: () => _redirectToSignUp(context, "driver"),
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.blue, backgroundColor: Colors.yellow, // Substitua pela cor correta
-                          minimumSize: Size(120, 36),
-                        ),
-                        child: Text('Driver'),
-                      ),
-                      SizedBox(width: 16.0), // Espaçamento
-
-                      // User Button
-                      ElevatedButton(
-                        onPressed: ()=> _redirectToSignUp(context, "user"),
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.blue, backgroundColor: Colors.yellow, // Substitua pela cor correta
-                          minimumSize: Size(120, 36),
-                        ),
-                        child: Text('User'),
-                      ),
-                      SizedBox(width: 16.0), // Espaçamento
-
-                      // Restaurant Button
-                      ElevatedButton(
-                        onPressed: ()=> _redirectToSignUp(context, "restaurant"),
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.blue, backgroundColor: Colors.yellow, // Substitua pela cor correta
-                          minimumSize: Size(150, 36),
-                        ),
-                        child: Text('Restaurant'),
-                      ),
-                    ],
-                  ),
+                SizedBox(height: 16.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    _buildAccountButton(context, 'Driver', 'driver'),
+                    const SizedBox(width: 16.0),
+                    _buildAccountButton(context, 'User', 'user'),
+                    const SizedBox(width: 16.0),
+                    _buildAccountButton(context, 'Restaurant', 'restaurant'),
+                  ],
                 ),
                 SizedBox(height: 24.0),
 
@@ -102,7 +83,7 @@ class AccountScreen extends StatelessWidget {
                     'Already have an account? Sign In',
                     style: TextStyle(
                       fontSize: 16.0,
-                      color: Colors.blue, // Substitua pela cor correta
+                      color: hangryBlue, // Substitua pela cor correta
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -114,6 +95,26 @@ class AccountScreen extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildAccountButton(BuildContext context, String title, String accountType) {
+    return ElevatedButton(
+      onPressed: () => _redirectToSignUp(context, accountType),
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.white,
+        backgroundColor: hangryYellow,
+        textStyle: const TextStyle(
+          fontSize: 16,
+          fontFamily: 'RammettoOne-Regular',
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
+      ),
+      child: Text(title),
+    );
+  }
+
   void _redirectToSignUp(BuildContext context, String accountType) {
     Navigator.push(
       context,

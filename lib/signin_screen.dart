@@ -22,6 +22,9 @@ class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  final Color hangryYellow = Color(0xFFFCBF49);
+  final Color hangryBlue = Color(0xFF003049);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
