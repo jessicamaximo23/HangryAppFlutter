@@ -7,6 +7,10 @@ import 'package:hangry_app_flutter/resetpassword_screen.dart';
 import 'package:hangry_app_flutter/activity_main.dart';
 
 class SignInScreen extends StatefulWidget {
+  final String accountType;
+
+  SignInScreen({required this.accountType});
+
   @override
   _SignInScreenState createState() => _SignInScreenState();
 }
@@ -115,7 +119,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SignUpScreen(accountType: "user"),
+                    builder: (context) => SignUpScreen(accountType: widget.accountType),
                   ),
                 );
               },
