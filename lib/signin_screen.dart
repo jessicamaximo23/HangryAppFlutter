@@ -31,7 +31,7 @@ class _SignInScreenState extends State<SignInScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
             Image.asset(
-            'assets/logobackground.png',
+            'images/assets/logobackground.png',
             width: 200,
             height: 150,
           ),

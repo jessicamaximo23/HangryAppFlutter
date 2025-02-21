@@ -47,7 +47,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/logobackground.png', width: 200, height: 150),
+              Image.asset('images/assets/logobackground.png', width: 200, height: 150),
               SizedBox(height: 20),
               Text(
                 "Forgot Password",

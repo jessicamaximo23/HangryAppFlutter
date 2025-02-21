@@ -62,7 +62,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         _showToast("Sign up successful!");
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => SignInScreen()),
+          MaterialPageRoute(builder: (context) => SignInScreen(accountType: widget.accountType,)),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -121,7 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SignInScreen()),
+                  MaterialPageRoute(builder: (context) => SignInScreen(accountType: widget.accountType)),
                 );
               },
               child: const Text('Already have an account? Sign In'),
