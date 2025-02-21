@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hangry_app_flutter/signup_screen.dart';
+import 'package:hangry_app_flutter/resetpassword_screen.dart';
 
 void main() {
   runApp(AccountScreen());
@@ -83,12 +84,16 @@ class AccountScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(height: 24.0), // Espaçamento
+                SizedBox(height: 24.0),
 
-                // Already have an account? Sign In Text
                 GestureDetector(
                   onTap: () {
-                    // Ação ao tocar no texto
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ResetPasswordScreen(),
+                      ),
+                    );
                   },
                   child: Text(
                     'Already have an account? Sign In',
