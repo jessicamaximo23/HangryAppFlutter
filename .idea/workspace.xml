@@ -5,8 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/signin_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/signin_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/account_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/account_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/signup_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/signup_screen.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -86,6 +87,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="Dart">
           <url>file://$PROJECT_DIR$/lib/signup_screen.dart</url>
+          <line>2</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
