@@ -18,9 +18,9 @@ class _UserScreenState extends State<UserScreen> {
 
       Navigator.pushReplacementNamed(context, '/login');
     } catch (e) {
-      print("Erro ao fazer logout: $e");
+      print("Error to log out: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Falha ao fazer logout. Tente novamente.')),
+        SnackBar(content: Text('Failed to logout. Please try again.')),
       );
     }
   }
