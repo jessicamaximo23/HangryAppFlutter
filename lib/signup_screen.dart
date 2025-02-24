@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -28,17 +30,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
     //logic to make sure registration of user is valid
     if (name.isEmpty || email.isEmpty || password.isEmpty) {
       _showToast("Please fill in all fields");
-    } else if (!RegExp(
+      return;
+    }
+
+    if (!RegExp(
         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(email)) {
       _showToast("Invalid email address");
-    } else if (password.length < 6) {
-      _showToast("Password must be at least 6 characters");
-    } else {
-      _showToast("Fields are valid!");
-      _registerUser(name, email, password);
+      return;
     }
+
+    if (password.length < 6) {
+      _showToast("Password must be at least 6 characters");
+      return;
+    }
+
+      _registerUser(name, email, password);
+
   }
+
 
     //implemented logic to register user name, email and password
   void _registerUser(String name, String email, String password) async {
@@ -55,6 +65,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
           "name": name,
           "email": email,
           "accountType": widget.accountType,
+          "status": "active",
+          "createdAt": DateTime.now().millisecondsSinceEpoch,
         };
 
         await _databaseRef.child("users").child(userId).set(userData);
@@ -159,14 +171,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
               obscureText: true,
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
+            SizedBox(
+              width: 250,
+              height: 50,
+            child: ElevatedButton(
               onPressed: _validateFields,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFFFFC107),
-                minimumSize: Size(250, 50),
               ),
               child: Text('Sign Up'),
             ),
+          ),
           ],
         ),
       ),

@@ -32,7 +32,7 @@ class AccountScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 16.0), // Espaçamento
                 Text(
-                  'Welcome to Hangry!',
+                  'Welcome to Hangry',
                   style: TextStyle(
                     fontSize: 24,
                     fontFamily: 'RammettoOne-Regular',
@@ -75,7 +75,7 @@ class AccountScreen extends StatelessWidget {
                       MaterialPageRoute(
                         //IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         //need to find a way to not pass accountType here.
-                        builder: (context) => SignInScreen(accountType: "user",),
+                        builder: (context) => SignInScreen(accountType: "",),
                       ),
                     );
                   },
