@@ -11,7 +11,6 @@ class DriverScreen extends StatefulWidget {
 
 class _DriverScreen extends State<DriverScreen> {
 
-  //SignOut created. Just add to the button you want to use.
   void _signOut(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signOut();
@@ -30,13 +29,100 @@ class _DriverScreen extends State<DriverScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Driver Screen'),
-        backgroundColor: Colors.blue,
+        title: const Text('Driver Dashboard'),
+        backgroundColor: Colors.yellow,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () => _signOut(context),
+          ),
+        ],
       ),
-      body: const Center(
-        child: Text(
-          'Hello, World!',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Welcome message
+            const Text(
+              'Welcome, Driver!',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+
+            // Dashboard cards
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                children: [
+                  _buildDashboardCard(
+                    icon: Icons.delivery_dining,
+                    title: 'My Deliveries',
+                    onTap: () {
+                      // Navigate to deliveries screen
+                    },
+                  ),
+                  _buildDashboardCard(
+                    icon: Icons.attach_money,
+                    title: 'Earnings',
+                    onTap: () {
+                      // Navigate to earnings screen
+                    },
+                  ),
+                  _buildDashboardCard(
+                    icon: Icons.schedule,
+                    title: 'Schedule',
+                    onTap: () {
+                      // Navigate to schedule screen
+                    },
+                  ),
+                  _buildDashboardCard(
+                    icon: Icons.person,
+                    title: 'Profile',
+                    onTap: () {
+                      // Navigate to profile screen
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Helper function to build dashboard cards
+  Widget _buildDashboardCard({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(15),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 40, color: Colors.blue),
+              const SizedBox(height: 10),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );

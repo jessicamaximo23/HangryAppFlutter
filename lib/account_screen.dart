@@ -26,19 +26,11 @@ class AccountScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image.asset(
-                  'images/assets/logobackground.png', // Caminho da imagem
+                  'images/assets/logobackground.png',
                   width: 150,
                   height: 100,
                 ),
                 SizedBox(height: 16.0), // Espaçamento
-                Text(
-                  'Welcome to Hangry',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontFamily: 'RammettoOne-Regular',
-                    color: hangryBlue,
-                  ),
-                ),
                 Image.asset(
                   'images/assets/image1.png',
                   width: 200,
