@@ -65,7 +65,7 @@ class _DriverScreenState extends State<DriverScreen> {
         Text(
           'Driver DashBoard',
           style: TextStyle(
-            fontSize: 26,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
@@ -77,8 +77,8 @@ class _DriverScreenState extends State<DriverScreen> {
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
+                crossAxisSpacing: 14,
+                mainAxisSpacing: 14,
                 children: [
                   _buildDashboardCard(
                     icon: Icons.delivery_dining,
@@ -112,7 +112,7 @@ class _DriverScreenState extends State<DriverScreen> {
               ),
             ),
 
-            // Sign Out Button
+            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.only(bottom: 30),
               child: ElevatedButton(
