@@ -6,16 +6,19 @@ class DriverScreen extends StatefulWidget {
   const DriverScreen({Key? key}) : super(key: key);
 
   @override
-  _DriverScreen createState() => _DriverScreen();
+  _DriverScreenState createState() => _DriverScreenState();
 }
 
-class _DriverScreen extends State<DriverScreen> {
 
+// Define custom colors
+final Color hangryYellow = Color(0xFFFCBF49);
+final Color hangryBlue = Color(0xFF003049);
+
+class _DriverScreenState extends State<DriverScreen> {
   void _signOut(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signOut();
-
-      Navigator.pushReplacementNamed(context, '/login');
+      Navigator.pushReplacementNamed(context, '/signin_screen');
     } catch (e) {
       print("Error to log out: $e");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -24,13 +27,12 @@ class _DriverScreen extends State<DriverScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Driver Dashboard'),
-        backgroundColor: Colors.yellow,
+        backgroundColor: hangryYellow, // Use custom yellow color
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -43,13 +45,25 @@ class _DriverScreen extends State<DriverScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Welcome message
-            const Text(
-              'Welcome, Driver!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            SizedBox(height: 20),
+            Image.asset(
+              'images/assets/logobackground.png',
+              width: 200,
+              height: 150,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Welcome to Hangry!',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: hangryBlue, // Use custom blue color
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
+
+
 
             // Dashboard cards
             Expanded(
@@ -89,6 +103,29 @@ class _DriverScreen extends State<DriverScreen> {
                 ],
               ),
             ),
+
+            // Sign Out Button
+            Padding(
+              padding: const EdgeInsets.only(bottom: 30),
+              child: ElevatedButton(
+                onPressed: () => _signOut(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: hangryYellow,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                ),
+                child: const Text(
+                  'Sign Out',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -114,11 +151,15 @@ class _DriverScreen extends State<DriverScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 40, color: Colors.blue),
+              Icon(icon, size: 40, color: hangryYellow), // Use custom yellow color
               const SizedBox(height: 10),
               Text(
                 title,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: hangryBlue, // Use custom blue color
+                ),
                 textAlign: TextAlign.center,
               ),
             ],
