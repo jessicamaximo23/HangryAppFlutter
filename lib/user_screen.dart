@@ -77,22 +77,22 @@ class _UserScreenState extends State<UserScreen> {
                 mainAxisSpacing: 14,
                 children: [
                   _buildDashboardCard(
-                    icon: Icons.delivery_dining,
-                    title: 'My Deliveries',
+                    icon: Icons.list,
+                    title: 'Previous Orders',
                     onTap: () {
                       // Navigate to deliveries screen
                     },
                   ),
                   _buildDashboardCard(
-                    icon: Icons.attach_money,
-                    title: 'Earnings',
+                    icon: Icons.map,
+                    title: 'Track my order',
                     onTap: () {
                       // Navigate to earnings screen
                     },
                   ),
                   _buildDashboardCard(
-                    icon: Icons.schedule,
-                    title: 'Schedule',
+                    icon: Icons.restaurant,
+                    title: 'Restaurant ',
                     onTap: () {
                       // Navigate to schedule screen
                     },
@@ -135,3 +135,41 @@ class _UserScreenState extends State<UserScreen> {
       ),
     );
   }
+
+  // Helper function to build dashboard cards
+  Widget _buildDashboardCard({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(15),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 40, color: hangryYellow), // Use custom yellow color
+              const SizedBox(height: 10),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: hangryBlue, // Use custom blue color
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
