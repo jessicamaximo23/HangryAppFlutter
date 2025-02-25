@@ -62,8 +62,16 @@ class _DriverScreenState extends State<DriverScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-
-
+        Text(
+          'Driver DashBoard',
+          style: TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+          textAlign: TextAlign.center,
+        ),
+          const SizedBox(height: 20),
 
             // Dashboard cards
             Expanded(
