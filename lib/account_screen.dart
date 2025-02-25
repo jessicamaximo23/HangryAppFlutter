@@ -27,10 +27,10 @@ class AccountScreen extends StatelessWidget {
               children: <Widget>[
                 Image.asset(
                   'images/assets/logobackground.png',
-                  width: 150,
-                  height: 100,
+                  width: 200,
+                  height: 150,
                 ),
-                SizedBox(height: 16.0), // Espaçamento
+                SizedBox(height: 16.0),
                 Image.asset(
                   'images/assets/image1.png',
                   width: 200,
@@ -75,7 +75,7 @@ class AccountScreen extends StatelessWidget {
                     'Already have an account? Sign In',
                     style: TextStyle(
                       fontSize: 16.0,
-                      color: hangryBlue, // Substitua pela cor correta
+                      color: hangryBlue,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
