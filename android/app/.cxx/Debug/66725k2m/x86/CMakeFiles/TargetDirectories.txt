@@ -1,0 +1,2 @@
+/Users/jessicamaximo/Desktop/HangryAppFlutter/android/app/.cxx/Debug/66725k2m/x86/CMakeFiles/edit_cache.dir
+/Users/jessicamaximo/Desktop/HangryAppFlutter/android/app/.cxx/Debug/66725k2m/x86/CMakeFiles/rebuild_cache.dir
