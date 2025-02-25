@@ -5,6 +5,7 @@ import 'package:hangry_app_flutter/signin_screen.dart';
 import 'package:hangry_app_flutter/driver_screen.dart';
 import 'package:hangry_app_flutter/user_screen.dart';
 import 'package:hangry_app_flutter/restaurant_screen.dart';
+import 'package:hangry_app_flutter/account_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
           final args = ModalRoute.of(context)!.settings.arguments as String?;
           return SignInScreen(accountType: args ?? 'user'); // Pass accountType to SignInScreen
         },
+        '/account_screen': (context) => AccountScreen(),
         '/driver': (context) => DriverScreen(),
         '/restaurant': (context) => RestaurantScreen(),
         '/user': (context) => UserScreen(),

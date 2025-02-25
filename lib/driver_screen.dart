@@ -18,7 +18,7 @@ class _DriverScreenState extends State<DriverScreen> {
   void _signOut(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signOut();
-      Navigator.pushReplacementNamed(context, '/signin_screen');
+      Navigator.pushReplacementNamed(context, '/account_screen');
     } catch (e) {
       print("Error to log out: $e");
       ScaffoldMessenger.of(context).showSnackBar(

@@ -16,7 +16,7 @@ class _RestaurantScreen extends State<RestaurantScreen> {
     try {
       await FirebaseAuth.instance.signOut();
 
-      Navigator.pushReplacementNamed(context, '/login');
+      Navigator.pushReplacementNamed(context, '/account_screen');
     } catch (e) {
       print("Error to log out: $e");
       ScaffoldMessenger.of(context).showSnackBar(
