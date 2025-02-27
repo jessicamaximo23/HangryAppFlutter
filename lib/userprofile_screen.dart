@@ -228,7 +228,8 @@ class ProfileScreen extends StatelessWidget {
             _buildProfileItem(context, Icons.settings, 'App Settings'),
             _buildProfileItem(context, Icons.delivery_dining, 'Delivery Driver'),
             _buildProfileItem(context, Icons.admin_panel_settings, 'Admin'),
-            const SizedBox(height: 70),
+
+              const SizedBox(height: 70),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
