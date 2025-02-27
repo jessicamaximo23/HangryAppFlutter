@@ -5,10 +5,6 @@ import 'package:firebase_database/firebase_database.dart';
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
-  void _deleteaccount(BuildContext context) async {
-
-  }
-
   Future<String?> getUserName(String userId) async {
     try {
       DatabaseReference ref = FirebaseDatabase.instance.ref("users/$userId/name");
@@ -19,6 +15,31 @@ class ProfileScreen extends StatelessWidget {
       return null;
     }
   }
+
+  Future<void> updatePassword(BuildContext context, String newPassword) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await user.updatePassword(newPassword);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Password updated successfully')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating password: $e')),
+      );
+    }
+  }
+  Future<void> updateAddress(String userId, String address) async {
+    try {
+      DatabaseReference ref = FirebaseDatabase.instance.ref("users/$userId/address");
+      await ref.set(address);
+    } catch (e) {
+      print("Error updating address: $e");
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -114,17 +135,18 @@ class ProfileScreen extends StatelessWidget {
             _buildProfileItem(context, Icons.person, 'Profile Information'),
             _buildProfileItem(context, Icons.location_on, 'Location'),
             _buildProfileItem(context, Icons.settings, 'App Settings'),
-            _buildProfileItem(context, Icons.notifications, 'Notifications'),
             _buildProfileItem(context, Icons.delivery_dining, 'Delivery Driver'),
             _buildProfileItem(context, Icons.admin_panel_settings, 'Admin'),
-            const SizedBox(height: 20),
+            const SizedBox(height: 70),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildBottomButton(
                   label: 'Delete Account',
-                  onPressed: () => _deleteaccount(context),
+                  onPressed: () {
+                    print('Delete Account button pressed');
+                  },
                   color: hangryYellow,
                 ),
                 _buildBottomButton(
