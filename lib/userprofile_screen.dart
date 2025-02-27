@@ -16,27 +16,26 @@ class ProfileScreen extends StatelessWidget {
     }
   }
 
-  Future<void> updateUserDetails(BuildContext context, userId, fullname, phonenumber, address, city, zipcode) async {
-    try {
+  Future<void> updateUserDetails(BuildContext context, userId, fullname, phonenumber, address, city, zipCode) async {
 
-      DatabaseReference userRef = FirebaseDatabase.instance.ref("users/$userId");
+    try {
+      DatabaseReference userRef = FirebaseDatabase.instance.ref("users/$userId/profile");
       await userRef.update({
         "name": fullname,
-        "number": phonenumber,
+        "phone number": phonenumber,
         "address": address,
-        "city" : city,
-        "zipCode" : zipcode
-
+        "city": city,
+        "zipCode": zipCode,
       });
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        // await user.updateEmail(email);
-      }
-
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Profile updated successfully')),
       );
+      DatabaseReference profileRef = FirebaseDatabase.instance.ref("users/$userId/profile");
+      DatabaseEvent event = await profileRef.once();
+      final updatedData = event.snapshot.value as Map<dynamic, dynamic>;
+
+
+
     } catch (e) {
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -175,7 +174,28 @@ class ProfileScreen extends StatelessWidget {
                         TextEditingController cityController = TextEditingController();
                         TextEditingController zipCodeController = TextEditingController();
 
-                        return Padding(
+                        DatabaseReference profileRef = FirebaseDatabase.instance.ref("users/${user.uid}/profile");
+                        return FutureBuilder<DatabaseEvent>(
+                          future: profileRef.once(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+
+                            if (snapshot.hasError) {
+                              return Center(child: Text('Error: ${snapshot.error}'));
+                            }
+
+                            if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
+                              final profileData = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
+                              fullnameController.text = profileData['fullname'] ?? '';
+                              phonenumberController.text = profileData['phonenumber'] ?? '';
+                              addressController.text = profileData['address'] ?? '';
+                              cityController.text = profileData['city'] ?? '';
+                              zipCodeController.text = profileData['zipcode'] ?? '';
+                            }
+
+                            return Padding(
                           padding: EdgeInsets.only(
                             left: 16,
                             right: 16,
@@ -245,7 +265,7 @@ class ProfileScreen extends StatelessWidget {
                                             foregroundColor: Colors.white,
                                             padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15), // Espaçamento interno
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(20), // Bordas arredondadas
+                                              borderRadius: BorderRadius.circular(20),
                                             ),
                                           ),
                                           child: const Text('Save Profile'),
@@ -257,8 +277,10 @@ class ProfileScreen extends StatelessWidget {
                               ],
                             ),
                           ),
+                            );
+                          },
                         );
-                      },
+                    }
                     );
                   }
                 },
