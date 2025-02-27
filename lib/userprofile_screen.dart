@@ -31,15 +31,31 @@ class ProfileScreen extends StatelessWidget {
       );
     }
   }
-  Future<void> updateAddress(String userId, String address) async {
+  Future<void> updateUserDetails(BuildContext context, userId, name, email, address) async {
     try {
-      DatabaseReference ref = FirebaseDatabase.instance.ref("users/$userId/address");
-      await ref.set(address);
+
+      DatabaseReference userRef = FirebaseDatabase.instance.ref("users/$userId");
+      await userRef.update({
+        'name': name,
+        'email': email,
+        'address': address,
+      });
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await user.updateEmail(email);
+      }
+
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile updated successfully')),
+      );
     } catch (e) {
-      print("Error updating address: $e");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating profile: $e')),
+      );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +75,7 @@ class ProfileScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
+              const SizedBox(height: 20),
               Center(
                 child: CircleAvatar(
                   radius: 50.0,
@@ -108,6 +124,7 @@ class ProfileScreen extends StatelessWidget {
                   }
                 },
               ),
+
         const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -131,8 +148,82 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 20),
-            _buildProfileItem(context, Icons.person, 'Profile Information'),
+
+              _buildProfileItem(
+                context,
+                Icons.person,
+                'Profile Information',
+                onTap: () {
+                  if (user != null) {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) {
+                        TextEditingController nameController = TextEditingController();
+                        TextEditingController emailController = TextEditingController();
+                        TextEditingController passwordController = TextEditingController();
+                        TextEditingController addressController = TextEditingController();
+
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            top: 16,
+                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                          ),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text(
+                                  'Update Profile',
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 16),
+                                TextField(
+                                  controller: nameController,
+                                  decoration: const InputDecoration(labelText: 'Name'),
+                                ),
+                                const SizedBox(height: 8),
+                                TextField(
+                                  controller: emailController,
+                                  decoration: const InputDecoration(labelText: 'Email'),
+                                ),
+                                const SizedBox(height: 8),
+                                TextField(
+                                  controller: passwordController,
+                                  decoration: const InputDecoration(labelText: 'Password'),
+                                  obscureText: true,
+                                ),
+                                const SizedBox(height: 8),
+                                TextField(
+                                  controller: addressController,
+                                  decoration: const InputDecoration(labelText: 'Address'),
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    updateUserDetails(
+                                      context,
+                                      user.uid,
+                                      nameController.text.trim(),
+                                      emailController.text.trim(),
+                                      passwordController.text.trim(),
+
+                                    );
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Save'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
             _buildProfileItem(context, Icons.location_on, 'Location'),
             _buildProfileItem(context, Icons.settings, 'App Settings'),
             _buildProfileItem(context, Icons.delivery_dining, 'Delivery Driver'),
@@ -161,6 +252,20 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildProfileItem(
+      BuildContext context,
+      IconData icon,
+      String title, {
+        VoidCallback? onTap,
+      }) {
+    return ListTile(
+      leading: Icon(icon, color: Color(0xFF003049)),
+      title: Text(title),
+      trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+      onTap: onTap,
     );
   }
 
@@ -205,17 +310,6 @@ class ProfileScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
       ),
-    );
-  }
-
-  Widget _buildProfileItem(BuildContext context, IconData icon, String title) {
-    return ListTile(
-      leading: Icon(icon, color: Color(0xFF003049)),
-      title: Text(title),
-      trailing: Icon(Icons.chevron_right, color: Colors.grey),
-      onTap: () {
-
-      },
     );
   }
 }
