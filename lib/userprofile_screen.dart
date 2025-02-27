@@ -57,6 +57,28 @@ class ProfileScreen extends StatelessWidget {
     }
   }
 
+  Future<void> deleteAccount(BuildContext context) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+
+        DatabaseReference userRef = FirebaseDatabase.instance.ref("users/${user.uid}");
+        await userRef.remove();
+        await user.delete();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Account deleted successfully')),
+        );
+
+        Navigator.of(context).pushReplacementNamed('/account_screen');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting account: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -237,7 +259,7 @@ class ProfileScreen extends StatelessWidget {
                 _buildBottomButton(
                   label: 'Delete Account',
                   onPressed: () {
-                    print('Delete Account button pressed');
+                    deleteAccount(context);
                   },
                   color: hangryYellow,
                 ),
