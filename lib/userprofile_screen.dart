@@ -21,8 +21,8 @@ class ProfileScreen extends StatelessWidget {
     try {
       DatabaseReference userRef = FirebaseDatabase.instance.ref("users/$userId/profile");
       await userRef.update({
-        "name": fullname,
-        "phone number": phonenumber,
+        "fullName": fullname,
+        "phoneNumber": phonenumber,
         "address": address,
         "city": city,
         "zipCode": zipCode,
@@ -32,9 +32,6 @@ class ProfileScreen extends StatelessWidget {
       );
       DatabaseReference profileRef = FirebaseDatabase.instance.ref("users/$userId/profile");
       DatabaseEvent event = await profileRef.once();
-      final updatedData = event.snapshot.value as Map<dynamic, dynamic>;
-
-
 
     } catch (e) {
 
@@ -169,7 +166,7 @@ class ProfileScreen extends StatelessWidget {
                       isScrollControlled: true,
                       builder: (context) {
                         TextEditingController fullnameController = TextEditingController();
-                        TextEditingController phonenumberController = TextEditingController();
+                        TextEditingController phoneNumberController = TextEditingController();
                         TextEditingController addressController = TextEditingController();
                         TextEditingController cityController = TextEditingController();
                         TextEditingController zipCodeController = TextEditingController();
@@ -188,12 +185,14 @@ class ProfileScreen extends StatelessWidget {
 
                             if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
                               final profileData = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
-                              fullnameController.text = profileData['fullname'] ?? '';
-                              phonenumberController.text = profileData['phonenumber'] ?? '';
+
+                              fullnameController.text = profileData['fullName'] ?? '';
+                              phoneNumberController.text = profileData['phoneNumber'] ?? '';
                               addressController.text = profileData['address'] ?? '';
                               cityController.text = profileData['city'] ?? '';
-                              zipCodeController.text = profileData['zipcode'] ?? '';
+                              zipCodeController.text = profileData['zipCode'] ?? '';
                             }
+
 
                             return Padding(
                           padding: EdgeInsets.only(
@@ -230,7 +229,7 @@ class ProfileScreen extends StatelessWidget {
                                         ),
                                         const SizedBox(height: 8),
                                         TextField(
-                                          controller: phonenumberController,
+                                          controller: phoneNumberController,
                                           decoration: const InputDecoration(labelText: 'Phone Number*'),
                                         ),
                                         const SizedBox(height: 8),
@@ -253,7 +252,7 @@ class ProfileScreen extends StatelessWidget {
                                               context,
                                               user.uid,
                                               fullnameController.text.trim(),
-                                              phonenumberController.text.trim(),
+                                              phoneNumberController.text.trim(),
                                               addressController.text.trim(),
                                               cityController.text.trim(),
                                               zipCodeController.text.trim(),
@@ -263,7 +262,7 @@ class ProfileScreen extends StatelessWidget {
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: Color(0xFFFCBF49),
                                             foregroundColor: Colors.white,
-                                            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15), // Espaçamento interno
+                                            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                                             shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(20),
                                             ),
