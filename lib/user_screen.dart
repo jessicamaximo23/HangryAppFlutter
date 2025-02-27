@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'profile_screen.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({Key? key}) : super(key: key);
@@ -55,7 +55,7 @@ class _UserScreenState extends State<UserScreen> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: hangryBlue, // Use custom blue color
+                  color: hangryBlue,
                ),
                   textAlign: TextAlign.center,
                 ),
@@ -101,7 +101,10 @@ class _UserScreenState extends State<UserScreen> {
                     icon: Icons.person,
                     title: 'Profile',
                     onTap: () {
-                      // Navigate to profile screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ProfileScreen()),
+                      );
                     },
                   ),
                 ],
