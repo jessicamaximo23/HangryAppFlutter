@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
+
+    User? user = FirebaseAuth.instance.currentUser;
+    // Define custom colors
+    final Color hangryYellow = Color(0xFFFCBF49);
+    final Color hangryBlue = Color(0xFF003049);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile Information'),
@@ -19,13 +27,15 @@ class ProfileScreen extends StatelessWidget {
             Center(
               child: CircleAvatar(
                 radius: 50,
-                backgroundImage: AssetImage('images/assets/profile_picture.png'), // Substitua pelo caminho da imagem do perfil
+                backgroundImage: user?.photoURL != null
+                    ? NetworkImage(user!.photoURL!)
+                    : AssetImage('images/assets/profile_picture.png') as ImageProvider, // Foto padrão
               ),
             ),
             const SizedBox(height: 20),
             Center(
               child: Text(
-                'John Doe', // Exemplo de nome do usuário
+                user?.displayName ?? 'User',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
