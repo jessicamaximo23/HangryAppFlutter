@@ -16,33 +16,21 @@ class ProfileScreen extends StatelessWidget {
     }
   }
 
-  Future<void> updatePassword(BuildContext context, String newPassword) async {
-    try {
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        await user.updatePassword(newPassword);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Password updated successfully')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error updating password: $e')),
-      );
-    }
-  }
-  Future<void> updateUserDetails(BuildContext context, userId, name, email, address) async {
+  Future<void> updateUserDetails(BuildContext context, userId, fullname, phonenumber, address, city, zipcode) async {
     try {
 
       DatabaseReference userRef = FirebaseDatabase.instance.ref("users/$userId");
       await userRef.update({
-        'name': name,
-        'email': email,
-        'address': address,
+        "name": fullname,
+        "number": phonenumber,
+        "address": address,
+        "city" : city,
+        "zipCode" : zipcode
+
       });
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        await user.updateEmail(email);
+        // await user.updateEmail(email);
       }
 
 
@@ -181,10 +169,11 @@ class ProfileScreen extends StatelessWidget {
                       context: context,
                       isScrollControlled: true,
                       builder: (context) {
-                        TextEditingController nameController = TextEditingController();
-                        TextEditingController emailController = TextEditingController();
-                        TextEditingController passwordController = TextEditingController();
+                        TextEditingController fullnameController = TextEditingController();
+                        TextEditingController phonenumberController = TextEditingController();
                         TextEditingController addressController = TextEditingController();
+                        TextEditingController cityController = TextEditingController();
+                        TextEditingController zipCodeController = TextEditingController();
 
                         return Padding(
                           padding: EdgeInsets.only(
@@ -198,44 +187,72 @@ class ProfileScreen extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 const Text(
-                                  'Update Profile',
+                                  'My Profile',
                                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 16),
-                                TextField(
-                                  controller: nameController,
-                                  decoration: const InputDecoration(labelText: 'Name'),
-                                ),
-                                const SizedBox(height: 8),
-                                TextField(
-                                  controller: emailController,
-                                  decoration: const InputDecoration(labelText: 'Email'),
-                                ),
-                                const SizedBox(height: 8),
-                                TextField(
-                                  controller: passwordController,
-                                  decoration: const InputDecoration(labelText: 'Password'),
-                                  obscureText: true,
-                                ),
-                                const SizedBox(height: 8),
-                                TextField(
-                                  controller: addressController,
-                                  decoration: const InputDecoration(labelText: 'Address'),
-                                ),
-                                const SizedBox(height: 16),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    updateUserDetails(
-                                      context,
-                                      user.uid,
-                                      nameController.text.trim(),
-                                      emailController.text.trim(),
-                                      passwordController.text.trim(),
+                                StreamBuilder(
+                                  stream: FirebaseDatabase.instance.ref("users/${user.uid}").onValue,
+                                  builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return CircularProgressIndicator();
+                                    }
 
+                                    if (snapshot.hasError) {
+                                      return Text('Error: ${snapshot.error}');
+                                    }
+
+                                    return Column(
+                                      children: [
+                                        TextField(
+                                          controller: fullnameController,
+                                          decoration: const InputDecoration(labelText: 'Full Name*'),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        TextField(
+                                          controller: phonenumberController,
+                                          decoration: const InputDecoration(labelText: 'Phone Number*'),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        TextField(
+                                          controller: addressController,
+                                          decoration: const InputDecoration(labelText: 'Address'),
+                                        ),
+                                        TextField(
+                                          controller: cityController,
+                                          decoration: const InputDecoration(labelText: 'City'),
+                                        ),
+                                        TextField(
+                                          controller: zipCodeController,
+                                          decoration: const InputDecoration(labelText: 'ZipCode'),
+                                        ),
+                                        const SizedBox(height: 20),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            updateUserDetails(
+                                              context,
+                                              user.uid,
+                                              fullnameController.text.trim(),
+                                              phonenumberController.text.trim(),
+                                              addressController.text.trim(),
+                                              cityController.text.trim(),
+                                              zipCodeController.text.trim(),
+                                            );
+                                            Navigator.pop(context);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Color(0xFFFCBF49),
+                                            foregroundColor: Colors.white,
+                                            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15), // Espaçamento interno
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(20), // Bordas arredondadas
+                                            ),
+                                          ),
+                                          child: const Text('Save Profile'),
+                                        ),
+                                      ],
                                     );
-                                    Navigator.pop(context);
                                   },
-                                  child: const Text('Save'),
                                 ),
                               ],
                             ),
