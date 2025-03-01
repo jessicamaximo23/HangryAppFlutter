@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hangry_app_flutter/restaurantprofile_screen.dart';
 
 class RestaurantScreen extends StatefulWidget {
   const RestaurantScreen({Key? key}) : super(key: key);
@@ -102,7 +103,10 @@ class _RestaurantScreen extends State<RestaurantScreen> {
                     icon: Icons.person,
                     title: 'Profile',
                     onTap: () {
-                      // Navigate to profile screen
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProfileScreenRestaurant()),
+    );
                     },
                   ),
                 ],

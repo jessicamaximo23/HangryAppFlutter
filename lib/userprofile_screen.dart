@@ -65,18 +65,18 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     User? user = FirebaseAuth.instance.currentUser;
-    // Define custom colors
+
     final Color hangryYellow = Color(0xFFFCBF49);
     final Color hangryBlue = Color(0xFF003049);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
-        backgroundColor: Color(0xFFFCBF49),
+        backgroundColor: hangryYellow,
       ),
-        body: Padding(
+      body: SingleChildScrollView( // Envolve o conteúdo para permitir rolagem
+        child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,7 +98,6 @@ class ProfileScreen extends StatelessWidget {
                       : null,
                 ),
               ),
-
               const SizedBox(height: 20),
               FutureBuilder<String?>(
                 future: user != null ? getUserName(user.uid) : Future.value(null),
@@ -130,31 +129,28 @@ class ProfileScreen extends StatelessWidget {
                   }
                 },
               ),
-
-        const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildTopButton(
-                  icon: Icons.wallet,
-                  label: 'Wallet',
-                  onPressed: () {
-                    print('Wallet button pressed');
-                  },
-                  color: hangryYellow,
-                ),
-                _buildTopButton(
-                  icon: Icons.favorite,
-                  label: 'Favorites',
-                  onPressed: () {
-                    print('Favorites button pressed');
-                  },
-                  color: hangryYellow,
-                ),
-              ],
-            ),
-
-
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildTopButton(
+                    icon: Icons.wallet,
+                    label: 'Wallet',
+                    onPressed: () {
+                      print('Wallet button pressed');
+                    },
+                    color: hangryYellow,
+                  ),
+                  _buildTopButton(
+                    icon: Icons.favorite,
+                    label: 'Favorites',
+                    onPressed: () {
+                      print('Favorites button pressed');
+                    },
+                    color: hangryYellow,
+                  ),
+                ],
+              ),
               _buildProfileItem(
                 context,
                 Icons.person,
@@ -164,14 +160,21 @@ class ProfileScreen extends StatelessWidget {
                     showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * 0.8,
+                      ),
                       builder: (context) {
-                        TextEditingController fullnameController = TextEditingController();
-                        TextEditingController phoneNumberController = TextEditingController();
-                        TextEditingController addressController = TextEditingController();
-                        TextEditingController cityController = TextEditingController();
-                        TextEditingController zipCodeController = TextEditingController();
+                        final fullnameController = TextEditingController();
+                        final phoneNumberController = TextEditingController();
+                        final addressController = TextEditingController();
+                        final cityController = TextEditingController();
+                        final zipCodeController = TextEditingController();
 
-                        DatabaseReference profileRef = FirebaseDatabase.instance.ref("users/${user.uid}/profile");
+                        final FocusNode fullnameFocusNode = FocusNode();
+
+                        DatabaseReference profileRef =
+                        FirebaseDatabase.instance.ref("users/${user.uid}/profile");
+
                         return FutureBuilder<DatabaseEvent>(
                           future: profileRef.once(),
                           builder: (context, snapshot) {
@@ -180,141 +183,147 @@ class ProfileScreen extends StatelessWidget {
                             }
 
                             if (snapshot.hasError) {
-                              return Center(child: Text('Error: ${snapshot.error}'));
+                              return Center(
+                                  child: Text('Error: ${snapshot.error}'));
                             }
 
-                            if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
-                              final profileData = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
+                            if (snapshot.hasData &&
+                                snapshot.data!.snapshot.value != null) {
+                              final profileData = snapshot.data!.snapshot.value
+                              as Map<dynamic, dynamic>;
 
-                              fullnameController.text = profileData['fullName'] ?? '';
-                              phoneNumberController.text = profileData['phoneNumber'] ?? '';
-                              addressController.text = profileData['address'] ?? '';
+                              fullnameController.text =
+                                  profileData['fullName'] ?? '';
+                              phoneNumberController.text =
+                                  profileData['phoneNumber'] ?? '';
+                              addressController.text =
+                                  profileData['address'] ?? '';
                               cityController.text = profileData['city'] ?? '';
-                              zipCodeController.text = profileData['zipCode'] ?? '';
+                              zipCodeController.text =
+                                  profileData['zipCode'] ?? '';
                             }
 
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              FocusScope.of(context)
+                                  .requestFocus(fullnameFocusNode);
+                            });
 
-                            return Padding(
-                          padding: EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                            top: 16,
-                            bottom: MediaQuery.of(context).viewInsets.bottom,
-                          ),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text(
-                                  'My Profile',
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            return SingleChildScrollView(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  left: 16,
+                                  right: 16,
+                                  top: 16,
+                                  bottom: MediaQuery.of(context)
+                                      .viewInsets
+                                      .bottom,
                                 ),
-                                const SizedBox(height: 16),
-                                StreamBuilder(
-                                  stream: FirebaseDatabase.instance.ref("users/${user.uid}").onValue,
-                                  builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return CircularProgressIndicator();
-                                    }
-
-                                    if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    }
-
-                                    return Column(
-                                      children: [
-                                        TextField(
-                                          controller: fullnameController,
-                                          decoration: const InputDecoration(labelText: 'Full Name*'),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Text(
+                                      'My Profile',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    TextField(
+                                      controller: fullnameController,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Full Name*'),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    TextField(
+                                      controller: phoneNumberController,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Phone Number*'),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    TextField(
+                                      controller: addressController,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Address'),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    TextField(
+                                      controller: cityController,
+                                      decoration: const InputDecoration(
+                                          labelText: 'City'),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    TextField(
+                                      controller: zipCodeController,
+                                      decoration: const InputDecoration(
+                                          labelText: 'ZipCode'),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        updateUserDetails(
+                                          context,
+                                          user.uid,
+                                          fullnameController.text.trim(),
+                                          phoneNumberController.text.trim(),
+                                          addressController.text.trim(),
+                                          cityController.text.trim(),
+                                          zipCodeController.text.trim(),
+                                        );
+                                        Navigator.pop(context);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: hangryYellow,
+                                        foregroundColor: Colors.white,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 30, vertical: 15),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(20),
                                         ),
-                                        const SizedBox(height: 8),
-                                        TextField(
-                                          controller: phoneNumberController,
-                                          decoration: const InputDecoration(labelText: 'Phone Number*'),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        TextField(
-                                          controller: addressController,
-                                          decoration: const InputDecoration(labelText: 'Address'),
-                                        ),
-                                        TextField(
-                                          controller: cityController,
-                                          decoration: const InputDecoration(labelText: 'City'),
-                                        ),
-                                        TextField(
-                                          controller: zipCodeController,
-                                          decoration: const InputDecoration(labelText: 'ZipCode'),
-                                        ),
-                                        const SizedBox(height: 20),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            updateUserDetails(
-                                              context,
-                                              user.uid,
-                                              fullnameController.text.trim(),
-                                              phoneNumberController.text.trim(),
-                                              addressController.text.trim(),
-                                              cityController.text.trim(),
-                                              zipCodeController.text.trim(),
-                                            );
-                                            Navigator.pop(context);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Color(0xFFFCBF49),
-                                            foregroundColor: Colors.white,
-                                            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(20),
-                                            ),
-                                          ),
-                                          child: const Text('Save Profile'),
-                                        ),
-                                      ],
-                                    );
-                                  },
+                                      ),
+                                      child: const Text('Save Profile'),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
+                              ),
                             );
                           },
                         );
-                    }
+                      },
                     );
                   }
                 },
               ),
-            _buildProfileItem(context, Icons.location_on, 'Location'),
-            _buildProfileItem(context, Icons.settings, 'App Settings'),
-            _buildProfileItem(context, Icons.delivery_dining, 'Delivery Driver'),
-            _buildProfileItem(context, Icons.admin_panel_settings, 'Admin'),
-
+              _buildProfileItem(context, Icons.location_on, 'Location'),
+              _buildProfileItem(context, Icons.settings, 'App Settings'),
+              _buildProfileItem(context, Icons.delivery_dining, 'Delivery Driver'),
+              _buildProfileItem(context, Icons.admin_panel_settings, 'Admin'),
               const SizedBox(height: 70),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildBottomButton(
-                  label: 'Delete Account',
-                  onPressed: () {
-                    deleteAccount(context);
-                  },
-                  color: hangryYellow,
-                ),
-                _buildBottomButton(
-                  label: 'Review',
-                  onPressed: () {
-                    print('Review button pressed');
-                  },
-                  color: hangryYellow,
-                ),
-              ],
-            ),
-          ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildBottomButton(
+                    label: 'Delete Account',
+                    onPressed: () {
+                      deleteAccount(context);
+                    },
+                    color: hangryYellow,
+                  ),
+                  _buildBottomButton(
+                    label: 'Review',
+                    onPressed: () {
+                      print('Review button pressed');
+                    },
+                    color: hangryYellow,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+
 
   Widget _buildProfileItem(
       BuildContext context,
