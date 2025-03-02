@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:hangry_app_flutter/driver_screen.dart';
 
 class ProfileScreenRestaurant extends StatelessWidget {
   const ProfileScreenRestaurant({Key? key}) : super(key: key);
 
   Future<String?> getUserName(String userId) async {
     try {
-      DatabaseReference ref = FirebaseDatabase.instance.ref(
-          "users/$userId/name");
+      DatabaseReference ref = FirebaseDatabase.instance.ref("users/$userId/name");
       DatabaseEvent event = await ref.once();
       return event.snapshot.value as String?;
     } catch (e) {
@@ -17,11 +17,10 @@ class ProfileScreenRestaurant extends StatelessWidget {
     }
   }
 
-  Future<void> updateUserDetails(BuildContext context, userId, fullname, typeofcuisine,
-      phonenumber, address, city, zipCode) async {
+  Future<void> updaterestaurantDetails(BuildContext context, String userId, String fullname, String typeofcuisine,
+      String phonenumber, String address, String city, String zipCode) async {
     try {
-      DatabaseReference userRef = FirebaseDatabase.instance.ref(
-          "users/$userId/profile");
+      DatabaseReference userRef = FirebaseDatabase.instance.ref("users/$userId/profile");
       await userRef.update({
         "fullName": fullname,
         "typeofcuisine": typeofcuisine,
@@ -33,9 +32,6 @@ class ProfileScreenRestaurant extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Profile updated successfully')),
       );
-      DatabaseReference profileRef = FirebaseDatabase.instance.ref(
-          "users/$userId/profile");
-      DatabaseEvent event = await profileRef.once();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error updating profile: $e')),
@@ -47,8 +43,7 @@ class ProfileScreenRestaurant extends StatelessWidget {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        DatabaseReference userRef = FirebaseDatabase.instance.ref(
-            "users/${user.uid}");
+        DatabaseReference userRef = FirebaseDatabase.instance.ref("users/${user.uid}");
         await userRef.remove();
         await user.delete();
 
@@ -74,7 +69,7 @@ class ProfileScreenRestaurant extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text('Profile Restaurant'),
         backgroundColor: hangryYellow,
       ),
       body: SingleChildScrollView(
@@ -88,22 +83,13 @@ class ProfileScreenRestaurant extends StatelessWidget {
                 child: CircleAvatar(
                   radius: 50.0,
                   backgroundColor: Colors.grey,
-                  backgroundImage: user?.photoURL != null
-                      ? NetworkImage(user!.photoURL!)
-                      : null,
-                  child: user?.photoURL == null
-                      ? Icon(
-                    Icons.person,
-                    size: 50,
-                    color: Colors.white,
-                  )
-                      : null,
+                  backgroundImage: user?.photoURL != null ? NetworkImage(user!.photoURL!) : null,
+                  child: user?.photoURL == null ? Icon(Icons.person, size: 50, color: Colors.white) : null,
                 ),
               ),
               const SizedBox(height: 20),
               FutureBuilder<String?>(
-                future: user != null ? getUserName(user.uid) : Future.value(
-                    null),
+                future: user != null ? getUserName(user.uid) : Future.value(null),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
@@ -160,165 +146,15 @@ class ProfileScreenRestaurant extends StatelessWidget {
                 'Profile Information',
                 onTap: () {
                   if (user != null) {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      constraints: BoxConstraints(
-                        maxHeight: MediaQuery
-                            .of(context)
-                            .size
-                            .height * 0.8,
-                      ),
-                      builder: (context) {
-                        final fullnameController = TextEditingController();
-                        final typeofcuisineController = TextEditingController();
-                        final phoneNumberController = TextEditingController();
-                        final addressController = TextEditingController();
-                        final cityController = TextEditingController();
-                        final zipCodeController = TextEditingController();
-
-                        final FocusNode fullnameFocusNode = FocusNode();
-
-                        DatabaseReference profileRef =
-                        FirebaseDatabase.instance.ref("users/${user
-                            .uid}/profile");
-
-                        return FutureBuilder<DatabaseEvent>(
-                          future: profileRef.once(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(child: CircularProgressIndicator());
-                            }
-
-                            if (snapshot.hasError) {
-                              return Center(
-                                  child: Text('Error: ${snapshot.error}'));
-                            }
-
-                            if (snapshot.hasData &&
-                                snapshot.data!.snapshot.value != null) {
-                              final profileData = snapshot.data!.snapshot.value
-                              as Map<dynamic, dynamic>;
-
-                              fullnameController.text =
-                                  profileData['fullName'] ?? '';
-                              typeofcuisineController.text =
-                                  profileData['typeofcuisine'] ?? '';
-                              phoneNumberController.text =
-                                  profileData['phoneNumber'] ?? '';
-                              addressController.text =
-                                  profileData['address'] ?? '';
-                              cityController.text = profileData['city'] ?? '';
-                              zipCodeController.text =
-                                  profileData['zipCode'] ?? '';
-                            }
-
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              FocusScope.of(context)
-                                  .requestFocus(fullnameFocusNode);
-                            });
-
-                            return SingleChildScrollView(
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                  top: 16,
-                                  bottom: MediaQuery
-                                      .of(context)
-                                      .viewInsets
-                                      .bottom,
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Text(
-                                      'My Profile',
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    TextField(
-                                      controller: fullnameController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Full Name*'),
-                                    ),
-                                    TextField(
-                                      controller: typeofcuisineController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Type of Cusine '),
-
-                                    ),
-                                    const SizedBox(height: 8),
-                                    TextField(
-                                      controller: phoneNumberController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Phone Number*'),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    TextField(
-                                      controller: addressController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Address'),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    TextField(
-                                      controller: cityController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'City'),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    TextField(
-                                      controller: zipCodeController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'ZipCode'),
-                                    ),
-                                    const SizedBox(height: 20),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        updateUserDetails(
-                                          context,
-                                          user.uid,
-                                          fullnameController.text.trim(),
-                                          typeofcuisineController.text.trim(),
-                                          phoneNumberController.text.trim(),
-                                          addressController.text.trim(),
-                                          cityController.text.trim(),
-                                          zipCodeController.text.trim(),
-                                        );
-                                        Navigator.pop(context);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: hangryYellow,
-                                        foregroundColor: Colors.white,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 30, vertical: 15),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              20),
-                                        ),
-                                      ),
-                                      child: const Text('Save Profile'),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    );
+                    _showProfileBottomSheet(context, user);
                   }
                 },
               ),
               _buildProfileItem(context, Icons.location_on, 'Location'),
               _buildProfileItem(context, Icons.settings, 'App Settings'),
-              _buildProfileItem(
-                  context, Icons.delivery_dining, 'Delivery Driver'),
+              _buildProfileItem(context, Icons.delivery_dining, 'Delivery Driver'),
               _buildProfileItem(context, Icons.admin_panel_settings, 'Admin'),
-              const SizedBox(height: 70),
+              const SizedBox(height: 100),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -345,12 +181,126 @@ class ProfileScreenRestaurant extends StatelessWidget {
     );
   }
 
+  void _showProfileBottomSheet(BuildContext context, User user) {
+    final fullnameController = TextEditingController();
+    final typeofcuisineController = TextEditingController();
+    final phoneNumberController = TextEditingController();
+    final addressController = TextEditingController();
+    final cityController = TextEditingController();
+    final zipCodeController = TextEditingController();
 
-  Widget _buildProfileItem(BuildContext context,
-      IconData icon,
-      String title, {
-        VoidCallback? onTap,
-      }) {
+    final FocusNode fullnameFocusNode = FocusNode();
+
+    DatabaseReference profileRef = FirebaseDatabase.instance.ref("users/${user.uid}/profile");
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return FutureBuilder<DatabaseEvent>(
+          future: profileRef.once(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+
+            if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
+              final profileData = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
+
+              fullnameController.text = profileData['fullName'] ?? '';
+              typeofcuisineController.text = profileData['typeofcuisine'] ?? '';
+              phoneNumberController.text = profileData['phoneNumber'] ?? '';
+              addressController.text = profileData['address'] ?? '';
+              cityController.text = profileData['city'] ?? '';
+              zipCodeController.text = profileData['zipCode'] ?? '';
+            }
+
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              FocusScope.of(context).requestFocus(fullnameFocusNode);
+            });
+
+            return SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: 5,
+                    right: 5,
+                    top: 5,
+                    bottom: MediaQuery.of(context)
+                        .viewInsets
+                        .bottom,
+                  ),
+                  child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'My Profile',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    TextField(
+                      controller: fullnameController,
+                      decoration: const InputDecoration(labelText: 'Full Name*'),
+                      focusNode: fullnameFocusNode,
+                    ),
+                    TextField(
+                      controller: typeofcuisineController,
+                      decoration: const InputDecoration(labelText: 'Type of Cuisine'),
+                    ),
+                    TextField(
+                      controller: phoneNumberController,
+                      decoration: const InputDecoration(labelText: 'Phone Number*'),
+                    ),
+                    TextField(
+                      controller: addressController,
+                      decoration: const InputDecoration(labelText: 'Address'),
+                    ),
+                    TextField(
+                      controller: cityController,
+                      decoration: const InputDecoration(labelText: 'City'),
+                    ),
+                    TextField(
+                      controller: zipCodeController,
+                      decoration: const InputDecoration(labelText: 'ZipCode'),
+                    ),
+                    const SizedBox(height: 70),
+                    ElevatedButton(
+                      onPressed: () {
+                        updaterestaurantDetails(
+                          context,
+                          user.uid,
+                          fullnameController.text.trim(),
+                          typeofcuisineController.text.trim(),
+                          phoneNumberController.text.trim(),
+                          addressController.text.trim(),
+                          cityController.text.trim(),
+                          zipCodeController.text.trim(),
+                        );
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: hangryYellow,
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: const Text('Save Profile'),
+                    ),
+                  ],
+                  ),
+                ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildProfileItem(BuildContext context, IconData icon, String title, {VoidCallback? onTap}) {
     return ListTile(
       leading: Icon(icon, color: Color(0xFF003049)),
       title: Text(title),

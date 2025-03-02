@@ -211,9 +211,9 @@ class ProfileScreen extends StatelessWidget {
                             return SingleChildScrollView(
                               child: Padding(
                                 padding: EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                  top: 16,
+                                  left: 5,
+                                  right: 5,
+                                  top: 5,
                                   bottom: MediaQuery.of(context)
                                       .viewInsets
                                       .bottom,
@@ -297,7 +297,7 @@ class ProfileScreen extends StatelessWidget {
               _buildProfileItem(context, Icons.settings, 'App Settings'),
               _buildProfileItem(context, Icons.delivery_dining, 'Delivery Driver'),
               _buildProfileItem(context, Icons.admin_panel_settings, 'Admin'),
-              const SizedBox(height: 70),
+              const SizedBox(height: 100),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
