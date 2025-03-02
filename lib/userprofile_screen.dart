@@ -72,10 +72,10 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text('Profile User'),
         backgroundColor: hangryYellow,
       ),
-      body: SingleChildScrollView( // Envolve o conteúdo para permitir rolagem
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

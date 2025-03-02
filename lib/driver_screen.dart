@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hangry_app_flutter/driverprofile_screen.dart';
 
 
 class DriverScreen extends StatefulWidget {
@@ -105,6 +106,11 @@ class _DriverScreenState extends State<DriverScreen> {
                     icon: Icons.person,
                     title: 'Profile',
                     onTap: () {
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ProfileScreenDriver()),
+                      );
                       // Navigate to profile screen
                     },
                   ),
