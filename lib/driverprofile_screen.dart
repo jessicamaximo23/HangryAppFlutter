@@ -215,23 +215,33 @@ class ProfileScreenDriver extends StatelessWidget {
 
     DatabaseReference profileRef = FirebaseDatabase.instance.ref("users/${user.uid}/profile");
 
-    Future<void> _uploadImage() async {
-      if (_driverLicenseImage == null) return;
-
-      final storageRef = FirebaseStorage.instance.ref().child('driver_licenses/${user.uid}.jpg');
-      await storageRef.putFile(_driverLicenseImage!);
-      _driverLicenseUrl = await storageRef.getDownloadURL();
+    Future<String> _uploadDriverLicense(File image) async {
+      try {
+        final storageRef = FirebaseStorage.instance.ref().child('driver_licenses/${user.uid}.jpg');
+        await storageRef.putFile(image);
+        final downloadURL = await storageRef.getDownloadURL();
+        return downloadURL; 
+      } catch (e) {
+        print("Error uploading image: $e");
+        throw e; 
+      }
     }
 
     Future<void> _pickImage() async {
       final ImagePicker _picker = ImagePicker();
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
       if (image != null) {
+        print("Image selected: ${image.path}");
+
         _driverLicenseImage = File(image.path);
-        _uploadImage();
+        _driverLicenseUrl = await _uploadDriverLicense(_driverLicenseImage!);
+
+        print("Image uploaded, URL: $_driverLicenseUrl");
+      } else {
+        print("No image selected");
       }
     }
-
 
     showModalBottomSheet(
       context: context,
@@ -249,7 +259,9 @@ class ProfileScreenDriver extends StatelessWidget {
             }
 
             if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
-              final profileData = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
+              final profileData = snapshot.data!.snapshot.value as Map<
+                  dynamic,
+                  dynamic>;
 
               fullnameController.text = profileData['fullName'] ?? '';
               phoneNumberController.text = profileData['phoneNumber'] ?? '';
@@ -272,7 +284,8 @@ class ProfileScreenDriver extends StatelessWidget {
                   left: 5,
                   right: 5,
                   top: 5,
-                  bottom: MediaQuery.of(context)
+                  bottom: MediaQuery
+                      .of(context)
                       .viewInsets
                       .bottom,
                 ),
@@ -281,16 +294,19 @@ class ProfileScreenDriver extends StatelessWidget {
                   children: [
                     const Text(
                       'My Profile',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     TextField(
                       controller: fullnameController,
-                      decoration: const InputDecoration(labelText: 'Full Name*'),
+                      decoration: const InputDecoration(
+                          labelText: 'Full Name*'),
                       focusNode: fullnameFocusNode,
                     ),
                     TextField(
                       controller: phoneNumberController,
-                      decoration: const InputDecoration(labelText: 'Phone Number*'),
+                      decoration: const InputDecoration(
+                          labelText: 'Phone Number*'),
                     ),
                     TextField(
                       controller: addressController,
@@ -303,7 +319,7 @@ class ProfileScreenDriver extends StatelessWidget {
                     TextField(
                       controller: zipCodeController,
                       decoration: const InputDecoration(labelText: 'ZipCode'),
-                    ),TextField(
+                    ), TextField(
                       controller: carModelController,
                       decoration: const InputDecoration(labelText: 'Car Model'),
                     ),
@@ -313,7 +329,8 @@ class ProfileScreenDriver extends StatelessWidget {
                     ),
                     TextField(
                       controller: plateNumberController,
-                      decoration: const InputDecoration(labelText: 'Plate Number'),
+                      decoration: const InputDecoration(
+                          labelText: 'Plate Number'),
                     ),
                     const SizedBox(height: 10),
                     if (_driverLicenseUrl != null)
@@ -325,27 +342,36 @@ class ProfileScreenDriver extends StatelessWidget {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () async {
-                        await _uploadImage();
-                        updatedriverDetails(
-                          context,
-                          user.uid,
-                          fullnameController.text.trim(),
-                          phoneNumberController.text.trim(),
-                          addressController.text.trim(),
-                          cityController.text.trim(),
-                          zipCodeController.text.trim(),
-                          carModelController.text.trim(),
-                          carColorController.text.trim(),
-                          plateNumberController.text.trim(),
-                          _driverLicenseUrl,
-
-                        );
-                        Navigator.pop(context);
+                        if (_driverLicenseImage !=
+                            null) { // Verifica se a imagem foi selecionada
+                          await _uploadDriverLicense(
+                              _driverLicenseImage!); // Faz o upload da imagem
+                          updatedriverDetails(
+                            context,
+                            user.uid,
+                            fullnameController.text.trim(),
+                            phoneNumberController.text.trim(),
+                            addressController.text.trim(),
+                            cityController.text.trim(),
+                            zipCodeController.text.trim(),
+                            carModelController.text.trim(),
+                            carColorController.text.trim(),
+                            plateNumberController.text.trim(),
+                            _driverLicenseUrl,
+                          );
+                          Navigator.pop(context); 
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text('Please select an image first')),
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: hangryYellow,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -361,6 +387,7 @@ class ProfileScreenDriver extends StatelessWidget {
       },
     );
   }
+}
 
   Widget _buildProfileItem(BuildContext context, IconData icon, String title, {VoidCallback? onTap}) {
     return ListTile(
@@ -414,4 +441,3 @@ class ProfileScreenDriver extends StatelessWidget {
       ),
     );
   }
-}
