@@ -17,13 +17,12 @@ class ProfileScreenDriver extends StatelessWidget {
     }
   }
 
-  Future<void> updaterestaurantDetails(BuildContext context, String userId, String fullname, String typeofcuisine,
+  Future<void> updatedriverDetails(BuildContext context, String userId, String fullname,
       String phonenumber, String address, String city, String zipCode) async {
     try {
       DatabaseReference userRef = FirebaseDatabase.instance.ref("users/$userId/profile");
       await userRef.update({
         "fullName": fullname,
-        "typeofcuisine": typeofcuisine,
         "phoneNumber": phonenumber,
         "address": address,
         "city": city,
@@ -69,7 +68,7 @@ class ProfileScreenDriver extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile Restaurant'),
+        title: const Text('Profile Driver'),
         backgroundColor: hangryYellow,
       ),
       body: SingleChildScrollView(
@@ -183,7 +182,6 @@ class ProfileScreenDriver extends StatelessWidget {
 
   void _showProfileBottomSheet(BuildContext context, User user) {
     final fullnameController = TextEditingController();
-    final typeofcuisineController = TextEditingController();
     final phoneNumberController = TextEditingController();
     final addressController = TextEditingController();
     final cityController = TextEditingController();
@@ -212,7 +210,6 @@ class ProfileScreenDriver extends StatelessWidget {
               final profileData = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
 
               fullnameController.text = profileData['fullName'] ?? '';
-              typeofcuisineController.text = profileData['typeofcuisine'] ?? '';
               phoneNumberController.text = profileData['phoneNumber'] ?? '';
               addressController.text = profileData['address'] ?? '';
               cityController.text = profileData['city'] ?? '';
@@ -246,10 +243,6 @@ class ProfileScreenDriver extends StatelessWidget {
                       focusNode: fullnameFocusNode,
                     ),
                     TextField(
-                      controller: typeofcuisineController,
-                      decoration: const InputDecoration(labelText: 'Type of Cuisine'),
-                    ),
-                    TextField(
                       controller: phoneNumberController,
                       decoration: const InputDecoration(labelText: 'Phone Number*'),
                     ),
@@ -268,11 +261,10 @@ class ProfileScreenDriver extends StatelessWidget {
                     const SizedBox(height: 70),
                     ElevatedButton(
                       onPressed: () {
-                        updaterestaurantDetails(
+                        updatedriverDetails(
                           context,
                           user.uid,
                           fullnameController.text.trim(),
-                          typeofcuisineController.text.trim(),
                           phoneNumberController.text.trim(),
                           addressController.text.trim(),
                           cityController.text.trim(),
