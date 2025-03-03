@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'account_screen.dart'; // Importe a tela AccountScreen
+import 'account_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -11,7 +11,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    // Simula um atraso de 3 segundos antes de navegar para a AccountScreen
+
     Future.delayed(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
@@ -25,12 +25,12 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Cor de fundo branca
+      backgroundColor: Colors.white,
       body: Center(
         child: Image.asset(
-          'images/assets/logobackground.png', // Caminho da imagem
-          width: 200, // Largura da imagem
-          height: 200, // Altura da imagem
+          'images/assets/logobackground.png',
+          width: 200,
+          height: 200,
         ),
       ),
     );
