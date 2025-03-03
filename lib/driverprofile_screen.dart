@@ -1,7 +1,10 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:hangry_app_flutter/driver_screen.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class ProfileScreenDriver extends StatelessWidget {
   const ProfileScreenDriver({Key? key}) : super(key: key);
@@ -17,8 +20,18 @@ class ProfileScreenDriver extends StatelessWidget {
     }
   }
 
-  Future<void> updatedriverDetails(BuildContext context, String userId, String fullname,
-      String phonenumber, String address, String city, String zipCode) async {
+  Future<void> updatedriverDetails(
+      BuildContext context,
+      String userId,
+      String fullname,
+      String phonenumber,
+      String address,
+      String city,
+      String zipCode,
+      String carModel,
+      String carColor,
+      String plateNumber,
+      String? driverLicenseUrl,) async {
     try {
       DatabaseReference userRef = FirebaseDatabase.instance.ref("users/$userId/profile");
       await userRef.update({
@@ -27,6 +40,10 @@ class ProfileScreenDriver extends StatelessWidget {
         "address": address,
         "city": city,
         "zipCode": zipCode,
+        "carModel": carModel,
+        "carColor": carColor,
+        "plateNumber": plateNumber,
+        "driverLicenseUrl": driverLicenseUrl,
       });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Profile updated successfully')),
@@ -58,6 +75,7 @@ class ProfileScreenDriver extends StatelessWidget {
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -186,10 +204,34 @@ class ProfileScreenDriver extends StatelessWidget {
     final addressController = TextEditingController();
     final cityController = TextEditingController();
     final zipCodeController = TextEditingController();
+    final carModelController = TextEditingController();
+    final carColorController = TextEditingController();
+    final plateNumberController = TextEditingController();
+
+    File? _driverLicenseImage;
+    String? _driverLicenseUrl;
 
     final FocusNode fullnameFocusNode = FocusNode();
 
     DatabaseReference profileRef = FirebaseDatabase.instance.ref("users/${user.uid}/profile");
+
+    Future<void> _uploadImage() async {
+      if (_driverLicenseImage == null) return;
+
+      final storageRef = FirebaseStorage.instance.ref().child('driver_licenses/${user.uid}.jpg');
+      await storageRef.putFile(_driverLicenseImage!);
+      _driverLicenseUrl = await storageRef.getDownloadURL();
+    }
+
+    Future<void> _pickImage() async {
+      final ImagePicker _picker = ImagePicker();
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        _driverLicenseImage = File(image.path);
+        _uploadImage();
+      }
+    }
+
 
     showModalBottomSheet(
       context: context,
@@ -214,6 +256,10 @@ class ProfileScreenDriver extends StatelessWidget {
               addressController.text = profileData['address'] ?? '';
               cityController.text = profileData['city'] ?? '';
               zipCodeController.text = profileData['zipCode'] ?? '';
+              carModelController.text = profileData['carModel'] ?? '';
+              carColorController.text = profileData['carColor'] ?? '';
+              plateNumberController.text = profileData['plateNumber'] ?? '';
+              _driverLicenseUrl = profileData['driverLicenseUrl'];
             }
 
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -257,10 +303,29 @@ class ProfileScreenDriver extends StatelessWidget {
                     TextField(
                       controller: zipCodeController,
                       decoration: const InputDecoration(labelText: 'ZipCode'),
+                    ),TextField(
+                      controller: carModelController,
+                      decoration: const InputDecoration(labelText: 'Car Model'),
                     ),
-                    const SizedBox(height: 70),
+                    TextField(
+                      controller: carColorController,
+                      decoration: const InputDecoration(labelText: 'Car Color'),
+                    ),
+                    TextField(
+                      controller: plateNumberController,
+                      decoration: const InputDecoration(labelText: 'Plate Number'),
+                    ),
+                    const SizedBox(height: 10),
+                    if (_driverLicenseUrl != null)
+                      Image.network(_driverLicenseUrl!, height: 100),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: _pickImage,
+                      child: Text('Upload Driver License'),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await _uploadImage();
                         updatedriverDetails(
                           context,
                           user.uid,
@@ -269,6 +334,11 @@ class ProfileScreenDriver extends StatelessWidget {
                           addressController.text.trim(),
                           cityController.text.trim(),
                           zipCodeController.text.trim(),
+                          carModelController.text.trim(),
+                          carColorController.text.trim(),
+                          plateNumberController.text.trim(),
+                          _driverLicenseUrl,
+
                         );
                         Navigator.pop(context);
                       },
