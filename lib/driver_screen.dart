@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hangry_app_flutter/driverprofile_screen.dart';
 
 
 class DriverScreen extends StatefulWidget {
   const DriverScreen({Key? key}) : super(key: key);
 
   @override
-  _DriverScreen createState() => _DriverScreen();
+  _DriverScreenState createState() => _DriverScreenState();
 }
 
-class _DriverScreen extends State<DriverScreen> {
 
-  //SignOut created. Just add to the button you want to use.
+// Define custom colors
+final Color hangryYellow = Color(0xFFFCBF49);
+final Color hangryBlue = Color(0xFF003049);
+
+class _DriverScreenState extends State<DriverScreen> {
   void _signOut(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signOut();
-
-      Navigator.pushReplacementNamed(context, '/login');
+      Navigator.pushReplacementNamed(context, '/account_screen');
     } catch (e) {
       print("Error to log out: $e");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -25,18 +28,156 @@ class _DriverScreen extends State<DriverScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Driver Screen'),
-        backgroundColor: Colors.blue,
+        title: const Text('Driver Dashboard'),
+        backgroundColor: hangryYellow, // Use custom yellow color
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () => _signOut(context),
+          ),
+        ],
       ),
-      body: const Center(
-        child: Text(
-          'Hello, World!',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(height: 20),
+            Image.asset(
+              'images/assets/logobackground.png',
+              width: 200,
+              height: 150,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Welcome to Hangry!',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: hangryBlue, // Use custom blue color
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+        Text(
+          'Driver DashBoard',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+          textAlign: TextAlign.center,
+        ),
+          const SizedBox(height: 20),
+
+            // Dashboard cards
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 14,
+                mainAxisSpacing: 14,
+                children: [
+                  _buildDashboardCard(
+                    icon: Icons.delivery_dining,
+                    title: 'My Deliveries',
+                    onTap: () {
+                      // Navigate to deliveries screen
+                    },
+                  ),
+                  _buildDashboardCard(
+                    icon: Icons.attach_money,
+                    title: 'Earnings',
+                    onTap: () {
+                      // Navigate to earnings screen
+                    },
+                  ),
+                  _buildDashboardCard(
+                    icon: Icons.schedule,
+                    title: 'Schedule',
+                    onTap: () {
+                      // Navigate to schedule screen
+                    },
+                  ),
+                  _buildDashboardCard(
+                    icon: Icons.person,
+                    title: 'Profile',
+                    onTap: () {
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ProfileScreenDriver()),
+                      );
+                      // Navigate to profile screen
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 30),
+              child: ElevatedButton(
+                onPressed: () => _signOut(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: hangryYellow,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                ),
+                child: const Text(
+                  'Sign Out',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Helper function to build dashboard cards
+  Widget _buildDashboardCard({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(15),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 40, color: hangryYellow), // Use custom yellow color
+              const SizedBox(height: 10),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: hangryBlue, // Use custom blue color
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );

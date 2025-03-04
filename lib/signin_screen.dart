@@ -8,6 +8,7 @@ import 'package:hangry_app_flutter/user_screen.dart';
 
 import 'driver_screen.dart';
 
+
 class SignInScreen extends StatefulWidget {
   final String accountType;
 
@@ -16,6 +17,7 @@ class SignInScreen extends StatefulWidget {
   @override
   _SignInScreenState createState() => _SignInScreenState();
 }
+
 
 class _SignInScreenState extends State<SignInScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -48,7 +50,7 @@ class _SignInScreenState extends State<SignInScreen> {
               fontFamily: 'RammettoOne-Regular',
               fontSize: 35,
               fontWeight: FontWeight.bold,
-              color: hangryBlue, // Cor personalizada
+              color: hangryBlue,
             ),
           ),
           SizedBox(height: 10),
@@ -76,7 +78,7 @@ class _SignInScreenState extends State<SignInScreen> {
             decoration: InputDecoration(
               labelText: 'Email Adress',
               hintText: 'Enter your email',
-              border: InputBorder.none, // Removendo a borda
+              border: InputBorder.none,
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey), // Linha simples
               ),
@@ -123,7 +125,7 @@ class _SignInScreenState extends State<SignInScreen> {
           ElevatedButton(
             onPressed: _signIn,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.yellow, // Cor personalizada
+              backgroundColor: Colors.yellow,
               minimumSize: Size(250, 50),
             ),
               child: Text(
