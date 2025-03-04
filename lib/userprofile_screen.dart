@@ -364,7 +364,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Campos de texto estilizados
+
               _buildStyledTextField(fullnameController, 'Full Name'),
               _buildStyledTextField(phoneNumberController, 'Phone Number'),
               _buildStyledTextField(addressController, 'Address'),
@@ -373,7 +373,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               const SizedBox(height: 20),
 
-              // Botão de salvar
+
               Center(
                 child: ElevatedButton(
                   onPressed: _saveProfileData,
@@ -392,7 +392,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  // Função para criar TextFields estilizados
   Widget _buildStyledTextField(TextEditingController controller, String label) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
