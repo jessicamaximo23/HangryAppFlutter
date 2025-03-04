@@ -76,7 +76,6 @@ class ProfileScreenDriver extends StatelessWidget {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     User? user = FirebaseAuth.instance.currentUser;
@@ -163,7 +162,12 @@ class ProfileScreenDriver extends StatelessWidget {
                 'Profile Information',
                 onTap: () {
                   if (user != null) {
-                    _showProfileBottomSheet(context, user);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditProfileScreenDriver(userId: user.uid),
+                      ),
+                    );
                   }
                 },
               ),
@@ -197,197 +201,6 @@ class ProfileScreenDriver extends StatelessWidget {
       ),
     );
   }
-
-  void _showProfileBottomSheet(BuildContext context, User user) {
-    final fullnameController = TextEditingController();
-    final phoneNumberController = TextEditingController();
-    final addressController = TextEditingController();
-    final cityController = TextEditingController();
-    final zipCodeController = TextEditingController();
-    final carModelController = TextEditingController();
-    final carColorController = TextEditingController();
-    final plateNumberController = TextEditingController();
-
-    File? _driverLicenseImage;
-    String? _driverLicenseUrl;
-
-    final FocusNode fullnameFocusNode = FocusNode();
-
-    DatabaseReference profileRef = FirebaseDatabase.instance.ref("users/${user.uid}/profile");
-
-    Future<String> _uploadDriverLicense(File image) async {
-      try {
-        final storageRef = FirebaseStorage.instance.ref().child('driver_licenses/${user.uid}.jpg');
-        await storageRef.putFile(image);
-        final downloadURL = await storageRef.getDownloadURL();
-        return downloadURL; 
-      } catch (e) {
-        print("Error uploading image: $e");
-        throw e; 
-      }
-    }
-
-    Future<void> _pickImage() async {
-      final ImagePicker _picker = ImagePicker();
-      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-
-      if (image != null) {
-        print("Image selected: ${image.path}");
-
-        _driverLicenseImage = File(image.path);
-        _driverLicenseUrl = await _uploadDriverLicense(_driverLicenseImage!);
-
-        print("Image uploaded, URL: $_driverLicenseUrl");
-      } else {
-        print("No image selected");
-      }
-    }
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) {
-        return FutureBuilder<DatabaseEvent>(
-          future: profileRef.once(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
-
-            if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            }
-
-            if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
-              final profileData = snapshot.data!.snapshot.value as Map<
-                  dynamic,
-                  dynamic>;
-
-              fullnameController.text = profileData['fullName'] ?? '';
-              phoneNumberController.text = profileData['phoneNumber'] ?? '';
-              addressController.text = profileData['address'] ?? '';
-              cityController.text = profileData['city'] ?? '';
-              zipCodeController.text = profileData['zipCode'] ?? '';
-              carModelController.text = profileData['carModel'] ?? '';
-              carColorController.text = profileData['carColor'] ?? '';
-              plateNumberController.text = profileData['plateNumber'] ?? '';
-              _driverLicenseUrl = profileData['driverLicenseUrl'];
-            }
-
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              FocusScope.of(context).requestFocus(fullnameFocusNode);
-            });
-
-            return SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: 5,
-                  right: 5,
-                  top: 5,
-                  bottom: MediaQuery
-                      .of(context)
-                      .viewInsets
-                      .bottom,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      'My Profile',
-                      style: TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    TextField(
-                      controller: fullnameController,
-                      decoration: const InputDecoration(
-                          labelText: 'Full Name*'),
-                      focusNode: fullnameFocusNode,
-                    ),
-                    TextField(
-                      controller: phoneNumberController,
-                      decoration: const InputDecoration(
-                          labelText: 'Phone Number*'),
-                    ),
-                    TextField(
-                      controller: addressController,
-                      decoration: const InputDecoration(labelText: 'Address'),
-                    ),
-                    TextField(
-                      controller: cityController,
-                      decoration: const InputDecoration(labelText: 'City'),
-                    ),
-                    TextField(
-                      controller: zipCodeController,
-                      decoration: const InputDecoration(labelText: 'ZipCode'),
-                    ), TextField(
-                      controller: carModelController,
-                      decoration: const InputDecoration(labelText: 'Car Model'),
-                    ),
-                    TextField(
-                      controller: carColorController,
-                      decoration: const InputDecoration(labelText: 'Car Color'),
-                    ),
-                    TextField(
-                      controller: plateNumberController,
-                      decoration: const InputDecoration(
-                          labelText: 'Plate Number'),
-                    ),
-                    const SizedBox(height: 10),
-                    if (_driverLicenseUrl != null)
-                      Image.network(_driverLicenseUrl!, height: 100),
-                    ElevatedButton(
-                      onPressed: _pickImage,
-                      child: Text('Upload Driver License'),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (_driverLicenseImage !=
-                            null) { // Verifica se a imagem foi selecionada
-                          await _uploadDriverLicense(
-                              _driverLicenseImage!); // Faz o upload da imagem
-                          updatedriverDetails(
-                            context,
-                            user.uid,
-                            fullnameController.text.trim(),
-                            phoneNumberController.text.trim(),
-                            addressController.text.trim(),
-                            cityController.text.trim(),
-                            zipCodeController.text.trim(),
-                            carModelController.text.trim(),
-                            carColorController.text.trim(),
-                            plateNumberController.text.trim(),
-                            _driverLicenseUrl,
-                          );
-                          Navigator.pop(context); 
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text('Please select an image first')),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: hangryYellow,
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      child: const Text('Save Profile'),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-}
 
   Widget _buildProfileItem(BuildContext context, IconData icon, String title, {VoidCallback? onTap}) {
     return ListTile(
@@ -441,3 +254,198 @@ class ProfileScreenDriver extends StatelessWidget {
       ),
     );
   }
+}
+
+class EditProfileScreenDriver extends StatefulWidget {
+  final String userId;
+
+  const EditProfileScreenDriver({Key? key, required this.userId}) : super(key: key);
+
+  @override
+  _EditProfileScreenDriverState createState() => _EditProfileScreenDriverState();
+}
+
+class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
+  final fullnameController = TextEditingController();
+  final phoneNumberController = TextEditingController();
+  final addressController = TextEditingController();
+  final cityController = TextEditingController();
+  final zipCodeController = TextEditingController();
+  final carModelController = TextEditingController();
+  final carColorController = TextEditingController();
+  final plateNumberController = TextEditingController();
+
+  File? _driverLicenseImage;
+  String? _driverLicenseUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileData();
+  }
+
+  Future<void> _loadProfileData() async {
+    DatabaseReference ref = FirebaseDatabase.instance.ref(
+        "users/${widget.userId}/profile");
+    DatabaseEvent event = await ref.once();
+
+    if (event.snapshot.value != null) {
+      final data = event.snapshot.value as Map<dynamic, dynamic>;
+      setState(() {
+        fullnameController.text = data['fullName'] ?? '';
+        phoneNumberController.text = data['phoneNumber'] ?? '';
+        addressController.text = data['address'] ?? '';
+        cityController.text = data['city'] ?? '';
+        zipCodeController.text = data['zipCode'] ?? '';
+        carModelController.text = data['carModel'] ?? '';
+        carColorController.text = data['carColor'] ?? '';
+        plateNumberController.text = data['plateNumber'] ?? '';
+        _driverLicenseUrl = data['driverLicenseUrl'];
+      });
+    }
+  }
+
+  Future<void> _saveProfileData() async {
+    DatabaseReference ref = FirebaseDatabase.instance.ref(
+        "users/${widget.userId}/profile");
+    await ref.update({
+      'fullName': fullnameController.text.trim(),
+      'phoneNumber': phoneNumberController.text.trim(),
+      'address': addressController.text.trim(),
+      'city': cityController.text.trim(),
+      'zipCode': zipCodeController.text.trim(),
+      'carModel': carModelController.text.trim(),
+      'carColor': carColorController.text.trim(),
+      'plateNumber': plateNumberController.text.trim(),
+      'driverLicenseUrl': _driverLicenseUrl,
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Profile updated successfully')),
+    );
+    Navigator.pop(context);
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      _driverLicenseImage = File(image.path);
+      _uploadDriverLicense(_driverLicenseImage!);
+    }
+  }
+
+  Future<void> _uploadDriverLicense(File image) async {
+    try {
+      final storageRef = FirebaseStorage.instance.ref().child(
+          'driver_licenses/${widget.userId}.jpg');
+      await storageRef.putFile(image);
+      final downloadURL = await storageRef.getDownloadURL();
+      setState(() {
+        _driverLicenseUrl = downloadURL;
+      });
+    } catch (e) {
+      print("Error uploading image: $e");
+    }
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Edit Profile'),
+        backgroundColor: hangryYellow,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Center(
+                child: Text(
+                  'Edit Your Profile',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: hangryBlue,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Campos de texto estilizados
+              _buildStyledTextField(fullnameController, 'Full Name'),
+              _buildStyledTextField(phoneNumberController, 'Phone Number'),
+              _buildStyledTextField(addressController, 'Address'),
+              _buildStyledTextField(cityController, 'City'),
+              _buildStyledTextField(zipCodeController, 'Zip Code'),
+              _buildStyledTextField(carModelController, 'Car Model'),
+              _buildStyledTextField(carColorController, 'Car Color'),
+              _buildStyledTextField(plateNumberController, 'Plate Number'),
+
+              const SizedBox(height: 20),
+
+              // Botões centralizados
+              Center(
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: _pickImage,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: hangryYellow,
+                        foregroundColor: Colors.black,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 15),
+                      ),
+                      child: const Text('Upload Driver License'),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: _saveProfileData,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: hangryYellow,
+                        foregroundColor: Colors.black,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 15),
+                      ),
+                      child: const Text('Save Profile'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Função para criar TextFields estilizados
+  Widget _buildStyledTextField(TextEditingController controller, String label) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(color: hangryBlue),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: hangryBlue),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: hangryYellow, width: 2),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+      ),
+    );
+  }
+}
