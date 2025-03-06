@@ -263,6 +263,7 @@ class EditProfileScreenDriver extends StatefulWidget {
 
   @override
   _EditProfileScreenDriverState createState() => _EditProfileScreenDriverState();
+
 }
 
 class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
@@ -279,9 +280,170 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
   String? _driverLicenseUrl;
 
   @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Edit Profile'),
+        backgroundColor: hangryYellow,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Center(
+                child: Text(
+                  'Edit Your Profile',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: hangryBlue,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+
+              _buildStyledTextField(fullnameController, 'Full Name'),
+              _buildStyledTextField(phoneNumberController, 'Phone Number'),
+              _buildStyledTextField(addressController, 'Address'),
+              _buildStyledTextField(cityController, 'City'),
+              _buildStyledTextField(zipCodeController, 'Zip Code'),
+              _buildStyledTextField(carModelController, 'Car Model'),
+              _buildStyledTextField(carColorController, 'Car Color'),
+              _buildStyledTextField(plateNumberController, 'Plate Number'),
+
+              const SizedBox(height: 20),
+
+              Center(
+                child: Column(
+                  children: [
+
+                    StreamBuilder<DatabaseEvent>(
+                      stream: FirebaseDatabase.instance
+                          .ref("users/${widget.userId}/profile/status")
+                          .onValue,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return CircularProgressIndicator(); // Exibe um loading enquanto carrega
+                        } else if (snapshot.hasError) {
+                          return Text(
+                            'Error: ${snapshot.error}',
+                            style: TextStyle(color: Colors.red),
+                          );
+                        } else if (!snapshot.hasData || snapshot.data!.snapshot.value == null) {
+                          // Se não houver status, o usuário ainda não fez o upload da foto
+                          return Column(
+                            children: [
+                              Text(
+                                'You have not uploaded your driver license yet.',
+                                style: TextStyle(color: Colors.grey, fontSize: 16),
+                              ),
+                              SizedBox(height: 20),
+                              ElevatedButton(
+                                onPressed: _pickImage, // Método para selecionar a foto
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  foregroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                                ),
+                                child: Text('Upload Driver License'),
+                              ),
+                            ],
+                          );
+                        } else {
+                          String status = snapshot.data!.snapshot.value as String;
+
+                          // Mensagens personalizadas para cada status
+                          String message;
+                          Color color;
+                          IconData icon;
+
+                          switch (status) {
+                            case 'pending':
+                              message = 'Your driver license is under review. ';
+                              color = Colors.orange;
+                              icon = Icons.access_time;
+                              break;
+                            case 'approved':
+                              message = 'Your driver license has been approved.';
+                              color = Colors.green;
+                              icon = Icons.check_circle;
+                              break;
+                            case 'rejected':
+                              message = 'Your driver license has been rejected.';
+                              color = Colors.red;
+                              icon = Icons.error;
+                              break;
+                            default:
+                              message = 'You can upload your driver license now.';
+                              color = Colors.blue;
+                              icon = Icons.upload;
+                          }
+
+                          return Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(icon, color: color, size: 24),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    message,
+                                    style: TextStyle(color: color, fontSize: 16),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                              if (status == 'rejected' || status == '') // Mostra o botão de upload se a foto foi rejeitada ou se não há status
+                                SizedBox(height: 20),
+
+
+                            ],
+                          );
+                        }
+                      },
+                    ),
+                    ElevatedButton(
+                      onPressed: _pickImage,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: hangryYellow,
+                        foregroundColor: Colors.black,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 15),
+                      ),
+                      child: const Text('Upload Driver License'),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: _saveProfileData,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: hangryYellow,
+                        foregroundColor: Colors.black,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 15),
+                      ),
+                      child: const Text('Save Profile'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
   void initState() {
     super.initState();
+
     _loadProfileData();
+    _checkDriverLicenseStatus();
   }
 
   Future<void> _loadProfileData() async {
@@ -338,26 +500,40 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
 
   Future<void> _uploadDriverLicense(File image) async {
     try {
-      final storageRef = FirebaseStorage.instance
-          .ref().child('${widget.userId}/driver_license.jpg');
+      DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
+      DatabaseEvent event = await ref.once();
 
+      if (event.snapshot.value != null) {
+        final data = event.snapshot.value as Map<dynamic, dynamic>;
+        String? driverLicenseUrl = data['driverLicenseUrl'];
+        String? status = data['status'];
+
+        if (driverLicenseUrl != null && status == 'pending') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Your driver license is already under review. Please wait for admin approval.')),
+          );
+          return;
+        }
+      }
+
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('${widget.userId}/driver_license.jpg');
 
       final uploadTask = await storageRef.putFile(image);
-
       final downloadURL = await uploadTask.ref.getDownloadURL();
+
+      await ref.update({
+        'driverLicenseUrl': downloadURL,
+        'status': 'pending',
+      });
 
       setState(() {
         _driverLicenseUrl = downloadURL;
       });
 
-      DatabaseReference ref = FirebaseDatabase.instance.ref(
-          "users/${widget.userId}/profile");
-      await ref.update({
-        'driverLicenseUrl': downloadURL,
-      });
-
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Photo added successfully!')),
+        const SnackBar(content: Text('Photo uploaded successfully! Awaiting admin approval.')),
       );
     } catch (e) {
       print("Error uploading image: $e");
@@ -367,80 +543,35 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
     }
   }
 
+  Future<void> _checkDriverLicenseStatus() async {
+    try {
+      DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
+      DatabaseEvent event = await ref.once();
 
+      if (event.snapshot.value != null) {
+        final data = event.snapshot.value as Map<dynamic, dynamic>;
+        String? driverLicenseUrl = data['driverLicenseUrl'];
+        String? status = data['status'];
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit Profile'),
-        backgroundColor: hangryYellow,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              Center(
-                child: Text(
-                  'Edit Your Profile',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: hangryBlue,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
+        if (driverLicenseUrl != null && status == 'pending') {
 
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Your driver license is under review. Please wait for admin approval.')),
+          );
+        } else if (driverLicenseUrl == null) {
 
-              _buildStyledTextField(fullnameController, 'Full Name'),
-              _buildStyledTextField(phoneNumberController, 'Phone Number'),
-              _buildStyledTextField(addressController, 'Address'),
-              _buildStyledTextField(cityController, 'City'),
-              _buildStyledTextField(zipCodeController, 'Zip Code'),
-              _buildStyledTextField(carModelController, 'Car Model'),
-              _buildStyledTextField(carColorController, 'Car Color'),
-              _buildStyledTextField(plateNumberController, 'Plate Number'),
-
-              const SizedBox(height: 20),
-
-              Center(
-                child: Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: _pickImage,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: hangryYellow,
-                        foregroundColor: Colors.black,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 15),
-                      ),
-                      child: const Text('Upload Driver License'),
-                    ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: _saveProfileData,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: hangryYellow,
-                        foregroundColor: Colors.black,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 15),
-                      ),
-                      child: const Text('Save Profile'),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('You can upload your driver license now.')),
+          );
+        }
+      }
+    } catch (e) {
+      print("Error checking driver license status: $e");
+    }
   }
+
+
+
 
   Widget _buildStyledTextField(TextEditingController controller, String label) {
     return Padding(
