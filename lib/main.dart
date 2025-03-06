@@ -7,6 +7,7 @@ import 'package:hangry_app_flutter/restaurant_screen.dart';
 import 'package:hangry_app_flutter/account_screen.dart';
 import 'package:provider/provider.dart';
 import 'authentication_manager.dart';
+import 'package:hangry_app_flutter/admin_panel_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         '/driver': (context) => DriverScreen(),
         '/restaurant': (context) => RestaurantScreen(),
         '/user': (context) => UserScreen(),
+        '/admin': (context) => AdminPanelScreen(),
       },
     );
   }

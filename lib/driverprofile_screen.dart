@@ -305,8 +305,6 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
                 ),
               ),
               const SizedBox(height: 20),
-
-
               _buildStyledTextField(fullnameController, 'Full Name'),
               _buildStyledTextField(phoneNumberController, 'Phone Number'),
               _buildStyledTextField(addressController, 'Address'),
@@ -321,43 +319,30 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
               Center(
                 child: Column(
                   children: [
-
                     StreamBuilder<DatabaseEvent>(
                       stream: FirebaseDatabase.instance
                           .ref("users/${widget.userId}/profile/status")
                           .onValue,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
-                          return CircularProgressIndicator(); // Exibe um loading enquanto carrega
+                          return CircularProgressIndicator();
                         } else if (snapshot.hasError) {
                           return Text(
                             'Error: ${snapshot.error}',
                             style: TextStyle(color: Colors.red),
                           );
                         } else if (!snapshot.hasData || snapshot.data!.snapshot.value == null) {
-                          // Se não houver status, o usuário ainda não fez o upload da foto
                           return Column(
                             children: [
                               Text(
                                 'You have not uploaded your driver license yet.',
-                                style: TextStyle(color: Colors.grey, fontSize: 16),
-                              ),
-                              SizedBox(height: 20),
-                              ElevatedButton(
-                                onPressed: _pickImage, // Método para selecionar a foto
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
-                                  foregroundColor: Colors.white,
-                                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                                ),
-                                child: Text('Upload Driver License'),
+                                style: TextStyle(color: Colors.black, fontSize: 16),
                               ),
                             ],
                           );
                         } else {
                           String status = snapshot.data!.snapshot.value as String;
 
-                          // Mensagens personalizadas para cada status
                           String message;
                           Color color;
                           IconData icon;
@@ -398,10 +383,8 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
                                   ),
                                 ],
                               ),
-                              if (status == 'rejected' || status == '') // Mostra o botão de upload se a foto foi rejeitada ou se não há status
+                              if (status == 'rejected' || status == '')
                                 SizedBox(height: 20),
-
-
                             ],
                           );
                         }
@@ -506,7 +489,7 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
       if (event.snapshot.value != null) {
         final data = event.snapshot.value as Map<dynamic, dynamic>;
         String? driverLicenseUrl = data['driverLicenseUrl'];
-        String? status = data['status'];
+        String? status = data['status DriverLicense'];
 
         if (driverLicenseUrl != null && status == 'pending') {
           ScaffoldMessenger.of(context).showSnackBar(
