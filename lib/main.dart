@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         '/driver': (context) => DriverScreen(),
         '/restaurant': (context) => RestaurantScreen(),
         '/user': (context) => UserScreen(),
-        '/admin': (context) => AdminPanelScreen(),
+        // '/admin': (context) => AdminPanelScreen(),
       },
     );
   }
@@ -55,6 +55,10 @@ class AuthWrapper extends StatelessWidget {
     }
 
     if (authManager.isAuthenticated) {
+      // Verificação se o e-mail do usuário é o seu e-mail
+      // if (authManager.userEmail == 'jessicamaximo23@gmail.com') {
+      //   return AdminPanelScreen(); // Redireciona para a tela de administração se o e-mail for o seu
+      // }
 
       switch (authManager.accountType) {
         case 'restaurant':
@@ -66,7 +70,7 @@ class AuthWrapper extends StatelessWidget {
           return UserScreen();
       }
     } else {
-      return SignInScreen(accountType: '');
+      return AccountScreen();
     }
   }
 }

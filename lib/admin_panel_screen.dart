@@ -1,101 +1,172 @@
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-class AdminPanelScreen extends StatefulWidget {
+import 'package:firebase_auth/firebase_auth.dart';
+import 'admin_driver_screen.dart';
+
+class AdminDashboardScreen extends StatefulWidget {
+  const AdminDashboardScreen({Key? key}) : super(key: key);
+
   @override
-  _AdminPanelScreenState createState() => _AdminPanelScreenState();
+  _AdminDashboardScreenState createState() => _AdminDashboardScreenState();
 }
 
-class _AdminPanelScreenState extends State<AdminPanelScreen> {
+final Color hangryYellow = Color(0xFFFCBF49);
+final Color hangryBlue = Color(0xFF003049);
+
+class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
+  void _signOut(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.pushReplacementNamed(context, '/account_screen');
+    } catch (e) {
+      print("Error to log out: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to logout. Please try again.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pending Driver Licenses'),
+        title: const Text('Admin Dashboard'),
+        backgroundColor: hangryYellow,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () => _signOut(context),
+          ),
+        ],
       ),
-      body: StreamBuilder<DatabaseEvent>(
-        stream: FirebaseDatabase.instance.ref("driver_licenses").onValue,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.snapshot.value == null) {
-            return Center(child: Text('No pending driver licenses found.'));
-          } else {
-            final data = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
-            final pendingLicenses = data.entries.where((entry) {
-              final licenseData = entry.value as Map<dynamic, dynamic>;
-              return licenseData['status'] == 'pending';
-            }).toList();
-
-            return ListView.builder(
-              itemCount: pendingLicenses.length,
-              itemBuilder: (context, index) {
-                final licenseData = pendingLicenses[index].value as Map<dynamic, dynamic>;
-                final userId = pendingLicenses[index].key;
-                final driverLicenseUrl = licenseData['driverLicenseUrl'];
-                final email = licenseData['email'];
-                final fullName = licenseData['fullName'];
-                final phoneNumber = licenseData['phoneNumber'];
-
-                return Card(
-                  margin: EdgeInsets.all(8.0),
-                  child: ListTile(
-                    leading: Image.network(driverLicenseUrl), // Exibe a foto da carteira de motorista
-                    title: Text(fullName),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Email: $email'),
-                        Text('Phone: $phoneNumber'),
-                      ],
-                    ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.check, color: Colors.green),
-                          onPressed: () => _updateDriverLicenseStatus(userId, 'approved'),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(height: 20),
+            Image.asset(
+              'images/assets/logobackground.png',
+              width: 200,
+              height: 150,
+            ),
+            const SizedBox(height: 20),
+            Text('Welcome to Hangry!',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: hangryBlue,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            Text('Admin Dashboard',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            // Dashboard cards
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 14,
+                mainAxisSpacing: 14,
+                children: [
+                  _buildDashboardCard(
+                    icon: Icons.drive_eta,
+                    title: 'Driver',
+                    onTap: () {
+                      // Navega para a tela de gerenciamento de motoristas
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AdminDriverScreen(),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.close, color: Colors.red),
-                          onPressed: () => _updateDriverLicenseStatus(userId, 'rejected'),
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                );
-              },
-            );
-          }
-        },
+                  _buildDashboardCard(
+                    icon: Icons.restaurant,
+                    title: 'Restaurant',
+                    onTap: () {
+                      // Navega para a tela de gerenciamento de restaurantes
+                    },
+                  ),
+                  _buildDashboardCard(
+                    icon: Icons.person,
+                    title: 'User',
+                    onTap: () {
+                      // Navega para a tela de gerenciamento de usuários
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 30),
+              child: ElevatedButton(
+                onPressed: () => _signOut(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: hangryYellow,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                ),
+                child: const Text(
+                  'Sign Out',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Future<void> _updateDriverLicenseStatus(String userId, String status) async {
-    try {
-      // Atualiza o status no banco de dados
-      DatabaseReference driverLicenseRef = FirebaseDatabase.instance.ref("driver_licenses/$userId");
-      await driverLicenseRef.update({
-        'status': status,
-      });
-
-      // Atualiza o status no perfil do usuário
-      DatabaseReference userRef = FirebaseDatabase.instance.ref("users/$userId/profile");
-      await userRef.update({
-        'status': status,
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Driver license status updated to $status')),
-      );
-    } catch (e) {
-      print("Error updating status: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error updating status: $e')),
-      );
-    }
+  // Helper function to build dashboard cards
+  Widget _buildDashboardCard({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(15),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 40, color: hangryYellow), // Use custom yellow color
+              const SizedBox(height: 10),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: hangryBlue, // Use custom blue color
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
