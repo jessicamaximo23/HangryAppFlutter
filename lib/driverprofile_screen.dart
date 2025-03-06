@@ -338,17 +338,35 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
 
   Future<void> _uploadDriverLicense(File image) async {
     try {
-      final storageRef = FirebaseStorage.instance.ref().child(
-          'driver_licenses/${widget.userId}.jpg');
-      await storageRef.putFile(image);
-      final downloadURL = await storageRef.getDownloadURL();
+      final storageRef = FirebaseStorage.instance
+          .ref().child('${widget.userId}/driver_license.jpg');
+
+
+      final uploadTask = await storageRef.putFile(image);
+
+      final downloadURL = await uploadTask.ref.getDownloadURL();
+
       setState(() {
         _driverLicenseUrl = downloadURL;
       });
+
+      DatabaseReference ref = FirebaseDatabase.instance.ref(
+          "users/${widget.userId}/profile");
+      await ref.update({
+        'driverLicenseUrl': downloadURL,
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Photo added successfully!')),
+      );
     } catch (e) {
       print("Error uploading image: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error uploading photo: $e')),
+      );
     }
   }
+
 
 
   @override
@@ -378,7 +396,7 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
               ),
               const SizedBox(height: 20),
 
-              // Campos de texto estilizados
+
               _buildStyledTextField(fullnameController, 'Full Name'),
               _buildStyledTextField(phoneNumberController, 'Phone Number'),
               _buildStyledTextField(addressController, 'Address'),
@@ -390,7 +408,6 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
 
               const SizedBox(height: 20),
 
-              // Botões centralizados
               Center(
                 child: Column(
                   children: [
@@ -425,7 +442,6 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
     );
   }
 
-  // Função para criar TextFields estilizados
   Widget _buildStyledTextField(TextEditingController controller, String label) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
