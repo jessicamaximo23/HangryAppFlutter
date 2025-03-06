@@ -225,9 +225,7 @@ class _SignInScreenState extends State<SignInScreen> {
           nextScreen = RestaurantScreen();
           break;
         default:
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Invalid account type')),
-          );
+          nextScreen = SignInScreen(accountType: accountType);
           return;
       }
 
