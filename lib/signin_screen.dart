@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hangry_app_flutter/admin_panel_screen.dart';
 import 'package:hangry_app_flutter/restaurant_screen.dart';
 import 'package:hangry_app_flutter/signup_screen.dart';
 import 'package:hangry_app_flutter/resetpassword_screen.dart';
@@ -223,6 +224,9 @@ class _SignInScreenState extends State<SignInScreen> {
           break;
         case 'restaurant':
           nextScreen = RestaurantScreen();
+          break;
+        case 'admin':
+          nextScreen = AdminDashboardScreen();
           break;
         default:
           nextScreen = SignInScreen(accountType: accountType);

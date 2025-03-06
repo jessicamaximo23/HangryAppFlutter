@@ -165,7 +165,7 @@ class ProfileScreenDriver extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EditProfileScreenDriver(userId: user.uid),
+                        builder: (context) => EditProfileScreenDriver(userId: user.uid, email: user.email ?? "",),
                       ),
                     );
                   }
@@ -258,8 +258,13 @@ class ProfileScreenDriver extends StatelessWidget {
 
 class EditProfileScreenDriver extends StatefulWidget {
   final String userId;
+  final String email;
 
-  const EditProfileScreenDriver({Key? key, required this.userId}) : super(key: key);
+  const EditProfileScreenDriver({
+    Key? key,
+    required this.userId,
+    required this.email,
+  }) : super(key: key);
 
   @override
   _EditProfileScreenDriverState createState() => _EditProfileScreenDriverState();
@@ -483,29 +488,20 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
 
   Future<void> _uploadDriverLicense(File image) async {
     try {
-      DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
-      DatabaseEvent event = await ref.once();
+      // Sanitiza o email para garantir que seja um caminho válido
+      final sanitizedEmail = widget.email.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
 
-      if (event.snapshot.value != null) {
-        final data = event.snapshot.value as Map<dynamic, dynamic>;
-        String? driverLicenseUrl = data['driverLicenseUrl'];
-        String? status = data['status DriverLicense'];
-
-        if (driverLicenseUrl != null && status == 'pending') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Your driver license is already under review. Please wait for admin approval.')),
-          );
-          return;
-        }
-      }
-
+      // Cria uma referência para o arquivo no Firebase Storage usando o email sanitizado
       final storageRef = FirebaseStorage.instance
           .ref()
-          .child('${widget.userId}/driver_license.jpg');
+          .child('driver_licenses/$sanitizedEmail/driver_license.jpg');
 
+      // Faz o upload da imagem
       final uploadTask = await storageRef.putFile(image);
       final downloadURL = await uploadTask.ref.getDownloadURL();
 
+      // Atualiza o banco de dados com a URL da imagem e define o status como "pending"
+      DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
       await ref.update({
         'driverLicenseUrl': downloadURL,
         'status': 'pending',
@@ -552,9 +548,6 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
       print("Error checking driver license status: $e");
     }
   }
-
-
-
 
   Widget _buildStyledTextField(TextEditingController controller, String label) {
     return Padding(

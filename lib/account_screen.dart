@@ -52,13 +52,12 @@ class AccountScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     _buildAccountButton(context, 'Driver', 'driver'),
-                    const SizedBox(width: 16.0),
                     _buildAccountButton(context, 'User', 'user'),
-                    const SizedBox(width: 16.0),
                     _buildAccountButton(context, 'Restaurant', 'restaurant'),
                   ],
                 ),
                 SizedBox(height: 24.0),
+                _buildAccountButton(context, 'Admin', 'admin'),
 
                 GestureDetector(
                   onTap: () {
