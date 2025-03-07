@@ -5,12 +5,8 @@ import 'package:hangry_app_flutter/admin_panel_screen.dart';
 import 'package:hangry_app_flutter/restaurant_screen.dart';
 import 'package:hangry_app_flutter/signup_screen.dart';
 import 'package:hangry_app_flutter/resetpassword_screen.dart';
-import 'package:hangry_app_flutter/splash_screen.dart';
 import 'package:hangry_app_flutter/user_screen.dart';
-import 'account_screen.dart';
-
 import 'driver_screen.dart';
-
 
 class SignInScreen extends StatefulWidget {
   final String accountType;
@@ -21,12 +17,18 @@ class SignInScreen extends StatefulWidget {
   _SignInScreenState createState() => _SignInScreenState();
 }
 
-
 class _SignInScreenState extends State<SignInScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+
+  final List<String> adminEmails = [
+    'jessicamaximo23@gmail.com',
+    'wandrey.wic@gmail.com',
+    'villantijulien@gmail.com',
+
+  ];
   final Color hangryYellow = Color(0xFFFCBF49);
   final Color hangryBlue = Color(0xFF003049);
 
@@ -83,10 +85,10 @@ class _SignInScreenState extends State<SignInScreen> {
               hintText: 'Enter your email',
               border: InputBorder.none,
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey), // Linha simples
+                borderSide: BorderSide(color: Colors.grey), 
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue), // Cor da linha quando o campo estiver focado
+                borderSide: BorderSide(color: Colors.blue),
               ),
             ),
             keyboardType: TextInputType.emailAddress,
@@ -97,12 +99,12 @@ class _SignInScreenState extends State<SignInScreen> {
             decoration: InputDecoration(
               labelText: 'Password',
               hintText: 'Enter your password',
-              border: InputBorder.none, // Removendo a borda
+              border: InputBorder.none,
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey), // Linha simples
+                borderSide: BorderSide(color: Colors.grey),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue), // Cor da linha quando o campo estiver focado
+                borderSide: BorderSide(color: Colors.blue),
               ),
             ),
             obscureText: true,
@@ -128,8 +130,7 @@ class _SignInScreenState extends State<SignInScreen> {
           ElevatedButton(
             onPressed: _signIn,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.yellow,
-              minimumSize: Size(250, 50),
+              backgroundColor: hangryYellow
             ),
               child: Text(
                 'Sign In',
@@ -159,13 +160,13 @@ class _SignInScreenState extends State<SignInScreen> {
                       color: Colors.black, // Cor personalizada
                     ),
                   ),
-                  SizedBox(width: 10), // Espaçamento entre as duas partes do texto
+                  SizedBox(width: 10),
                   Text(
                     'Create one here!',
                     style: TextStyle(
-                      color: Colors.orange, // Cor personalizada
+                      color: Colors.orange,
                       fontSize: 25,
-                      fontWeight: FontWeight.bold, // Deixar a segunda parte mais destacada, se desejar
+                      fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
@@ -197,11 +198,19 @@ class _SignInScreenState extends State<SignInScreen> {
         email: email,
         password: password,
       );
-      // get user UID
+      if (adminEmails.contains(email)) {
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AdminDashboardScreen(),
+          ),
+        );
+        return;
+      }
+
       String uid = userCredential.user!.uid;
-      // Referencing user in database
       DatabaseReference ref = FirebaseDatabase.instance.ref('users/$uid');
-      // Search for user data on database
       DatabaseEvent event = await ref.once();
       DataSnapshot snapshot = event.snapshot;
 

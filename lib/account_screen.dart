@@ -57,8 +57,6 @@ class AccountScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 24.0),
-                _buildAccountButton(context, 'Admin', 'admin'),
-
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
