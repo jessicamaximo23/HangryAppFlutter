@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hangry_app_flutter/admin_restaurant_screen.dart';
 import 'admin_driver_screen.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
@@ -79,7 +80,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     icon: Icons.drive_eta,
                     title: 'Driver',
                     onTap: () {
-                      // Navega para a tela de gerenciamento de motoristas
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -92,6 +93,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     icon: Icons.restaurant,
                     title: 'Restaurant',
                     onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AdminRestaurantScreen(),
+                        ),
+                      );
 
                     },
                   ),
