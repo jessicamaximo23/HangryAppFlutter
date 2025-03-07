@@ -92,14 +92,21 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     icon: Icons.restaurant,
                     title: 'Restaurant',
                     onTap: () {
-                      // Navega para a tela de gerenciamento de restaurantes
+
                     },
                   ),
                   _buildDashboardCard(
                     icon: Icons.person,
                     title: 'User',
                     onTap: () {
-                      // Navega para a tela de gerenciamento de usuários
+
+                    },
+                  ),
+                  _buildDashboardCard(
+                    icon: Icons.settings,
+                    title: 'Settings',
+                    onTap: () {
+
                     },
                   ),
                 ],

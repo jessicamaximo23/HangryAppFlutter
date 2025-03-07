@@ -85,7 +85,7 @@ class _SignInScreenState extends State<SignInScreen> {
               hintText: 'Enter your email',
               border: InputBorder.none,
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey), 
+                borderSide: BorderSide(color: Colors.grey),
               ),
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.blue),
