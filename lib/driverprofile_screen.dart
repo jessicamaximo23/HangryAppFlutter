@@ -75,8 +75,15 @@ class ProfileScreenDriver extends StatelessWidget {
       );
     }
   }
-
-  @override
+  bool _isValidUrl(String url) {
+    try {
+      Uri.parse(url); // Tenta analisar a URL
+      return true; // Se não houver erro, a URL é válida
+    } catch (e) {
+      return false; // Se houver erro, a URL é inválida
+    }
+  }
+    @override
   Widget build(BuildContext context) {
     User? user = FirebaseAuth.instance.currentUser;
 
@@ -96,11 +103,41 @@ class ProfileScreenDriver extends StatelessWidget {
             children: [
               const SizedBox(height: 20),
               Center(
-                child: CircleAvatar(
-                  radius: 50.0,
-                  backgroundColor: Colors.grey,
-                  backgroundImage: user?.photoURL != null ? NetworkImage(user!.photoURL!) : null,
-                  child: user?.photoURL == null ? Icon(Icons.person, size: 50, color: Colors.white) : null,
+                child: GestureDetector(
+                  onTap: () async {
+                   
+                    final ImagePicker _picker = ImagePicker();
+                    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+                    if (image != null && user != null) {
+
+                      final storageRef = FirebaseStorage.instance
+                          .ref()
+                          .child('driver_profile_Flutter/${user.uid}');
+
+                      final uploadTask = await storageRef.putFile(File(image.path));
+                      final downloadURL = await uploadTask.ref.getDownloadURL();
+
+                      await user.updatePhotoURL(downloadURL);
+
+                      DatabaseReference userRef = FirebaseDatabase.instance.ref("users/${user.uid}/profile");
+                      await userRef.update({'photoURL': downloadURL});
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Profile picture updated successfully')),
+                      );
+                    }
+                  },
+                  child: CircleAvatar(
+                    radius: 50.0,
+                    backgroundColor: Colors.grey,
+                    backgroundImage: user != null && user.photoURL != null
+                        ? NetworkImage(user.photoURL!)
+                        : null,
+                    child: user == null || user.photoURL == null
+                        ? Icon(Icons.person, size: 50, color: Colors.white)
+                        : null,
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -165,7 +202,8 @@ class ProfileScreenDriver extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EditProfileScreenDriver(userId: user.uid, email: user.email ?? "",),
+                        builder: (context) => EditProfileScreenDriver(
+                            userId: user.uid, email: user.email ?? ""),
                       ),
                     );
                   }
@@ -201,6 +239,7 @@ class ProfileScreenDriver extends StatelessWidget {
       ),
     );
   }
+
 
   Widget _buildProfileItem(BuildContext context, IconData icon, String title, {VoidCallback? onTap}) {
     return ListTile(
@@ -493,7 +532,7 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
 
       final storageRef = FirebaseStorage.instance
           .ref()
-          .child('driver_licenses/$sanitizedEmail/driver_license.jpg');
+          .child('driver_licenses/$sanitizedEmail/driver_licenseFlutter');
 
       final uploadTask = await storageRef.putFile(image);
       final downloadURL = await uploadTask.ref.getDownloadURL();
@@ -520,32 +559,6 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
     }
   }
 
-  // Future<void> _checkDriverLicenseStatus() async {
-  //   try {
-  //     DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
-  //     DatabaseEvent event = await ref.once();
-  //
-  //     if (event.snapshot.value != null) {
-  //       final data = event.snapshot.value as Map<dynamic, dynamic>;
-  //       String? driverLicenseUrl = data['driverLicenseUrl'];
-  //       String? status = data['status'];
-  //
-  //       if (driverLicenseUrl != null && status == 'pending') {
-  //
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           SnackBar(content: Text('Your driver license is under review. Please wait for admin approval.')),
-  //         );
-  //       } else if (driverLicenseUrl == null) {
-  //
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           SnackBar(content: Text('You can upload your driver license now.')),
-  //         );
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print("Error checking driver license status: $e");
-  //   }
-  // }
 
   Widget _buildStyledTextField(TextEditingController controller, String label) {
     return Padding(

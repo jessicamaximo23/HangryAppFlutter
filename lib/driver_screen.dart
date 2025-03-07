@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hangry_app_flutter/driverprofile_screen.dart';
 
-
 class DriverScreen extends StatefulWidget {
   const DriverScreen({Key? key}) : super(key: key);
 
   @override
   _DriverScreenState createState() => _DriverScreenState();
 }
-
 
 // Define custom colors
 final Color hangryYellow = Color(0xFFFCBF49);
