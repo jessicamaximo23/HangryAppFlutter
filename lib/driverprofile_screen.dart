@@ -431,7 +431,7 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
     super.initState();
 
     _loadProfileData();
-    _checkDriverLicenseStatus();
+    // _checkDriverLicenseStatus();
   }
 
   Future<void> _loadProfileData() async {
@@ -520,32 +520,32 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
     }
   }
 
-  Future<void> _checkDriverLicenseStatus() async {
-    try {
-      DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
-      DatabaseEvent event = await ref.once();
-
-      if (event.snapshot.value != null) {
-        final data = event.snapshot.value as Map<dynamic, dynamic>;
-        String? driverLicenseUrl = data['driverLicenseUrl'];
-        String? status = data['status'];
-
-        if (driverLicenseUrl != null && status == 'pending') {
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Your driver license is under review. Please wait for admin approval.')),
-          );
-        } else if (driverLicenseUrl == null) {
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('You can upload your driver license now.')),
-          );
-        }
-      }
-    } catch (e) {
-      print("Error checking driver license status: $e");
-    }
-  }
+  // Future<void> _checkDriverLicenseStatus() async {
+  //   try {
+  //     DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
+  //     DatabaseEvent event = await ref.once();
+  //
+  //     if (event.snapshot.value != null) {
+  //       final data = event.snapshot.value as Map<dynamic, dynamic>;
+  //       String? driverLicenseUrl = data['driverLicenseUrl'];
+  //       String? status = data['status'];
+  //
+  //       if (driverLicenseUrl != null && status == 'pending') {
+  //
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(content: Text('Your driver license is under review. Please wait for admin approval.')),
+  //         );
+  //       } else if (driverLicenseUrl == null) {
+  //
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(content: Text('You can upload your driver license now.')),
+  //         );
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print("Error checking driver license status: $e");
+  //   }
+  // }
 
   Widget _buildStyledTextField(TextEditingController controller, String label) {
     return Padding(

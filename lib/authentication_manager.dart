@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
-
 class AuthenticationManager extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseReference _database = FirebaseDatabase.instance.ref();
@@ -10,6 +9,9 @@ class AuthenticationManager extends ChangeNotifier {
   String? _accountType;
   bool _isLoading = false;
   bool _isAuthenticated = false;
+
+  // Callback para redirecionar após o logout
+  VoidCallback? _onLogoutCallback;
 
   User? get user => _user;
   String? get accountType => _accountType;
@@ -27,8 +29,15 @@ class AuthenticationManager extends ChangeNotifier {
         _fetchAccountType(user.uid);
       } else {
         _accountType = null;
+        // Chama o callback de logout se o usuário deslogar
+        _onLogoutCallback?.call();
       }
     });
+  }
+
+  // Método para definir o callback de logout
+  void setOnLogoutCallback(VoidCallback callback) {
+    _onLogoutCallback = callback;
   }
 
   Future<void> signIn(String email, String password) async {
@@ -53,7 +62,7 @@ class AuthenticationManager extends ChangeNotifier {
 
   Future<void> _fetchAccountType(String userId) async {
     try {
-      final snapshot = await _database.child('users').child(userId).child('accountType').get(); // Alterado para 'accountType'
+      final snapshot = await _database.child('users').child(userId).child('accountType').get();
       if (snapshot.exists) {
         _accountType = snapshot.value as String?;
       } else {
@@ -72,6 +81,8 @@ class AuthenticationManager extends ChangeNotifier {
       _accountType = null;
       _isAuthenticated = false;
       notifyListeners();
+      // Chama o callback de logout após o logout ser concluído
+      _onLogoutCallback?.call();
     } catch (error) {
       debugPrint('Error signing out: $error');
       rethrow;

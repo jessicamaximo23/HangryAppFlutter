@@ -5,7 +5,9 @@ import 'package:hangry_app_flutter/admin_panel_screen.dart';
 import 'package:hangry_app_flutter/restaurant_screen.dart';
 import 'package:hangry_app_flutter/signup_screen.dart';
 import 'package:hangry_app_flutter/resetpassword_screen.dart';
+import 'package:hangry_app_flutter/splash_screen.dart';
 import 'package:hangry_app_flutter/user_screen.dart';
+import 'account_screen.dart';
 
 import 'driver_screen.dart';
 
@@ -213,7 +215,7 @@ class _SignInScreenState extends State<SignInScreen> {
       Map<dynamic, dynamic> userData = snapshot.value as Map<dynamic, dynamic>;
       String accountType = userData['accountType'];
 
-      // Direcionamento com base no accountType
+    
       Widget nextScreen;
       switch (accountType) {
         case 'user':

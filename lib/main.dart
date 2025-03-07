@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hangry_app_flutter/signin_screen.dart';
 import 'package:hangry_app_flutter/driver_screen.dart';
 import 'package:hangry_app_flutter/admin_panel_screen.dart';
+import 'package:hangry_app_flutter/splash_screen.dart';
 import 'package:hangry_app_flutter/user_screen.dart';
 import 'package:hangry_app_flutter/restaurant_screen.dart';
 import 'package:hangry_app_flutter/account_screen.dart';
@@ -68,11 +69,13 @@ class AuthWrapper extends StatelessWidget {
         case 'user':
           return UserScreen();
         default:
-          return  AccountScreen();
+          return AccountScreen();
       }
     } else {
-      return SignInScreen(accountType: '');
+      // Redireciona para a SplashScreen em vez de SignInScreen
+      return SplashScreen();
     }
   }
+
 
 }
