@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hangry_app_flutter/signin_screen.dart';
 import 'package:hangry_app_flutter/driver_screen.dart';
+import 'package:hangry_app_flutter/admin_panel_screen.dart';
 import 'package:hangry_app_flutter/user_screen.dart';
 import 'package:hangry_app_flutter/restaurant_screen.dart';
 import 'package:hangry_app_flutter/account_screen.dart';
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
         '/driver': (context) => DriverScreen(),
         '/restaurant': (context) => RestaurantScreen(),
         '/user': (context) => UserScreen(),
-        // '/admin': (context) => AdminPanelScreen(),
+         '/admin': (context) => AdminDashboardScreen(),
       },
     );
   }
@@ -55,10 +56,9 @@ class AuthWrapper extends StatelessWidget {
     }
 
     if (authManager.isAuthenticated) {
-      // Verificação se o e-mail do usuário é o seu e-mail
-      // if (authManager.userEmail == 'jessicamaximo23@gmail.com') {
-      //   return AdminPanelScreen(); // Redireciona para a tela de administração se o e-mail for o seu
-      // }
+      if (authManager.accountType == 'admin') {
+        return AdminDashboardScreen();
+      }
 
       switch (authManager.accountType) {
         case 'restaurant':
@@ -66,11 +66,13 @@ class AuthWrapper extends StatelessWidget {
         case 'driver':
           return DriverScreen();
         case 'user':
-        default:
           return UserScreen();
+        default:
+          return  AccountScreen();
       }
     } else {
-      return AccountScreen();
+      return SignInScreen(accountType: '');
     }
   }
+
 }

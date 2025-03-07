@@ -488,19 +488,17 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
 
   Future<void> _uploadDriverLicense(File image) async {
     try {
-      // Sanitiza o email para garantir que seja um caminho válido
+
       final sanitizedEmail = widget.email.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
 
-      // Cria uma referência para o arquivo no Firebase Storage usando o email sanitizado
       final storageRef = FirebaseStorage.instance
           .ref()
           .child('driver_licenses/$sanitizedEmail/driver_license.jpg');
 
-      // Faz o upload da imagem
       final uploadTask = await storageRef.putFile(image);
       final downloadURL = await uploadTask.ref.getDownloadURL();
 
-      // Atualiza o banco de dados com a URL da imagem e define o status como "pending"
+
       DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
       await ref.update({
         'driverLicenseUrl': downloadURL,
@@ -515,7 +513,7 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
         const SnackBar(content: Text('Photo uploaded successfully! Awaiting admin approval.')),
       );
     } catch (e) {
-      print("Error uploading image: $e");
+      print("Error uploading image:");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error uploading photo: $e')),
       );
