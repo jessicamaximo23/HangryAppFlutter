@@ -127,24 +127,6 @@ class ProfileScreenRestaurant extends StatelessWidget {
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildTopButton(
-                    icon: Icons.wallet,
-                    label: 'Wallet',
-                    onPressed: () {
-                      print('Wallet button pressed');
-                    },
-                    color: hangryYellow,
-                  ),
-                  _buildTopButton(
-                    icon: Icons.favorite,
-                    label: 'Favorites',
-                    onPressed: () {
-                      print('Favorites button pressed');
-                    },
-                    color: hangryYellow,
-                  ),
-                ],
               ),
               _buildProfileItem(
                 context,
@@ -173,13 +155,6 @@ class ProfileScreenRestaurant extends StatelessWidget {
                     label: 'Delete Account',
                     onPressed: () {
                       deleteAccount(context);
-                    },
-                    color: hangryYellow,
-                  ),
-                  _buildBottomButton(
-                    label: 'Review',
-                    onPressed: () {
-                      print('Review button pressed');
                     },
                     color: hangryYellow,
                   ),
@@ -257,14 +232,26 @@ class EditProfileScreenRestaurant extends StatefulWidget {
 
 class _EditProfileScreenRestaurantState extends State<EditProfileScreenRestaurant> {
   final fullnameController = TextEditingController();
-  final typeofcuisineController = TextEditingController();
   final phoneNumberController = TextEditingController();
   final addressController = TextEditingController();
   final cityController = TextEditingController();
   final zipCodeController = TextEditingController();
+  final openHoursController = TextEditingController();
+  final openDaysController = TextEditingController();
 
   final Color hangryYellow = Color(0xFFFCBF49);
   final Color hangryBlue = Color(0xFF003049);
+
+  // Lista de tipos de culinária em ordem alfabética
+  final List<String> cuisineTypes = [
+    'Fast Food',
+    'Indian',
+    'Italian',
+    'Japanese',
+    'Mexican',
+  ];
+
+  String? selectedCuisine; // Tipo de culinária selecionado
 
   @override
   void initState() {
@@ -280,14 +267,17 @@ class _EditProfileScreenRestaurantState extends State<EditProfileScreenRestauran
       final data = event.snapshot.value as Map<dynamic, dynamic>;
       setState(() {
         fullnameController.text = data['fullName'] ?? '';
-        typeofcuisineController.text = data['typeofcuisine'] ?? '';
+        selectedCuisine = data['typeofcuisine'] ?? '';
         phoneNumberController.text = data['phoneNumber'] ?? '';
         addressController.text = data['address'] ?? '';
         cityController.text = data['city'] ?? '';
         zipCodeController.text = data['zipCode'] ?? '';
+        openHoursController.text = data['openHours'] ?? '';
+        openDaysController.text = data['openDays'] ?? '';
       });
     }
   }
+
   Future<void> updaterestaurantDetails(
       BuildContext context,
       String userId,
@@ -296,7 +286,9 @@ class _EditProfileScreenRestaurantState extends State<EditProfileScreenRestauran
       String phonenumber,
       String address,
       String city,
-      String zipCode) async {
+      String zipCode,
+      String openHours,
+      String openDays) async {
     try {
       DatabaseReference userRef = FirebaseDatabase.instance.ref("users/$userId/profile");
       await userRef.update({
@@ -306,6 +298,8 @@ class _EditProfileScreenRestaurantState extends State<EditProfileScreenRestauran
         "address": address,
         "city": city,
         "zipCode": zipCode,
+        "openHours": openHours,
+        "openDays": openDays,
       });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Profile updated successfully')),
@@ -316,16 +310,19 @@ class _EditProfileScreenRestaurantState extends State<EditProfileScreenRestauran
       );
     }
   }
+
   Future<void> _saveProfileData() async {
     await updaterestaurantDetails(
       context,
       widget.userId,
       fullnameController.text.trim(),
-      typeofcuisineController.text.trim(),
+      selectedCuisine ?? '',
       phoneNumberController.text.trim(),
       addressController.text.trim(),
       cityController.text.trim(),
       zipCodeController.text.trim(),
+      openHoursController.text.trim(),
+      openDaysController.text.trim(),
     );
     Navigator.pop(context);
   }
@@ -359,11 +356,13 @@ class _EditProfileScreenRestaurantState extends State<EditProfileScreenRestauran
 
               // Campos de texto estilizados
               _buildStyledTextField(fullnameController, 'Full Name'),
-              _buildStyledTextField(typeofcuisineController, 'Type of Cuisine'),
+              _buildCuisineDropdown(),
               _buildStyledTextField(phoneNumberController, 'Phone Number'),
               _buildStyledTextField(addressController, 'Address'),
               _buildStyledTextField(cityController, 'City'),
               _buildStyledTextField(zipCodeController, 'Zip Code'),
+              _buildStyledTextField(openHoursController, 'Open Hours (e.g., 9 AM - 10 PM)'),
+              _buildStyledTextField(openDaysController, 'Open Days (e.g., Mon - Sun)'),
 
               const SizedBox(height: 20),
 
@@ -406,6 +405,41 @@ class _EditProfileScreenRestaurantState extends State<EditProfileScreenRestauran
           filled: true,
           fillColor: Colors.white,
         ),
+      ),
+    );
+  }
+
+  // Função para criar o dropdown de tipos de culinária
+  Widget _buildCuisineDropdown() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: DropdownButtonFormField<String>(
+        value: selectedCuisine,
+        decoration: InputDecoration(
+          labelText: 'Type of Cuisine',
+          labelStyle: TextStyle(color: hangryBlue),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: hangryBlue),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: hangryYellow, width: 2),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        items: cuisineTypes.map((String cuisine) {
+          return DropdownMenuItem<String>(
+            value: cuisine,
+            child: Text(cuisine),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          setState(() {
+            selectedCuisine = newValue;
+          });
+        },
       ),
     );
   }

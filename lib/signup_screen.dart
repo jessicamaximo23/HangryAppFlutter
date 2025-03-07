@@ -5,6 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:hangry_app_flutter/signin_screen.dart';
 
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:hangry_app_flutter/signin_screen.dart';
+
 class SignUpScreen extends StatefulWidget {
   final String accountType;
 
@@ -27,7 +32,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
 
-    //logic to make sure registration of user is valid
+
     if (name.isEmpty || email.isEmpty || password.isEmpty) {
       _showToast("Please fill in all fields");
       return;
@@ -45,12 +50,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return;
     }
 
-      _registerUser(name, email, password);
-
+    _registerUser(name, email, password);
   }
 
-
-    //implemented logic to register user name, email and password
   void _registerUser(String name, String email, String password) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
@@ -61,6 +63,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (userCredential.user != null) {
         String userId = userCredential.user!.uid;
 
+
         Map<String, dynamic> userData = {
           "name": name,
           "email": email,
@@ -69,12 +72,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
           "createdAt": DateTime.now().millisecondsSinceEpoch,
         };
 
-        await _databaseRef.child("users").child(userId).set(userData);
+
+        await _databaseRef
+            .child("users")
+            .child(widget.accountType)
+            .child(userId)
+            .set(userData);
 
         _showToast("Sign up successful!");
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => SignInScreen(accountType: widget.accountType,)),
+          MaterialPageRoute(
+            builder: (context) => SignInScreen(accountType: widget.accountType),
+          ),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -110,7 +120,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               style: TextStyle(
                 fontSize: 35,
                 fontWeight: FontWeight.bold,
-                color: Colors.black, // Correspondente ao azul
+                color: Colors.black,
               ),
               textAlign: TextAlign.center,
             ),
@@ -127,20 +137,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SignInScreen(accountType: widget.accountType)),
+                  MaterialPageRoute(
+                    builder: (context) => SignInScreen(accountType: widget.accountType),
+                  ),
                 );
               },
               child: Text(
                 'Already have an account?',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Color(0xFFFFC107), // Correspondente ao amarelo
+                  color: Color(0xFFFFC107), // Amarelo
                 ),
                 textAlign: TextAlign.center,
               ),
             ),
-            SizedBox(height: 20),
-
             SizedBox(height: 20),
             TextField(
               controller: _nameController,
@@ -174,14 +184,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
             SizedBox(
               width: 250,
               height: 50,
-            child: ElevatedButton(
-              onPressed: _validateFields,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFFFFC107),
+              child: ElevatedButton(
+                onPressed: _validateFields,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFFFC107),
+                ),
+                child: Text('Sign Up'),
               ),
-              child: Text('Sign Up'),
             ),
-          ),
           ],
         ),
       ),

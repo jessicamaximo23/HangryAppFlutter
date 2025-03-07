@@ -8,6 +8,7 @@ import 'package:hangry_app_flutter/resetpassword_screen.dart';
 import 'package:hangry_app_flutter/user_screen.dart';
 import 'driver_screen.dart';
 
+
 class SignInScreen extends StatefulWidget {
   final String accountType;
 
@@ -21,7 +22,6 @@ class _SignInScreenState extends State<SignInScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
 
   final List<String> adminEmails = [
     'jessicamaximo23@gmail.com',
@@ -85,10 +85,10 @@ class _SignInScreenState extends State<SignInScreen> {
               hintText: 'Enter your email',
               border: InputBorder.none,
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
+                borderSide: BorderSide(color: Colors.grey), // Linha simples
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue),
+                borderSide: BorderSide(color: Colors.blue), // Cor da linha quando o campo estiver focado
               ),
             ),
             keyboardType: TextInputType.emailAddress,
@@ -99,12 +99,12 @@ class _SignInScreenState extends State<SignInScreen> {
             decoration: InputDecoration(
               labelText: 'Password',
               hintText: 'Enter your password',
-              border: InputBorder.none,
+              border: InputBorder.none, // Removendo a borda
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
+                borderSide: BorderSide(color: Colors.grey), // Linha simples
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue),
+                borderSide: BorderSide(color: Colors.blue), // Cor da linha quando o campo estiver focado
               ),
             ),
             obscureText: true,
@@ -130,7 +130,8 @@ class _SignInScreenState extends State<SignInScreen> {
           ElevatedButton(
             onPressed: _signIn,
             style: ElevatedButton.styleFrom(
-              backgroundColor: hangryYellow
+              backgroundColor: Colors.yellow,
+              minimumSize: Size(250, 50),
             ),
               child: Text(
                 'Sign In',
@@ -160,13 +161,13 @@ class _SignInScreenState extends State<SignInScreen> {
                       color: Colors.black, // Cor personalizada
                     ),
                   ),
-                  SizedBox(width: 10),
+                  SizedBox(width: 10), // Espaçamento entre as duas partes do texto
                   Text(
                     'Create one here!',
                     style: TextStyle(
-                      color: Colors.orange,
+                      color: Colors.orange, // Cor personalizada
                       fontSize: 25,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.bold, // Deixar a segunda parte mais destacada, se desejar
                       ),
                     ),
                   ],
@@ -198,19 +199,11 @@ class _SignInScreenState extends State<SignInScreen> {
         email: email,
         password: password,
       );
-      if (adminEmails.contains(email)) {
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AdminDashboardScreen(),
-          ),
-        );
-        return;
-      }
-
+      // get user UID
       String uid = userCredential.user!.uid;
+      // Referencing user in database
       DatabaseReference ref = FirebaseDatabase.instance.ref('users/$uid');
+      // Search for user data on database
       DatabaseEvent event = await ref.once();
       DataSnapshot snapshot = event.snapshot;
 
