@@ -6,8 +6,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:image_picker/image_picker.dart';
 
-class ProfileScreenRestaurant extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
+class ProfileScreenRestaurant extends StatefulWidget {
   const ProfileScreenRestaurant({Key? key}) : super(key: key);
+
+  @override
+  _ProfileScreenRestaurantState createState() => _ProfileScreenRestaurantState();
+}
+
+class _ProfileScreenRestaurantState extends State<ProfileScreenRestaurant> {
+  String? _profileImageUrl;
 
   Future<String?> getUserName(String userId) async {
     try {
@@ -84,6 +98,11 @@ class ProfileScreenRestaurant extends StatelessWidget {
         "photoUrl": downloadUrl,
       });
 
+      // Atualiza o estado para refletir a nova imagem
+      setState(() {
+        _profileImageUrl = downloadUrl;
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Profile picture updated successfully')),
       );
@@ -101,6 +120,30 @@ class ProfileScreenRestaurant extends StatelessWidget {
     if (pickedFile != null) {
       File image = File(pickedFile.path);
       await _uploadProfileImage(context, userId, image);
+    }
+  }
+
+  Future<String?> getProfileImageUrl(String userId) async {
+    try {
+      DatabaseReference ref = FirebaseDatabase.instance.ref("users/$userId/profile/photoUrl");
+      DatabaseEvent event = await ref.once();
+      return event.snapshot.value as String?;
+    } catch (e) {
+      print("Error fetching profile image URL: $e");
+      return null;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      getProfileImageUrl(user.uid).then((url) {
+        setState(() {
+          _profileImageUrl = url;
+        });
+      });
     }
   }
 
@@ -129,8 +172,8 @@ class ProfileScreenRestaurant extends StatelessWidget {
                     CircleAvatar(
                       radius: 50.0,
                       backgroundColor: Colors.grey,
-                      backgroundImage: user?.photoURL != null ? NetworkImage(user!.photoURL!) : null,
-                      child: user?.photoURL == null ? Icon(Icons.person, size: 50, color: Colors.white) : null,
+                      backgroundImage: _profileImageUrl != null ? NetworkImage(_profileImageUrl!) : null,
+                      child: _profileImageUrl == null ? Icon(Icons.person, size: 50, color: Colors.white) : null,
                     ),
                     Positioned(
                       bottom: 0,
