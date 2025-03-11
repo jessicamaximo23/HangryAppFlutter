@@ -1,6 +1,10 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileScreenRestaurant extends StatelessWidget {
   const ProfileScreenRestaurant({Key? key}) : super(key: key);
@@ -66,6 +70,40 @@ class ProfileScreenRestaurant extends StatelessWidget {
     }
   }
 
+  Future<void> _uploadProfileImage(BuildContext context, String userId, File image) async {
+    try {
+      // Faz o upload da imagem para o Firebase Storage
+      final storageRef = FirebaseStorage.instance.ref().child('profile_images/$userId/${DateTime.now().toString()}');
+      final uploadTask = storageRef.putFile(image);
+      final snapshot = await uploadTask;
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+
+      // Atualiza a URL da foto no Firebase Realtime Database
+      DatabaseReference userRef = FirebaseDatabase.instance.ref("users/$userId/profile");
+      await userRef.update({
+        "photoUrl": downloadUrl,
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Profile picture updated successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error uploading profile picture: $e')),
+      );
+    }
+  }
+
+  Future<void> _pickImage(BuildContext context, String userId) async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      File image = File(pickedFile.path);
+      await _uploadProfileImage(context, userId, image);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     User? user = FirebaseAuth.instance.currentUser;
@@ -86,11 +124,27 @@ class ProfileScreenRestaurant extends StatelessWidget {
             children: [
               const SizedBox(height: 20),
               Center(
-                child: CircleAvatar(
-                  radius: 50.0,
-                  backgroundColor: Colors.grey,
-                  backgroundImage: user?.photoURL != null ? NetworkImage(user!.photoURL!) : null,
-                  child: user?.photoURL == null ? Icon(Icons.person, size: 50, color: Colors.white) : null,
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 50.0,
+                      backgroundColor: Colors.grey,
+                      backgroundImage: user?.photoURL != null ? NetworkImage(user!.photoURL!) : null,
+                      child: user?.photoURL == null ? Icon(Icons.person, size: 50, color: Colors.white) : null,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: IconButton(
+                        icon: Icon(Icons.camera_alt, color: hangryBlue),
+                        onPressed: () {
+                          if (user != null) {
+                            _pickImage(context, user.uid);
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 20),
@@ -176,29 +230,6 @@ class ProfileScreenRestaurant extends StatelessWidget {
     );
   }
 
-  Widget _buildTopButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback onPressed,
-    required Color color,
-  }) {
-    return ElevatedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon, color: Colors.black),
-      label: Text(
-        label,
-        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-      ),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),
-    );
-  }
-
   Widget _buildBottomButton({
     required String label,
     required VoidCallback onPressed,
@@ -220,7 +251,6 @@ class ProfileScreenRestaurant extends StatelessWidget {
     );
   }
 }
-
 class EditProfileScreenRestaurant extends StatefulWidget {
   final String userId;
 
@@ -409,7 +439,7 @@ class _EditProfileScreenRestaurantState extends State<EditProfileScreenRestauran
     );
   }
 
-  // Função para criar o dropdown de tipos de culinária
+
   Widget _buildCuisineDropdown() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
