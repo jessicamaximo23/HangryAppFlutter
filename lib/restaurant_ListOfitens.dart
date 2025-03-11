@@ -16,14 +16,14 @@ class _Restaurant_ListOfItemsState extends State<Restaurant_ListOfItems> {
   void initState() {
     super.initState();
 
-    // Obtém o UID do usuário logado
+
     final String? userUid = _auth.currentUser?.uid;
 
     if (userUid == null) {
       throw Exception("User UID is null. User must be logged in.");
     }
 
-    // Cria a referência do banco de dados para o menu do usuário logado
+
     _databaseRef = FirebaseDatabase.instance
         .ref()
         .child('users')
@@ -36,7 +36,7 @@ class _Restaurant_ListOfItemsState extends State<Restaurant_ListOfItems> {
     return Scaffold(
       appBar: AppBar(
         title: Text('List of Items', style: TextStyle(color: Colors.black)),
-        backgroundColor: Color(0xFFFCBF49), // Cor amarela do Hangry
+        backgroundColor: Color(0xFFFCBF49),
         iconTheme: IconThemeData(color: Colors.black),
       ),
       body: StreamBuilder(
@@ -73,7 +73,7 @@ class _Restaurant_ListOfItemsState extends State<Restaurant_ListOfItems> {
           );
         },
         child: Icon(Icons.add, color: Colors.white),
-        backgroundColor: Color(0xFF003049), // Cor azul do Hangry
+        backgroundColor: Color(0xFF003049),
       ),
     );
   }

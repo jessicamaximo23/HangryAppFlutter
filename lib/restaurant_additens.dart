@@ -94,8 +94,15 @@ class _Restaurant_addItemsState extends State<Restaurant_addItems> {
         }
 
         if (imageUrl != null) {
+          // Verifica se já existe um item para determinar o próximo nome
+          final DatabaseEvent snapshot = await _databaseRef.once();
+          final Map<dynamic, dynamic>? items = snapshot.snapshot.value as Map<dynamic, dynamic>?;
+          int itemCount = items?.length ?? 0;
+
+          String itemKey = 'item${itemCount + 1}';
+
           if (widget.item != null) {
-            // Editar item existente
+
             await _databaseRef.child(widget.item!['key']).update({
               'name': _nameController.text,
               'price': _priceController.text,
@@ -103,8 +110,8 @@ class _Restaurant_addItemsState extends State<Restaurant_addItems> {
               'imageUrl': imageUrl,
             });
           } else {
-            // Adicionar novo item
-            await _databaseRef.push().set({
+
+            await _databaseRef.child(itemKey).set({
               'name': _nameController.text,
               'price': _priceController.text,
               'description': _descriptionController.text,
@@ -116,7 +123,7 @@ class _Restaurant_addItemsState extends State<Restaurant_addItems> {
             SnackBar(content: Text('Item saved successfully!')),
           );
 
-          Navigator.pop(context); // Volta para a página anterior
+          Navigator.pop(context);
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -134,8 +141,8 @@ class _Restaurant_addItemsState extends State<Restaurant_addItems> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.item == null ? 'Add Item' : 'Edit Item', style: TextStyle(color: Colors.black)),
-        backgroundColor: Color(0xFFFCBF49), // Cor amarela do Hangry
+        title: Text(widget.item == null ? 'Menu Creation' : 'Edit Item', style: TextStyle(color: Colors.black)),
+        backgroundColor: Color(0xFFFCBF49),
         iconTheme: IconThemeData(color: Colors.black),
       ),
       body: _isLoading
@@ -189,7 +196,7 @@ class _Restaurant_addItemsState extends State<Restaurant_addItems> {
               ElevatedButton(
                 onPressed: _pickImage,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFFCBF49), // Botão amarelo
+                  backgroundColor: Color(0xFFFCBF49),
                 ),
                 child: Text('Pick Image', style: TextStyle(color: Colors.black)),
               ),
