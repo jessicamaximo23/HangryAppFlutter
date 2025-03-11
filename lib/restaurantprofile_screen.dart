@@ -251,7 +251,7 @@ class _EditProfileScreenRestaurantState extends State<EditProfileScreenRestauran
     'Mexican',
   ];
 
-  String? selectedCuisine; // Tipo de culinária selecionado
+  String? selectedCuisine;
 
   @override
   void initState() {
@@ -354,7 +354,7 @@ class _EditProfileScreenRestaurantState extends State<EditProfileScreenRestauran
               ),
               const SizedBox(height: 20),
 
-              // Campos de texto estilizados
+
               _buildStyledTextField(fullnameController, 'Full Name'),
               _buildCuisineDropdown(),
               _buildStyledTextField(phoneNumberController, 'Phone Number'),
@@ -385,7 +385,7 @@ class _EditProfileScreenRestaurantState extends State<EditProfileScreenRestauran
     );
   }
 
-  // Função para criar TextFields estilizados
+
   Widget _buildStyledTextField(TextEditingController controller, String label) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hangry_app_flutter/restaurant_ListOfitens.dart';
 import 'package:hangry_app_flutter/restaurantprofile_screen.dart';
 
 class RestaurantScreen extends StatefulWidget {
@@ -96,7 +97,10 @@ class _RestaurantScreen extends State<RestaurantScreen> {
                     icon: Icons.menu,
                     title: 'Create my menu',
                     onTap: () {
-                      // Navigate to schedule screen
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Restaurant_ListOfItems()),
+                      );
                     },
                   ),
                   _buildDashboardCard(

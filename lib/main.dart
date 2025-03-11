@@ -9,7 +9,7 @@ import 'package:hangry_app_flutter/restaurant_screen.dart';
 import 'package:hangry_app_flutter/account_screen.dart';
 import 'package:provider/provider.dart';
 import 'authentication_manager.dart';
-import 'package:hangry_app_flutter/admin_panel_screen.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,7 +72,7 @@ class AuthWrapper extends StatelessWidget {
           return AccountScreen();
       }
     } else {
-      // Redireciona para a SplashScreen em vez de SignInScreen
+
       return SplashScreen();
     }
   }

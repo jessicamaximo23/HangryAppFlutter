@@ -75,14 +75,7 @@ class ProfileScreenDriver extends StatelessWidget {
       );
     }
   }
-  bool _isValidUrl(String url) {
-    try {
-      Uri.parse(url); // Tenta analisar a URL
-      return true; // Se não houver erro, a URL é válida
-    } catch (e) {
-      return false; // Se houver erro, a URL é inválida
-    }
-  }
+
     @override
   Widget build(BuildContext context) {
     User? user = FirebaseAuth.instance.currentUser;
@@ -105,7 +98,7 @@ class ProfileScreenDriver extends StatelessWidget {
               Center(
                 child: GestureDetector(
                   onTap: () async {
-                   
+
                     final ImagePicker _picker = ImagePicker();
                     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
 
@@ -532,7 +525,7 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
 
       final storageRef = FirebaseStorage.instance
           .ref()
-          .child('driver_licenses/$sanitizedEmail/driver_licenseFlutter');
+          .child('driver_licensesFlutter/$sanitizedEmail/driver_licenseFlutter');
 
       final uploadTask = await storageRef.putFile(image);
       final downloadURL = await uploadTask.ref.getDownloadURL();
