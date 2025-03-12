@@ -1,17 +1,10 @@
 import 'dart:io';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 class ProfileScreenRestaurant extends StatefulWidget {
   const ProfileScreenRestaurant({Key? key}) : super(key: key);
@@ -86,19 +79,18 @@ class _ProfileScreenRestaurantState extends State<ProfileScreenRestaurant> {
 
   Future<void> _uploadProfileImage(BuildContext context, String userId, File image) async {
     try {
-      // Faz o upload da imagem para o Firebase Storage
+
       final storageRef = FirebaseStorage.instance.ref().child('profile_images/$userId/${DateTime.now().toString()}');
       final uploadTask = storageRef.putFile(image);
       final snapshot = await uploadTask;
       final downloadUrl = await snapshot.ref.getDownloadURL();
 
-      // Atualiza a URL da foto no Firebase Realtime Database
+
       DatabaseReference userRef = FirebaseDatabase.instance.ref("users/$userId/profile");
       await userRef.update({
         "photoUrl": downloadUrl,
       });
 
-      // Atualiza o estado para refletir a nova imagem
       setState(() {
         _profileImageUrl = downloadUrl;
       });
@@ -315,7 +307,7 @@ class _EditProfileScreenRestaurantState extends State<EditProfileScreenRestauran
   final Color hangryYellow = Color(0xFFFCBF49);
   final Color hangryBlue = Color(0xFF003049);
 
-  // Lista de tipos de culinária em ordem alfabética
+
   final List<String> cuisineTypes = [
     'Fast Food',
     'Indian',
