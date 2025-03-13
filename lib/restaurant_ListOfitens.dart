@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:hangry_app_flutter/admin_panel_screen.dart';
 import 'package:hangry_app_flutter/restaurant_additens.dart';
 
 class Restaurant_ListOfItems extends StatefulWidget {
@@ -73,7 +74,7 @@ class _Restaurant_ListOfItemsState extends State<Restaurant_ListOfItems> {
           );
         },
         child: Icon(Icons.add, color: Colors.white),
-        backgroundColor: Color(0xFF003049),
+        backgroundColor: Color(0xFFB2AFEC),
       ),
     );
   }
@@ -83,12 +84,12 @@ class _Restaurant_ListOfItemsState extends State<Restaurant_ListOfItems> {
       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: ListTile(
         leading: Image.network(item['imageUrl'], width: 50, height: 50, fit: BoxFit.cover),
-        title: Text(item['name'], style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(item['name'], style: TextStyle(color: Color(0xFFCCB903),fontWeight: FontWeight.bold,)),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(item['description']),
-            Text('\$${item['price']}', style: TextStyle(color: Color(0xFF003049))),
+            Text(item['description'], style: TextStyle(color: Color(0xFF05044C),fontWeight: FontWeight.bold )),
+            Text('\$${item['price']}', style: TextStyle(color: Color(0xFFFF5E02), fontWeight: FontWeight.bold)),
           ],
         ),
         trailing: Row(

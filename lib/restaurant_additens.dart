@@ -32,24 +32,24 @@ class _Restaurant_addItemsState extends State<Restaurant_addItems> {
   void initState() {
     super.initState();
 
-    // Obtém o UID do usuário logado
+
     final String? userUid = _auth.currentUser?.uid;
 
     if (userUid == null) {
       throw Exception("User UID is null. User must be logged in.");
     }
 
-    // Cria a referência do banco de dados para o menu do usuário logado
+
     _databaseRef = FirebaseDatabase.instance
         .ref()
         .child('users')
         .child(userUid)
         .child('menu');
 
-    // Preenche os campos se estiver editando um item existente
+
     if (widget.item != null) {
       _nameController.text = widget.item!['name'];
-      _priceController.text = widget.item!['price'];
+      _priceController.text = widget.item!['price']?.toString() ?? '';
       _descriptionController.text = widget.item!['description'];
     }
   }
@@ -94,29 +94,32 @@ class _Restaurant_addItemsState extends State<Restaurant_addItems> {
         }
 
         if (imageUrl != null) {
-          // Verifica se já existe um item para determinar o próximo nome
-          final DatabaseEvent snapshot = await _databaseRef.once();
-          final Map<dynamic, dynamic>? items = snapshot.snapshot.value as Map<dynamic, dynamic>?;
-          int itemCount = items?.length ?? 0;
-
-          String itemKey = 'item${itemCount + 1}';
+          double price = double.tryParse(_priceController.text) ?? 0.0;
 
           if (widget.item != null) {
 
             await _databaseRef.child(widget.item!['key']).update({
               'name': _nameController.text,
-              'price': _priceController.text,
+              'price': price.toString(), // Converte para String
               'description': _descriptionController.text,
               'imageUrl': imageUrl,
             });
           } else {
 
+            DatabaseReference counterRef = _databaseRef.parent!.child('menu_counter');
+            DataSnapshot counterSnapshot = await counterRef.get();
+            int counter = (counterSnapshot.value as int? ?? 0) + 1;
+
+            String itemKey = 'item$counter';
+
             await _databaseRef.child(itemKey).set({
               'name': _nameController.text,
-              'price': _priceController.text,
+              'price': price.toString(),
               'description': _descriptionController.text,
               'imageUrl': imageUrl,
             });
+
+            await counterRef.set(counter);
           }
 
           ScaffoldMessenger.of(context).showSnackBar(
@@ -136,6 +139,7 @@ class _Restaurant_addItemsState extends State<Restaurant_addItems> {
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +208,7 @@ class _Restaurant_addItemsState extends State<Restaurant_addItems> {
               ElevatedButton(
                 onPressed: _saveItem,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFFCBF49), // Botão amarelo
+                  backgroundColor: Color(0xFFFCBF49),
                 ),
                 child: Text('Submit', style: TextStyle(color: Colors.black)),
               ),
