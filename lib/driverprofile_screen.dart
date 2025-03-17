@@ -106,7 +106,7 @@ class ProfileScreenDriver extends StatelessWidget {
 
                       final storageRef = FirebaseStorage.instance
                           .ref()
-                          .child('driver_profile_Flutter/${user.uid}');
+                          .child('driver_profileImage/${user.email}');
 
                       final uploadTask = await storageRef.putFile(File(image.path));
                       final downloadURL = await uploadTask.ref.getDownloadURL();
@@ -525,7 +525,7 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
 
       final storageRef = FirebaseStorage.instance
           .ref()
-          .child('driver_licensesFlutter/$sanitizedEmail/driver_licenseFlutter');
+          .child('driver_license/$sanitizedEmail');
 
       final uploadTask = await storageRef.putFile(image);
       final downloadURL = await uploadTask.ref.getDownloadURL();
@@ -533,7 +533,7 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
 
       DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
       await ref.update({
-        'driverLicenseUrl': downloadURL,
+        'driverlicenseUrl': downloadURL,
         'status': 'pending',
       });
 

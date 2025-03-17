@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -32,20 +31,17 @@ class _Restaurant_addItemsState extends State<Restaurant_addItems> {
   void initState() {
     super.initState();
 
-
     final String? userUid = _auth.currentUser?.uid;
 
     if (userUid == null) {
       throw Exception("User UID is null. User must be logged in.");
     }
 
-
     _databaseRef = FirebaseDatabase.instance
         .ref()
         .child('users')
         .child(userUid)
         .child('menu');
-
 
     if (widget.item != null) {
       _nameController.text = widget.item!['name'];
@@ -97,15 +93,13 @@ class _Restaurant_addItemsState extends State<Restaurant_addItems> {
           double price = double.tryParse(_priceController.text) ?? 0.0;
 
           if (widget.item != null) {
-
             await _databaseRef.child(widget.item!['key']).update({
               'name': _nameController.text,
-              'price': price.toString(), // Converte para String
+              'price': price.toString(),
               'description': _descriptionController.text,
               'imageUrl': imageUrl,
             });
           } else {
-
             DatabaseReference counterRef = _databaseRef.parent!.child('menu_counter');
             DataSnapshot counterSnapshot = await counterRef.get();
             int counter = (counterSnapshot.value as int? ?? 0) + 1;
@@ -140,23 +134,45 @@ class _Restaurant_addItemsState extends State<Restaurant_addItems> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.item == null ? 'Menu Creation' : 'Edit Item', style: TextStyle(color: Colors.black)),
+        title: Text(widget.item == null ? 'Add Item' : 'Edit Item', style: TextStyle(color: Colors.black)),
         backgroundColor: Color(0xFFFCBF49),
         iconTheme: IconThemeData(color: Colors.black),
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
-          : Padding(
+          : SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
+              Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.grey, width: 1),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: ClipOval(
+                  child: _image != null
+                      ? Image.file(_image!, fit: BoxFit.cover)
+                      : widget.item != null
+                      ? Image.network(widget.item!['imageUrl'], fit: BoxFit.cover)
+                      : Icon(Icons.fastfood, size: 60, color: Colors.grey),
+                ),
+              ),
+              SizedBox(height: 20),
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(labelText: 'Dish Name'),
@@ -192,17 +208,12 @@ class _Restaurant_addItemsState extends State<Restaurant_addItems> {
                 },
               ),
               SizedBox(height: 20),
-              _image == null && widget.item == null
-                  ? Text('No image selected.')
-                  : _image != null
-                  ? Image.file(_image!, height: 150)
-                  : Image.network(widget.item!['imageUrl'], height: 150),
               ElevatedButton(
                 onPressed: _pickImage,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFFFCBF49),
                 ),
-                child: Text('Pick Image', style: TextStyle(color: Colors.black)),
+                child: Text('Upload Dish Picture', style: TextStyle(color: Colors.black)),
               ),
               SizedBox(height: 20),
               ElevatedButton(

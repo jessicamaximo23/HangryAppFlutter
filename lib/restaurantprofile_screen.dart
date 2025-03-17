@@ -77,41 +77,52 @@ class _ProfileScreenRestaurantState extends State<ProfileScreenRestaurant> {
     }
   }
 
-  Future<void> _uploadProfileImage(BuildContext context, String userId, File image) async {
+  Future<void> _uploadProfileImage(BuildContext context, File image) async {
     try {
 
-      final storageRef = FirebaseStorage.instance.ref().child('profile_images/$userId/${DateTime.now().toString()}');
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user == null || user.email == null) {
+        print('No user logged in or email not found.');
+        return;
+      }
+
+      final sanitizedEmail = user.email!.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
+
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('restaurant_profileImage/$sanitizedEmail/${DateTime.now().toString()}.jpg');
+
+
       final uploadTask = storageRef.putFile(image);
       final snapshot = await uploadTask;
       final downloadUrl = await snapshot.ref.getDownloadURL();
 
-
-      DatabaseReference userRef = FirebaseDatabase.instance.ref("users/$userId/profile");
+      // Update the image URL in the Realtime Database
+      DatabaseReference userRef = FirebaseDatabase.instance.ref("users/${user.uid}/profile");
       await userRef.update({
         "photoUrl": downloadUrl,
       });
 
-      setState(() {
-        _profileImageUrl = downloadUrl;
-      });
-
+      // Show a success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Profile picture updated successfully')),
       );
     } catch (e) {
+      // Show an error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error uploading profile picture: $e')),
       );
     }
   }
 
-  Future<void> _pickImage(BuildContext context, String userId) async {
+  Future<void> _pickImage(BuildContext context) async {
     final ImagePicker _picker = ImagePicker();
     final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       File image = File(pickedFile.path);
-      await _uploadProfileImage(context, userId, image);
+      await _uploadProfileImage(context, image);
     }
   }
 
@@ -174,7 +185,7 @@ class _ProfileScreenRestaurantState extends State<ProfileScreenRestaurant> {
                         icon: Icon(Icons.camera_alt, color: hangryBlue),
                         onPressed: () {
                           if (user != null) {
-                            _pickImage(context, user.uid);
+                            _pickImage(context);
                           }
                         },
                       ),
