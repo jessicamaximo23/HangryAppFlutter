@@ -10,7 +10,7 @@ class AuthenticationManager extends ChangeNotifier {
   bool _isLoading = false;
   bool _isAuthenticated = false;
 
-  // Callback para redirecionar após o logout
+
   VoidCallback? _onLogoutCallback;
 
   User? get user => _user;
@@ -19,7 +19,7 @@ class AuthenticationManager extends ChangeNotifier {
   bool get isAuthenticated => _isAuthenticated;
 
   AuthenticationManager() {
-    // Listen to auth state changes
+
     _auth.authStateChanges().listen((user) {
       _user = user;
       _isAuthenticated = user != null;
@@ -29,13 +29,12 @@ class AuthenticationManager extends ChangeNotifier {
         _fetchAccountType(user.uid);
       } else {
         _accountType = null;
-        // Chama o callback de logout se o usuário deslogar
         _onLogoutCallback?.call();
       }
     });
   }
 
-  // Método para definir o callback de logout
+
   void setOnLogoutCallback(VoidCallback callback) {
     _onLogoutCallback = callback;
   }
@@ -81,7 +80,7 @@ class AuthenticationManager extends ChangeNotifier {
       _accountType = null;
       _isAuthenticated = false;
       notifyListeners();
-      // Chama o callback de logout após o logout ser concluído
+
       _onLogoutCallback?.call();
     } catch (error) {
       debugPrint('Error signing out: $error');
