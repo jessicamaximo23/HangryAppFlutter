@@ -11,6 +11,7 @@ class Restaurant_ListOfItems extends StatefulWidget {
 class _Restaurant_ListOfItemsState extends State<Restaurant_ListOfItems> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   late DatabaseReference _databaseRef;
+  String _selectedCategory = 'All';
 
   @override
   void initState() {
@@ -29,39 +30,99 @@ class _Restaurant_ListOfItemsState extends State<Restaurant_ListOfItems> {
         .child('menu');
   }
 
+  // ========================
+  bool _isMenuItem(String key, dynamic value) {
+    return key.startsWith('item') &&
+        value is Map &&
+        (value.containsKey('name') || value.containsKey('price'));
+  }
+
   @override
   Widget build(BuildContext context) {
+    final Color lightPink = Color(0xFFFAF5F9);
+    final Color hangryYellow = Color(0xFFFCBF49);
+
     return Scaffold(
+      backgroundColor: lightPink,
       appBar: AppBar(
-        title: Text('List of Items', style: TextStyle(color: Colors.black)),
-        backgroundColor: Color(0xFFFCBF49),
+        title: Text('My Menu',
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        backgroundColor: hangryYellow,
+        elevation: 0,
         iconTheme: IconThemeData(color: Colors.black),
       ),
-      body: StreamBuilder(
-        stream: _databaseRef.onValue,
-        builder: (context, snapshot) {
-          if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
-            Map<dynamic, dynamic> items = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
-            List<Map<String, dynamic>> itemList = items.entries.map((entry) {
-              return {
-                'key': entry.key,
-                'name': entry.value['name'],
-                'price': entry.value['price'],
-                'description': entry.value['description'],
-                'imageUrl': entry.value['imageUrl'],
-              };
-            }).toList();
+      body: Column(
+        children: [
+          // Category selector
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _buildCategoryButton('All'),
+                  _buildCategoryButton('Appetizer'),
+                  _buildCategoryButton('Main Dish'),
+                  _buildCategoryButton('Dessert'),
+                ],
+              ),
+            ),
+          ),
 
-            return ListView.builder(
-              itemCount: itemList.length,
-              itemBuilder: (context, index) {
-                return _buildListItem(itemList[index]);
+          // Menu items list
+          Expanded(
+            child: StreamBuilder(
+              stream: _databaseRef.onValue,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
+                  Map<dynamic, dynamic> userData =
+                      snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
+                  List<Map<String, dynamic>> menuItems = [];
+
+                  // Extract menu items from user data
+                  userData.forEach((key, value) {
+                    if (_isMenuItem(key, value)) {
+                      menuItems.add({
+                        'key': key,
+                        'name': value['name'] ?? 'No Name',
+                        'price': value['price'] ?? '0',
+                        'description': value['description'] ?? 'No Description',
+                        'imageUrl': value['imageUrl'] ?? '',
+                        'category': value['category'] ?? 'Appetizer',
+                        'availability': value['availability'] ?? 'Yes',
+                      });
+                    }
+                  });
+
+                  // Filter by category if not 'All'
+                  if (_selectedCategory != 'All') {
+                    menuItems = menuItems
+                        .where((item) => item['category'] == _selectedCategory)
+                        .toList();
+                  }
+
+                  if (menuItems.isEmpty) {
+                    return Center(child: Text('No items in this category.'));
+                  }
+
+                  return ListView.builder(
+                    padding: EdgeInsets.all(16),
+                    itemCount: menuItems.length,
+                    itemBuilder: (context, index) {
+                      return _buildMenuItemCard(menuItems[index]);
+                    },
+                  );
+                } else {
+                  return Center(child: Text('No menu items found. Add some!'));
+                }
               },
-            );
-          } else {
-            return Center(child: Text('No items found.'));
-          }
-        },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -71,42 +132,221 @@ class _Restaurant_ListOfItemsState extends State<Restaurant_ListOfItems> {
           );
         },
         child: Icon(Icons.add, color: Colors.white),
-        backgroundColor: Color(0xFFB2AFEC),
+        backgroundColor: hangryYellow,
       ),
     );
   }
 
-  Widget _buildListItem(Map<String, dynamic> item) {
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      child: ListTile(
-        leading: Image.network(item['imageUrl'], width: 50, height: 50, fit: BoxFit.cover),
-        title: Text(item['name'], style: TextStyle(color: Color(0xFFCCB903), fontWeight: FontWeight.bold)),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(item['description'], style: TextStyle(color: Color(0xFF05044C), fontWeight: FontWeight.bold)),
-            Text('\$${item['price']}', style: TextStyle(color: Color(0xFFFF5E02), fontWeight: FontWeight.bold)),
-          ],
+  Widget _buildCategoryButton(String category) {
+    final bool isSelected = _selectedCategory == category;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6.0),
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            _selectedCategory = category;
+          });
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isSelected ? Color(0xFF0A3A52) : Colors.white,
+          foregroundColor: isSelected ? Colors.white : Colors.black,
+          elevation: isSelected ? 4 : 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: Icon(Icons.edit, color: Color(0xFF003049)),
+        child: Text(category),
+      ),
+    );
+  }
+
+  Widget _buildMenuItemCard(Map<String, dynamic> item) {
+    return Card(
+      margin: EdgeInsets.only(bottom: 16),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Item details section
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Item image
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: item['imageUrl'].isNotEmpty
+                      ? Image.network(
+                          item['imageUrl'],
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: 100,
+                              height: 100,
+                              color: Colors.grey[300],
+                              child: Icon(Icons.error,
+                                  size: 40, color: Colors.red),
+                            );
+                          },
+                        )
+                      : Container(
+                          width: 100,
+                          height: 100,
+                          color: Colors.grey[300],
+                          child: Icon(Icons.fastfood,
+                              size: 40, color: Colors.grey[600]),
+                        ),
+                ),
+                SizedBox(width: 16),
+
+                // Item info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item['name'],
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            '\$${item['price'].toString()}',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        item['description'],
+                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.blue[100],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              item['category'],
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.blue[900],
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: item['availability'] == 'Yes'
+                                  ? Colors.green[100]
+                                  : Colors.red[100],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              item['availability'] == 'Yes'
+                                  ? 'Available'
+                                  : 'Not Available',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: item['availability'] == 'Yes'
+                                    ? Colors.green[900]
+                                    : Colors.red[900],
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Action buttons
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // Edit button
+                TextButton.icon(
+                  icon: Icon(Icons.edit, size: 20),
+                  label: Text('Edit'),
+                  onPressed: () {
+                    _navigateToEditItemPage(item);
+                  },
+                ),
+                // Delete button
+                TextButton.icon(
+                  icon: Icon(Icons.delete, size: 20, color: Colors.red),
+                  label: Text('Delete', style: TextStyle(color: Colors.red)),
+                  onPressed: () {
+                    _showDeleteConfirmation(item);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(Map<String, dynamic> item) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Delete'),
+          content: Text('Are you sure you want to delete ${item['name']}?'),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
               onPressed: () {
-                _navigateToEditItemPage(item);
+                Navigator.of(context).pop();
               },
             ),
-            IconButton(
-              icon: Icon(Icons.delete, color: Colors.red),
+            TextButton(
+              child: Text('Delete', style: TextStyle(color: Colors.red)),
               onPressed: () {
                 _deleteItem(item['key']);
+                Navigator.of(context).pop();
               },
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -128,6 +368,8 @@ class _Restaurant_ListOfItemsState extends State<Restaurant_ListOfItems> {
       MaterialPageRoute(
         builder: (context) => Restaurant_addItems(item: item),
       ),
-    );
+    ).then((_) {
+      setState(() {});
+    });
   }
 }
