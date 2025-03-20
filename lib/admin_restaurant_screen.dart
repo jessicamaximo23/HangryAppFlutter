@@ -96,6 +96,10 @@ class _AdminRestaurantScreenState extends State<AdminRestaurantScreen> {
         'status': newStatus ? 'active' : 'inactive',
       });
 
+      setState(() {
+        restaurants[index]['isActive'] = newStatus;
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Restaurant status updated successfully')),
       );
@@ -441,21 +445,107 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
   }
 
   void _loadRestaurantData() async {
-    final snapshot =
-        await _databaseRef.child('restaurants/${widget.restaurantName}').get();
-    if (snapshot.exists) {
+    try {
+      final userSnapshot = await _databaseRef.child('users/${widget.restaurantUid}').get();
+
+      if (userSnapshot.exists) {
+        Map<dynamic, dynamic> userData = userSnapshot.value as Map<dynamic, dynamic>;
+        Map<String, dynamic> formattedData = {};
+
+        // Format basic restaurant data
+        formattedData['name'] = userData['name'] ?? 'Unknown';
+        formattedData['email'] = userData['email'] ?? '';
+        formattedData['status'] = userData['status'] ?? 'inactive';
+        formattedData['isApproved'] = userData['isApproved'] ?? false;
+        formattedData['profileImageUrl'] = userData['profileImageUrl'] ?? '';
+
+        // Get profile data if it exists
+        if (userData.containsKey('profile') && userData['profile'] is Map) {
+          Map<dynamic, dynamic> profileData = userData['profile'] as Map<dynamic, dynamic>;
+          formattedData['profile'] = Map<String, dynamic>.from(profileData);
+        }
+
+        // Load menu items
+        List<Map<String, dynamic>> menuItems = [];
+        if (userData.containsKey('menu_counter')) {
+          int menuCounter = userData['menu_counter'] as int? ?? 0;
+
+          for (int i = 1; i <= menuCounter; i++) {
+            String itemKey = 'item$i';
+            if (userData.containsKey(itemKey) && userData[itemKey] is Map) {
+              Map<dynamic, dynamic> itemData = userData[itemKey] as Map<dynamic, dynamic>;
+              menuItems.add({
+                'key': itemKey,
+                'name': itemData['name'] ?? 'Unknown Item',
+                'price': itemData['price'] ?? 0,
+                'description': itemData['description'] ?? '',
+                'imageUrl': itemData['imageUrl'] ?? '',
+                'category': itemData['category'] ?? 'Other',
+                'availability': itemData['availability'] ?? 'No',
+              });
+            }
+          }
+        }
+
+        setState(() {
+          _restaurantData = formattedData;
+          _menuItems = menuItems;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        print('Restaurant data not found');
+      }
+    } catch (error) {
       setState(() {
-        _restaurantData = Map<String, dynamic>.from(snapshot.value as Map);
+        _isLoading = false;
       });
-    } else {
-      print('Restaurant data not found');
+      print('Error loading restaurant data: $error');
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadRestaurantData();
+  // void _loadRestaurantData() async {
+  //   final snapshot =
+  //       await _databaseRef.child('restaurants/${widget.restaurantName}').get();
+  //   if (snapshot.exists) {
+  //     setState(() {
+  //       _restaurantData = Map<String, dynamic>.from(snapshot.value as Map);
+  //     });
+  //   } else {
+  //     print('Restaurant data not found');
+  //   }
+  // }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _loadRestaurantData();
+  // }
+  void _toggleApprovalStatus() async {
+    if (_restaurantData == null) return;
+
+    bool currentStatus = _restaurantData!['isApproved'] == true;
+    bool newStatus = !currentStatus;
+
+    try {
+      await _databaseRef.child('users/${widget.restaurantUid}').update({
+        'isApproved': newStatus,
+      });
+
+      setState(() {
+        _restaurantData!['isApproved'] = newStatus;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Restaurant ${newStatus ? 'approved' : 'approval revoked'}')),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update approval status: $error')),
+      );
+    }
   }
 
   Widget _buildScreen() {
