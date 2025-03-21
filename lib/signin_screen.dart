@@ -2,10 +2,13 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hangry_app_flutter/admin_panel_screen.dart';
+import 'package:hangry_app_flutter/authentication_manager.dart';
 import 'package:hangry_app_flutter/restaurant_screen.dart';
 import 'package:hangry_app_flutter/signup_screen.dart';
 import 'package:hangry_app_flutter/resetpassword_screen.dart';
 import 'package:hangry_app_flutter/user_screen.dart';
+import 'package:provider/provider.dart';
+import 'account_screen.dart';
 import 'driver_screen.dart';
 
 
@@ -43,131 +46,138 @@ class _SignInScreenState extends State<SignInScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 20),
-            Image.asset(
-            'images/assets/logobackground.png',
-            width: 200,
-            height: 150,
-          ),
-          SizedBox(height: 20),
-          Text(
-            'Sign in',
-            style: TextStyle(
-              fontFamily: 'RammettoOne-Regular',
-              fontSize: 35,
-              fontWeight: FontWeight.bold,
-              color: hangryBlue,
-            ),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'Enter your email address to sign in.',
-            style: TextStyle(
-              fontFamily: 'RammettoOne-Regular',
-              fontSize: 14,
-              color: Colors.grey,
-            ),
-            textAlign: TextAlign.left,
-          ),
-          Text(
-            'Enjoy your food.',
-            style: TextStyle(
-              fontFamily: 'RammettoOne-Regular',
-              fontSize: 14,
-              color: Colors.grey,
-            ),
-            textAlign: TextAlign.left,
-          ),
-          SizedBox(height: 20),
-          TextField(
-            controller: _emailController,
-            decoration: InputDecoration(
-              labelText: 'Email Adress',
-              hintText: 'Enter your email',
-              border: InputBorder.none,
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey), // Linha simples
+              Image.asset(
+                'images/assets/logobackground.png',
+                width: 200,
+                height: 150,
               ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue), // Cor da linha quando o campo estiver focado
-              ),
-            ),
-            keyboardType: TextInputType.emailAddress,
-          ),
-          SizedBox(height: 20),
-          TextField(
-            controller: _passwordController,
-            decoration: InputDecoration(
-              labelText: 'Password',
-              hintText: 'Enter your password',
-              border: InputBorder.none, // Removendo a borda
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey), // Linha simples
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue), // Cor da linha quando o campo estiver focado
-              ),
-            ),
-            obscureText: true,
-          ),
-          SizedBox(height: 10),
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ResetPasswordScreen(),
-                ),
-              );
-            },
-            child: Text(
-              'Forgot Password?',
-              style: TextStyle(
-                color: Colors.grey,
-              ),
-            ),
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: _signIn,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.yellow,
-              minimumSize: Size(250, 50),
-            ),
-              child: Text(
-                'Sign In',
+              SizedBox(height: 20),
+              Text(
+                'Sign in',
                 style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
+                  fontFamily: 'RammettoOne-Regular',
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold,
+                  color: hangryBlue,
                 ),
               ),
-          ),
-            SizedBox(height: 10),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SignUpScreen(accountType: widget.accountType),
+              SizedBox(height: 10),
+              Text(
+                'Enter your email address to sign in.',
+                style: TextStyle(
+                  fontFamily: 'RammettoOne-Regular',
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+                textAlign: TextAlign.left,
+              ),
+              Text(
+                'Enjoy your food.',
+                style: TextStyle(
+                  fontFamily: 'RammettoOne-Regular',
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+                textAlign: TextAlign.left,
+              ),
+              SizedBox(height: 20),
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  labelText: 'Email Adress',
+                  hintText: 'Enter your email',
+                  border: InputBorder.none,
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey), // Linha simples
                   ),
-                );
-              },
-              child: Wrap(
-                alignment: WrapAlignment.center, // Garante que o Row ocupe apenas o espaço necessário
-                children: [
-                  Text(
-                    'Don\'t have an account? ',
-                    style: TextStyle(
-                      fontSize: 25,
-                      color: Colors.black, // Cor personalizada
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors
+                        .blue), // Cor da linha quando o campo estiver focado
+                  ),
+                ),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              SizedBox(height: 20),
+              TextField(
+                controller: _passwordController,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  hintText: 'Enter your password',
+                  border: InputBorder.none,
+                  // Removendo a borda
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey), // Linha simples
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors
+                        .blue), // Cor da linha quando o campo estiver focado
+                  ),
+                ),
+                obscureText: true,
+              ),
+              SizedBox(height: 10),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ResetPasswordScreen(),
                     ),
+                  );
+                },
+                child: Text(
+                  'Forgot Password?',
+                  style: TextStyle(
+                    color: Colors.grey,
                   ),
-                  SizedBox(width: 10), // Espaçamento entre as duas partes do texto
-                  Text(
-                    'Create one here!',
-                    style: TextStyle(
-                      color: Colors.orange, // Cor personalizada
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold, // Deixar a segunda parte mais destacada, se desejar
+                ),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _signIn,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.yellow,
+                  minimumSize: Size(250, 50),
+                ),
+                child: Text(
+                  'Sign In',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          SignUpScreen(accountType: widget.accountType),
+                    ),
+                  );
+                },
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  // Garante que o Row ocupe apenas o espaço necessário
+                  children: [
+                    Text(
+                      'Don\'t have an account? ',
+                      style: TextStyle(
+                        fontSize: 25,
+                        color: Colors.black, // Cor personalizada
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    // Espaçamento entre as duas partes do texto
+                    Text(
+                      'Create one here!',
+                      style: TextStyle(
+                        color: Colors.orange, // Cor personalizada
+                        fontSize: 25,
+                        fontWeight: FontWeight
+                            .bold, // Deixar a segunda parte mais destacada, se desejar
                       ),
                     ),
                   ],
@@ -180,7 +190,6 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  // function to authenticate user
   void _signIn() async {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
@@ -195,59 +204,141 @@ class _SignInScreenState extends State<SignInScreen> {
     }
 
     try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      // get user UID
-      String uid = userCredential.user!.uid;
-      // Referencing user in database
-      DatabaseReference ref = FirebaseDatabase.instance.ref('users/$uid');
-      // Search for user data on database
-      DatabaseEvent event = await ref.once();
-      DataSnapshot snapshot = event.snapshot;
+      final authManager = Provider.of<AuthenticationManager>(
+          context, listen: false);
+      await authManager.signIn(email, password);
 
-      if (!snapshot.exists) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('User data not found')),
+      // If we get here, sign in was successful
+      // Navigate directly based on account type
+      if (authManager.isAuthenticated) {
+        print("Sign in successful, account type: ${authManager.accountType}");
+
+        Widget nextScreen;
+        switch (authManager.accountType) {
+          case 'user':
+            nextScreen = UserScreen();
+            break;
+          case 'driver':
+            nextScreen = DriverScreen();
+            break;
+          case 'restaurant':
+            nextScreen = RestaurantScreen();
+            break;
+          case 'admin':
+            nextScreen = AdminDashboardScreen();
+            break;
+          default:
+          // Use account screen as fallback
+            nextScreen = AccountScreen();
+            break;
+        }
+
+        // Use pushAndRemoveUntil to clear the navigation stack
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => nextScreen),
+              (Route<dynamic> route) => false,
         );
-        return;
       }
+    } catch (error) {
+      final authManager = Provider.of<AuthenticationManager>(
+          context, listen: false);
+      String errorMessage = authManager.authErrorMessage ??
+          'An error occurred during sign in';
 
-      Map<dynamic, dynamic> userData = snapshot.value as Map<dynamic, dynamic>;
-      String accountType = userData['accountType'];
-
-    
-      Widget nextScreen;
-      switch (accountType) {
-        case 'user':
-          nextScreen = UserScreen();
-          break;
-        case 'driver':
-          nextScreen = DriverScreen();
-          break;
-        case 'restaurant':
-          nextScreen = RestaurantScreen();
-          break;
-        case 'admin':
-          nextScreen = AdminDashboardScreen();
-          break;
-        default:
-          nextScreen = SignInScreen(accountType: accountType);
-          return;
-      }
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => nextScreen),
-      );
-    } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(e.message ?? 'An error occurred'),
+          content: Text(errorMessage),
         ),
       );
     }
   }
 }
+
+  //======================= BROKEN -------------------------
+// function to authenticate user
+//   void _signIn() async {
+//     String email = _emailController.text.trim();
+//     String password = _passwordController.text.trim();
+//
+//     if (email.isEmpty || password.isEmpty) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(
+//           content: Text('Please fill in all fields'),
+//         ),
+//       );
+//       return;
+//     }
+//
+//     try {
+//       await Provider.of<AuthenticationManager>(context, listen: false)
+//           .signIn(email, password);
+//
+//       // The AuthWrapper in main.dart will handle the navigation
+//     } catch (error) {
+//       final authManager = Provider.of<AuthenticationManager>(context, listen: false);
+//       String errorMessage = authManager.authErrorMessage ?? 'An error occurred during sign in';
+//
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(
+//           content: Text(errorMessage),
+//         ),
+//       );
+//     }
+//   }
+// }
+    // try {
+    //   UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+    //     email: email,
+    //     password: password,
+    //   );
+    //   // get user UID
+    //   String uid = userCredential.user!.uid;
+    //   // Referencing user in database
+    //   DatabaseReference ref = FirebaseDatabase.instance.ref('users/$uid');
+    //   // Search for user data on database
+    //   DatabaseEvent event = await ref.once();
+    //   DataSnapshot snapshot = event.snapshot;
+    //
+    //   if (!snapshot.exists) {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       const SnackBar(content: Text('User data not found')),
+    //     );
+    //     return;
+    //   }
+//
+//       Map<dynamic, dynamic> userData = snapshot.value as Map<dynamic, dynamic>;
+//       String accountType = userData['accountType'];
+//
+//
+//       Widget nextScreen;
+//       switch (accountType) {
+//         case 'user':
+//           nextScreen = UserScreen();
+//           break;
+//         case 'driver':
+//           nextScreen = DriverScreen();
+//           break;
+//         case 'restaurant':
+//           nextScreen = RestaurantScreen();
+//           break;
+//         case 'admin':
+//           nextScreen = AdminDashboardScreen();
+//           break;
+//         default:
+//           nextScreen = SignInScreen(accountType: accountType);
+//           return;
+//       }
+//
+//       Navigator.pushReplacement(
+//         context,
+//         MaterialPageRoute(
+//           builder: (context) => nextScreen),
+//       );
+//     } on FirebaseAuthException catch (e) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(
+//           content: Text(e.message ?? 'An error occurred'),
+//         ),
+//       );
+//     }
+//   }
