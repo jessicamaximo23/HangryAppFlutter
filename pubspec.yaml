@@ -39,6 +39,7 @@ dependencies:
   provider: ^6.1.2
   flutter_plugin_android_lifecycle: ^2.0.0
   cached_network_image: ^3.2.3
+  google_fonts: ^6.2.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -86,7 +87,12 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
+  fonts:
+    - family: RammettoOne
+      fonts:
+        - asset: fonts/RammettoOne-Regular.ttf
+        - asset: fonts/RammettoOne-Bold.ttf
+          weight: 400
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf
