@@ -99,6 +99,8 @@ class _RestaurantsScreenState extends State<RestaurantsListingScreen> {
     // Todo: put the nav logic to the restaurant screen here
     //
 
+
+
     // For now, just show a message
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Selected restaurant: $restaurantName')),
