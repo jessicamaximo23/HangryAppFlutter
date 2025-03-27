@@ -7,10 +7,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="Restaurant listing done, based on the Firebase infos">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="Nothing much(2 more empty lines)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/driverprofile_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/driverprofile_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/restaurant_listing_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/restaurant_listing_screen.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -333,7 +331,31 @@
       <option name="project" value="LOCAL" />
       <updated>1742577313364</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="version change">
+      <option name="closed" value="true" />
+      <created>1743004188667</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1743004188667</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Changed profileImage firebase location , changed driver's license logic, cleaned up UI a little">
+      <option name="closed" value="true" />
+      <created>1743004403204</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1743004403204</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Nothing much(2 more empty lines)">
+      <option name="closed" value="true" />
+      <created>1743004435080</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1743004435080</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -349,7 +371,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Changed gradle version and java path to fit my machine, among other changes" />
-    <MESSAGE value="version change" />
     <MESSAGE value="Added category dropdown and availability dropdown options and their respective logic, saving it to firebase, changed some UI stuff, added containers, text" />
     <MESSAGE value="Changed profileImageUrl storage path to fit with the rest of the app languages(IOS and Android), added cuisine types" />
     <MESSAGE value="Added logic, UI and elements to make the CRUD apply to the list of items" />
@@ -369,6 +390,9 @@
     <MESSAGE value="Created restaurant listing component, starting with the logic" />
     <MESSAGE value="Imported new restaurant_listing_screen.dart for routing" />
     <MESSAGE value="Restaurant listing done, based on the Firebase infos" />
-    <option name="LAST_COMMIT_MESSAGE" value="Restaurant listing done, based on the Firebase infos" />
+    <MESSAGE value="version change" />
+    <MESSAGE value="Changed profileImage firebase location , changed driver's license logic, cleaned up UI a little" />
+    <MESSAGE value="Nothing much(2 more empty lines)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Nothing much(2 more empty lines)" />
   </component>
 </project>
