@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'cart_screen.dart';
 
 class RestaurantMenuScreen extends StatefulWidget {
   final String restaurantId;
@@ -21,10 +22,18 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
   final Color hangryBlue = Color(0xFF003049);
 
   late DatabaseReference _databaseRef;
+  late DatabaseReference _restaurantInfoRef;
   List<Map<String, dynamic>> menuItems = [];
+  Map<String, dynamic>? restaurantData;
   bool _isLoading = true;
   String _errorMessage = '';
   String _selectedCategory = 'All';
+
+  // Cart
+  Map<String, CartItem> _cartItems = {};
+  int _cartItemCount = 0;
+  double _cartTotal = 0.0;
+
 
   @override
   void initState() {
@@ -35,7 +44,47 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
         .child(widget.restaurantId)
         .child('menu');
 
+    _restaurantInfoRef = FirebaseDatabase.instance
+    .ref()
+    .child('users')
+    .child(widget.restaurantId);
+
+    _fetchRestaurantData();
     _fetchMenuItems();
+  }
+
+  void _fetchRestaurantData() async {
+    try {
+      DatabaseEvent event = await _restaurantInfoRef.once();
+
+      if (event.snapshot.exists) {
+        Map<dynamic, dynamic> data = event.snapshot.value as Map<dynamic, dynamic>;
+
+        Map<String, dynamic> formattedData = {
+          'uid': widget.restaurantId,
+          'name': data['name'] ?? widget.restaurantName,
+          'profileImageUrl': data['profileImageUrl'] ?? '',
+          'email': data['email'] ?? '',
+          'status': data['status'] ?? 'inactive',
+        };
+
+        if (data.containsKey('profile') && data['profile'] is Map) {
+          Map<dynamic, dynamic> profile = data['profile'] as Map<dynamic, dynamic>;
+          formattedData['description'] = profile['description'] ?? 'No description available';
+          formattedData['cuisine'] = profile['typeofcuisine'] ?? 'Various cuisine';
+          formattedData['address'] = profile['address'] ?? '';
+          formattedData['city'] = profile['city'] ?? '';
+          formattedData['openHours'] = profile['openHours'] ?? 'Hours not available';
+          formattedData['openDays'] = profile['openDays'] ?? 'Days not available';
+        }
+
+        setState(() {
+          restaurantData = formattedData;
+        });
+      }
+    } catch (error) {
+      print('Error loading restaurant data: $error');
+    }
   }
 
   void _fetchMenuItems() async {
@@ -95,6 +144,51 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
           .toList();
     }
   }
+
+  // Adding cart method to add items
+  void _addToCart(Map<String, dynamic> menuItem) {
+    setState(() {
+      String itemId = menuItem['key'];
+
+      if (_cartItems.containsKey(itemId)) {
+        //   Item already in cart, add to quantity
+        _cartItems[itemId]!.quantity += 1;
+      } else {
+      //   adding new items
+        _cartItems[itemId] = CartItem(
+          id: itemId,
+          name: menuItem['name'],
+          price: menuItem['price'],
+          imageUrl: menuItem['imageUrl'],
+          description: menuItem['description'],
+          quantity: 1,
+        );
+      }
+
+      _updateCartTotals();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${menuItem['name']} added to cart'),
+          duration: Duration(seconds: 1),
+          action: SnackBarAction(
+            label: 'View Cart',
+            onPressed: () {
+              _navigateToCart();
+            },
+          ),
+        ),
+      );
+    });
+  }
+
+  void _updateCartTotals() {
+    int itemCount = 0;
+    double total = 0.0;
+
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
