@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '';
+import 'restaurant_menu_screen.dart';
 
 final Color hangryYellow = Color(0xFFFCBF49);
 final Color hangryBlue = Color(0xFF003049);
@@ -216,14 +216,19 @@ class _RestaurantsScreenState extends State<RestaurantsListingScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => Resta)
-    )
-
-    // For now, just show a message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Selected restaurant: $restaurantName')),
+        builder: (context) => RestaurantMenuScreen(
+          restaurantId: restaurantId,
+          restaurantName: restaurantName,
+        ),
+      ),
     );
   }
+
+  // For now, just show a message
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(content: Text('Selected restaurant: $restaurantName')),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
