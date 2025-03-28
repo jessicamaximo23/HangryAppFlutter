@@ -28,9 +28,9 @@ class _CartScreenState extends State<CartScreen> {
   Map<String, CartItem> _currentCartItems = {};
   double _subtotal = 0.0;
   double _taxAmount = 0.0;
-  double _deliveryFee = 3.99; // TBD if it's free or not
+  double _deliveryFee = 3.99;
   double _total = 0.0;
-  final double _taxRate = 0.1498; // 14.98% taxes for QC
+  final double _taxRate = 0.08; // 8% tax rate
 
   @override
   void initState() {
@@ -71,7 +71,8 @@ class _CartScreenState extends State<CartScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Clear Cart'),
-          content: Text('Are you sure you want to remove all items from your cart?'),
+          content:
+              Text('Are you sure you want to remove all items from your cart?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -143,22 +144,22 @@ class _CartScreenState extends State<CartScreen> {
       body: _currentCartItems.isEmpty
           ? _buildEmptyCart()
           : Column(
-        children: [
-          _buildRestaurantInfo(),
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.all(16),
-              itemCount: _currentCartItems.length,
-              itemBuilder: (context, index) {
-                String itemId = _currentCartItems.keys.elementAt(index);
-                CartItem item = _currentCartItems[itemId]!;
-                return _buildCartItem(itemId, item);
-              },
+              children: [
+                _buildRestaurantInfo(),
+                Expanded(
+                  child: ListView.builder(
+                    padding: EdgeInsets.all(16),
+                    itemCount: _currentCartItems.length,
+                    itemBuilder: (context, index) {
+                      String itemId = _currentCartItems.keys.elementAt(index);
+                      CartItem item = _currentCartItems[itemId]!;
+                      return _buildCartItem(itemId, item);
+                    },
+                  ),
+                ),
+                _buildOrderSummary(),
+              ],
             ),
-          ),
-          _buildOrderSummary(),
-        ],
-      ),
     );
   }
 
@@ -227,42 +228,42 @@ class _CartScreenState extends State<CartScreen> {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: widget.restaurantData['profileImageUrl'] != null &&
-                widget.restaurantData['profileImageUrl'].isNotEmpty
+                    widget.restaurantData['profileImageUrl'].isNotEmpty
                 ? CachedNetworkImage(
-              imageUrl: widget.restaurantData['profileImageUrl'],
-              width: 50,
-              height: 50,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
-                width: 50,
-                height: 50,
-                color: Colors.grey[300],
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: hangryYellow,
-                    strokeWidth: 2,
-                  ),
-                ),
-              ),
-              errorWidget: (context, url, error) => Container(
-                width: 50,
-                height: 50,
-                color: Colors.grey[300],
-                child: Icon(
-                  Icons.restaurant,
-                  color: hangryYellow,
-                ),
-              ),
-            )
+                    imageUrl: widget.restaurantData['profileImageUrl'],
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      width: 50,
+                      height: 50,
+                      color: Colors.grey[300],
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: hangryYellow,
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      width: 50,
+                      height: 50,
+                      color: Colors.grey[300],
+                      child: Icon(
+                        Icons.restaurant,
+                        color: hangryYellow,
+                      ),
+                    ),
+                  )
                 : Container(
-              width: 50,
-              height: 50,
-              color: Colors.grey[300],
-              child: Icon(
-                Icons.restaurant,
-                color: hangryYellow,
-              ),
-            ),
+                    width: 50,
+                    height: 50,
+                    color: Colors.grey[300],
+                    child: Icon(
+                      Icons.restaurant,
+                      color: hangryYellow,
+                    ),
+                  ),
           ),
           SizedBox(width: 16),
           Expanded(
@@ -312,7 +313,8 @@ class _CartScreenState extends State<CartScreen> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text('Remove Item'),
-              content: Text('Are you sure you want to remove ${item.name} from your cart?'),
+              content: Text(
+                  'Are you sure you want to remove ${item.name} from your cart?'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(false),
@@ -345,40 +347,40 @@ class _CartScreenState extends State<CartScreen> {
                 borderRadius: BorderRadius.circular(6),
                 child: item.imageUrl.isNotEmpty
                     ? CachedNetworkImage(
-                  imageUrl: item.imageUrl,
-                  width: 70,
-                  height: 70,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    width: 70,
-                    height: 70,
-                    color: Colors.grey[300],
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: hangryYellow,
-                        strokeWidth: 2,
-                      ),
-                    ),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    width: 70,
-                    height: 70,
-                    color: Colors.grey[300],
-                    child: Icon(
-                      Icons.fastfood,
-                      color: hangryYellow,
-                    ),
-                  ),
-                )
+                        imageUrl: item.imageUrl,
+                        width: 70,
+                        height: 70,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          width: 70,
+                          height: 70,
+                          color: Colors.grey[300],
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: hangryYellow,
+                              strokeWidth: 2,
+                            ),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          width: 70,
+                          height: 70,
+                          color: Colors.grey[300],
+                          child: Icon(
+                            Icons.fastfood,
+                            color: hangryYellow,
+                          ),
+                        ),
+                      )
                     : Container(
-                  width: 70,
-                  height: 70,
-                  color: Colors.grey[300],
-                  child: Icon(
-                    Icons.fastfood,
-                    color: hangryYellow,
-                  ),
-                ),
+                        width: 70,
+                        height: 70,
+                        color: Colors.grey[300],
+                        child: Icon(
+                          Icons.fastfood,
+                          color: hangryYellow,
+                        ),
+                      ),
               ),
               SizedBox(width: 12),
               Expanded(
@@ -420,7 +422,8 @@ class _CartScreenState extends State<CartScreen> {
                     children: [
                       _buildQuantityButton(
                         icon: Icons.remove,
-                        onPressed: () => _updateItemQuantity(itemId, item.quantity - 1),
+                        onPressed: () =>
+                            _updateItemQuantity(itemId, item.quantity - 1),
                       ),
                       Container(
                         width: 40,
@@ -435,7 +438,8 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                       _buildQuantityButton(
                         icon: Icons.add,
-                        onPressed: () => _updateItemQuantity(itemId, item.quantity + 1),
+                        onPressed: () =>
+                            _updateItemQuantity(itemId, item.quantity + 1),
                       ),
                     ],
                   ),
@@ -448,7 +452,8 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget _buildQuantityButton({required IconData icon, required VoidCallback onPressed}) {
+  Widget _buildQuantityButton(
+      {required IconData icon, required VoidCallback onPressed}) {
     return InkWell(
       onTap: onPressed,
       borderRadius: BorderRadius.circular(15),
@@ -495,7 +500,8 @@ class _CartScreenState extends State<CartScreen> {
           SizedBox(height: 12),
           _buildSummaryRow('Subtotal', '\${_subtotal.toStringAsFixed(2)}'),
           _buildSummaryRow('Tax (8%)', '\${_taxAmount.toStringAsFixed(2)}'),
-          _buildSummaryRow('Delivery Fee', '\${_deliveryFee.toStringAsFixed(2)}'),
+          _buildSummaryRow(
+              'Delivery Fee', '\${_deliveryFee.toStringAsFixed(2)}'),
           Divider(height: 24),
           _buildSummaryRow(
             'Total',
@@ -555,3 +561,4 @@ class _CartScreenState extends State<CartScreen> {
       ),
     );
   }
+}
