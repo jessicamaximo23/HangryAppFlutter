@@ -7,9 +7,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="Nothing much(2 more empty lines)">
+    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="Added UI and methods to calculate cart's total, clear cart and add items">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/restaurant_listing_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/restaurant_listing_screen.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -355,7 +354,87 @@
       <option name="project" value="LOCAL" />
       <updated>1743004435080</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="version">
+      <option name="closed" value="true" />
+      <created>1743037113214</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1743037113214</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Added filters for type of dish and type of cuisine for the user. Added a search bar, to be completed wit Google Maps later on">
+      <option name="closed" value="true" />
+      <created>1743037233067</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1743037233067</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Created menu screen">
+      <option name="closed" value="true" />
+      <created>1743037533884</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1743037533884</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Added import to menu screen">
+      <option name="closed" value="true" />
+      <created>1743039071417</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1743039071418</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Created menu screen to check items and add those to cart">
+      <option name="closed" value="true" />
+      <created>1743106554972</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1743106554972</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Created cart screen">
+      <option name="closed" value="true" />
+      <created>1743106709794</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1743106709794</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Started adding the cart logic into the restaurant_menu_screen">
+      <option name="closed" value="true" />
+      <created>1743108047136</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1743108047136</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Modified UI, added some methods for the prices in cart, added cartItem class">
+      <option name="closed" value="true" />
+      <created>1743169358524</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1743169358524</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Created new checkout screen">
+      <option name="closed" value="true" />
+      <created>1743169756162</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1743169756162</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Added UI and methods to calculate cart's total, clear cart and add items">
+      <option name="closed" value="true" />
+      <created>1743169912145</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1743169912145</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -370,14 +449,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Changed gradle version and java path to fit my machine, among other changes" />
-    <MESSAGE value="Added category dropdown and availability dropdown options and their respective logic, saving it to firebase, changed some UI stuff, added containers, text" />
-    <MESSAGE value="Changed profileImageUrl storage path to fit with the rest of the app languages(IOS and Android), added cuisine types" />
-    <MESSAGE value="Added logic, UI and elements to make the CRUD apply to the list of items" />
-    <MESSAGE value="Modified admin restaurant part 1" />
-    <MESSAGE value="Changed toggle status for restaurant" />
-    <MESSAGE value="Created admin_user_screen.dart" />
-    <MESSAGE value="Created admin_driver_screen.dart plus logic" />
     <MESSAGE value="Updated route to the user screen for admin" />
     <MESSAGE value="Removed main as it was causing issues to log in" />
     <MESSAGE value="trying to add Rammetto font for UI purposes(does not work for now)" />
@@ -393,6 +464,16 @@
     <MESSAGE value="version change" />
     <MESSAGE value="Changed profileImage firebase location , changed driver's license logic, cleaned up UI a little" />
     <MESSAGE value="Nothing much(2 more empty lines)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Nothing much(2 more empty lines)" />
+    <MESSAGE value="version" />
+    <MESSAGE value="Added filters for type of dish and type of cuisine for the user. Added a search bar, to be completed wit Google Maps later on" />
+    <MESSAGE value="Created menu screen" />
+    <MESSAGE value="Added import to menu screen" />
+    <MESSAGE value="Created menu screen to check items and add those to cart" />
+    <MESSAGE value="Created cart screen" />
+    <MESSAGE value="Started adding the cart logic into the restaurant_menu_screen" />
+    <MESSAGE value="Modified UI, added some methods for the prices in cart, added cartItem class" />
+    <MESSAGE value="Created new checkout screen" />
+    <MESSAGE value="Added UI and methods to calculate cart's total, clear cart and add items" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added UI and methods to calculate cart's total, clear cart and add items" />
   </component>
 </project>
