@@ -29,11 +29,10 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
   String _errorMessage = '';
   String _selectedCategory = 'All';
 
-  // Cart
+  // Cart state
   Map<String, CartItem> _cartItems = {};
   int _cartItemCount = 0;
   double _cartTotal = 0.0;
-
 
   @override
   void initState() {
@@ -45,9 +44,9 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
         .child('menu');
 
     _restaurantInfoRef = FirebaseDatabase.instance
-    .ref()
-    .child('users')
-    .child(widget.restaurantId);
+        .ref()
+        .child('users')
+        .child(widget.restaurantId);
 
     _fetchRestaurantData();
     _fetchMenuItems();
@@ -58,7 +57,8 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
       DatabaseEvent event = await _restaurantInfoRef.once();
 
       if (event.snapshot.exists) {
-        Map<dynamic, dynamic> data = event.snapshot.value as Map<dynamic, dynamic>;
+        Map<dynamic, dynamic> data =
+            event.snapshot.value as Map<dynamic, dynamic>;
 
         Map<String, dynamic> formattedData = {
           'uid': widget.restaurantId,
@@ -69,13 +69,18 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
         };
 
         if (data.containsKey('profile') && data['profile'] is Map) {
-          Map<dynamic, dynamic> profile = data['profile'] as Map<dynamic, dynamic>;
-          formattedData['description'] = profile['description'] ?? 'No description available';
-          formattedData['cuisine'] = profile['typeofcuisine'] ?? 'Various cuisine';
+          Map<dynamic, dynamic> profile =
+              data['profile'] as Map<dynamic, dynamic>;
+          formattedData['description'] =
+              profile['description'] ?? 'No description available';
+          formattedData['cuisine'] =
+              profile['typeofcuisine'] ?? 'Various cuisine';
           formattedData['address'] = profile['address'] ?? '';
           formattedData['city'] = profile['city'] ?? '';
-          formattedData['openHours'] = profile['openHours'] ?? 'Hours not available';
-          formattedData['openDays'] = profile['openDays'] ?? 'Days not available';
+          formattedData['openHours'] =
+              profile['openHours'] ?? 'Hours not available';
+          formattedData['openDays'] =
+              profile['openDays'] ?? 'Days not available';
         }
 
         setState(() {
@@ -106,7 +111,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
             items.add({
               'key': key,
               'name': value['name'] ?? 'No Name',
-              'price': value['price'] ?? 0.0,
+              'price': _parsePrice(value['price']),
               'description': value['description'] ?? 'No Description',
               'imageUrl': value['imageUrl'] ?? '',
               'category': value['category'] ?? 'Appetizer',
@@ -133,6 +138,19 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     }
   }
 
+  double _parsePrice(dynamic price) {
+    if (price is double) return price;
+    if (price is int) return price.toDouble();
+    if (price is String) {
+      try {
+        return double.parse(price);
+      } catch (e) {
+        return 0.0;
+      }
+    }
+    return 0.0;
+  }
+
   List<Map<String, dynamic>> getFilteredItems() {
     if (_selectedCategory == 'All') {
       return menuItems.where((item) => item['availability'] == 'Yes').toList();
@@ -145,16 +163,15 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     }
   }
 
-  // Adding cart method to add items
   void _addToCart(Map<String, dynamic> menuItem) {
     setState(() {
       String itemId = menuItem['key'];
 
       if (_cartItems.containsKey(itemId)) {
-        //   Item already in cart, add to quantity
+        // Item already in cart, increase quantity
         _cartItems[itemId]!.quantity += 1;
       } else {
-      //   adding new items
+        // Add new item to cart
         _cartItems[itemId] = CartItem(
           id: itemId,
           name: menuItem['name'],
@@ -165,8 +182,10 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
         );
       }
 
+      // Update cart totals
       _updateCartTotals();
 
+      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${menuItem['name']} added to cart'),
@@ -186,9 +205,42 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
     int itemCount = 0;
     double total = 0.0;
 
+    _cartItems.forEach((key, item) {
+      itemCount += item.quantity;
+      total += item.price * item.quantity;
+    });
 
+    setState(() {
+      _cartItemCount = itemCount;
+      _cartTotal = total;
+    });
   }
 
+  void _navigateToCart() {
+    if (restaurantData == null) {
+      // Ensure we have restaurant data
+      restaurantData = {
+        'uid': widget.restaurantId,
+        'name': widget.restaurantName,
+      };
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CartScreen(
+          cartItems: _cartItems,
+          restaurantData: restaurantData!,
+          onCartUpdate: (updatedCart) {
+            setState(() {
+              _cartItems = updatedCart;
+              _updateCartTotals();
+            });
+          },
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -204,8 +256,49 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.restaurantName),
+        title: Text(
+          widget.restaurantName,
+          style: TextStyle(
+            fontFamily: 'RammettoOne-Regular',
+            color: Colors.black,
+          ),
+        ),
         backgroundColor: hangryYellow,
+        actions: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: Icon(Icons.shopping_cart),
+                onPressed: _cartItemCount > 0 ? _navigateToCart : null,
+              ),
+              if (_cartItemCount > 0)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    constraints: BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      _cartItemCount.toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -290,6 +383,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
           ),
         ],
       ),
+      bottomNavigationBar: _cartItemCount > 0 ? _buildCartSummary() : null,
     );
   }
 
@@ -325,113 +419,270 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Item image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: item['imageUrl'] != null &&
-                      item['imageUrl'].toString().isNotEmpty
-                  ? CachedNetworkImage(
-                      imageUrl: item['imageUrl'],
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
+      child: InkWell(
+        onTap: () {
+          _showItemDetailDialog(item);
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Item image
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: item['imageUrl'] != null &&
+                        item['imageUrl'].toString().isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: item['imageUrl'],
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          width: 100,
+                          height: 100,
+                          color: Colors.grey[300],
+                          child: Center(
+                              child: CircularProgressIndicator(
+                                  color: hangryYellow)),
+                        ),
+                        errorWidget: (context, error, stackTrace) => Container(
+                          width: 100,
+                          height: 100,
+                          color: Colors.grey[300],
+                          child: Icon(Icons.error, size: 40, color: Colors.red),
+                        ),
+                      )
+                    : Container(
                         width: 100,
                         height: 100,
                         color: Colors.grey[300],
-                        child: Center(
-                            child:
-                                CircularProgressIndicator(color: hangryYellow)),
+                        child: Icon(Icons.fastfood,
+                            size: 40, color: Colors.grey[600]),
                       ),
-                      errorWidget: (context, error, stackTrace) => Container(
-                        width: 100,
-                        height: 100,
-                        color: Colors.grey[300],
-                        child: Icon(Icons.error, size: 40, color: Colors.red),
-                      ),
-                    )
-                  : Container(
-                      width: 100,
-                      height: 100,
-                      color: Colors.grey[300],
-                      child: Icon(Icons.fastfood,
-                          size: 40, color: Colors.grey[600]),
-                    ),
-            ),
-            SizedBox(width: 16),
+              ),
+              SizedBox(width: 16),
 
-            // Item info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          item['name'],
+              // Item info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item['name'],
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: hangryBlue,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          '\$${item['price'].toStringAsFixed(2)}',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: hangryBlue,
+                            color: hangryYellow,
                           ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
                         ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      item['description'],
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 8),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[100],
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      SizedBox(width: 8),
-                      Text(
-                        '\$${item['price'] is double ? item['price'].toStringAsFixed(2) : item['price'].toString()}',
+                      child: Text(
+                        item['category'],
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 12,
+                          color: Colors.blue[900],
                           fontWeight: FontWeight.bold,
-                          color: hangryYellow,
                         ),
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    item['description'],
-                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 8),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.blue[100],
-                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text(
-                      item['category'],
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.blue[900],
-                        fontWeight: FontWeight.bold,
+                    SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          _addToCart(item);
+                        },
+                        icon: Icon(Icons.add_shopping_cart, size: 16),
+                        label: Text('Add to Cart'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: hangryYellow,
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        ),
                       ),
                     ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showItemDetailDialog(Map<String, dynamic> item) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: item['imageUrl'] != null && item['imageUrl'].isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: item['imageUrl'],
+                          width: double.infinity,
+                          height: 180,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            height: 180,
+                            color: Colors.grey[300],
+                            child: Center(
+                                child: CircularProgressIndicator(
+                                    color: hangryYellow)),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            height: 180,
+                            color: Colors.grey[300],
+                            child: Icon(Icons.fastfood,
+                                size: 40, color: hangryYellow),
+                          ),
+                        )
+                      : Container(
+                          height: 180,
+                          color: Colors.grey[300],
+                          child: Icon(Icons.fastfood,
+                              size: 40, color: hangryYellow),
+                        ),
+                ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item['name'],
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: hangryBlue,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: hangryYellow.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '\$${item['price'].toStringAsFixed(2)}',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: hangryBlue,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton.icon(
+                  child: Text(
+                    item['category'],
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[800],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 12),
+                Text(
+                  'Description',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: hangryBlue,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  item['description'],
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    OutlinedButton(
                       onPressed: () {
-                        // Add to cart functionality would go here
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text('${item['name']} added to cart')),
-                        );
+                        Navigator.pop(context);
                       },
-                      icon: Icon(Icons.add_shopping_cart, size: 16),
-                      label: Text('Add to Cart'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: hangryBlue,
+                        side: BorderSide(color: hangryBlue),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      ),
+                      child: Text('Close'),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        _addToCart(item);
+                        Navigator.pop(context);
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: hangryYellow,
                         foregroundColor: Colors.black,
@@ -439,16 +690,103 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         padding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
+                      icon: Icon(Icons.add_shopping_cart),
+                      label: Text('Add to Cart'),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCartSummary() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '$_cartItemCount ${_cartItemCount == 1 ? 'item' : 'items'}',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+              ),
+              Text(
+                '\$${_cartTotal.toStringAsFixed(2)}',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: hangryBlue,
+                ),
+              ),
+            ],
+          ),
+          ElevatedButton(
+            onPressed: _navigateToCart,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: hangryYellow,
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.shopping_cart),
+                SizedBox(width: 8),
+                Text(
+                  'View Cart',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
+}
+
+class CartItem {
+  final String id;
+  final String name;
+  final double price;
+  final String imageUrl;
+  final String description;
+  int quantity;
+
+  CartItem({
+    required this.id,
+    required this.name,
+    required this.price,
+    required this.imageUrl,
+    required this.description,
+    this.quantity = 1,
+  });
 }
