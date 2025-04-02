@@ -13,6 +13,7 @@ class CheckoutScreen extends StatefulWidget {
   final double taxAmount;
   final double deliveryFee;
   final double total;
+  final String orderComments;
 
   const CheckoutScreen({
     Key? key,
@@ -22,6 +23,7 @@ class CheckoutScreen extends StatefulWidget {
     required this.taxAmount,
     required this.deliveryFee,
     required this.total,
+    this.orderComments = '',
   }) : super(key: key);
 
   @override
@@ -37,7 +39,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   // User information
   final _addressController = TextEditingController();
   final _cityController = TextEditingController();
-  final _zipCodeController = TextEditingController();
+  final _postalCodeController = TextEditingController();
   final _phoneController = TextEditingController();
   final _notesController = TextEditingController();
 
@@ -50,11 +52,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   bool _isLoading = false;
   Map<String, dynamic>? _userProfile;
+  bool _useSavedAddress = true; // Default to using saved address if available
 
   @override
   void initState() {
     super.initState();
     _loadUserProfile();
+
+    // Initialize notes controller with order comments if any
+    if (widget.orderComments.isNotEmpty) {
+      _notesController.text = widget.orderComments;
+    }
   }
 
   Future<void> _loadUserProfile() async {
@@ -80,8 +88,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               // Pre-fill form with user data if available
               _addressController.text = _userProfile?['address'] ?? '';
               _cityController.text = _userProfile?['city'] ?? '';
-              _zipCodeController.text = _userProfile?['zipCode'] ?? '';
+              _postalCodeController.text = _userProfile?['zipCode'] ?? '';
               _phoneController.text = _userProfile?['phoneNumber'] ?? '';
+
+              // Determine if we should use saved address
+              _useSavedAddress = _addressController.text.isNotEmpty &&
+                  _cityController.text.isNotEmpty &&
+                  _postalCodeController.text.isNotEmpty;
             });
           }
         }
@@ -92,6 +105,26 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       setState(() {
         _isLoading = false;
       });
+    }
+  }
+
+  // Save the address to Firebase for future use
+  Future<void> _saveAddressToProfile() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      try {
+        await FirebaseDatabase.instance.ref('users/${currentUser.uid}/profile').update({
+          'address': _addressController.text,
+          'city': _cityController.text,
+          'zipCode': _postalCodeController.text,
+          'phoneNumber': _phoneController.text,
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Address saved for future orders')),
+        );
+      } catch (error) {
+        print('Error saving address: $error');
+      }
     }
   }
 
@@ -112,6 +145,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         _isLoading = true;
       });
 
+      // Save the address for future use if it's new
+      if (!_useSavedAddress || _userProfile == null) {
+        await _saveAddressToProfile();
+      }
+
       User? currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser == null) {
         _showErrorSnackBar('User not authenticated');
@@ -125,6 +163,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       String orderDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
 
       // Convert cart items to a format suitable for the database
+      // Include item-specific comments as well
       Map<String, dynamic> orderItems = {};
       widget.cartItems.forEach((itemId, cartItem) {
         orderItems[itemId] = {
@@ -132,6 +171,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           'price': cartItem.price,
           'quantity': cartItem.quantity,
           'subtotal': cartItem.price * cartItem.quantity,
+          'comment': cartItem.comment ?? '', // Include item comment if any
         };
       });
 
@@ -152,10 +192,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'deliveryAddress': {
           'address': _addressController.text,
           'city': _cityController.text,
-          'zipCode': _zipCodeController.text,
+          'zipCode': _postalCodeController.text,
           'phone': _phoneController.text,
         },
-        'notes': _notesController.text,
+        'orderComments': _notesController.text, // Include order-level comments
       };
 
       // Save to user's orders in the database
@@ -235,79 +275,34 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildSectionTitle('Delivery Address'),
-              _buildTextFormField(
-                controller: _addressController,
-                labelText: 'Street Address',
-                hintText: 'Enter your street address',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your street address';
-                  }
-                  return null;
-                },
-                icon: Icons.home,
-              ),
-              SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: _buildTextFormField(
-                      controller: _cityController,
-                      labelText: 'City',
-                      hintText: 'Enter your city',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your city';
-                        }
-                        return null;
-                      },
-                      icon: Icons.location_city,
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    flex: 1,
-                    child: _buildTextFormField(
-                      controller: _zipCodeController,
-                      labelText: 'Zip Code',
-                      hintText: 'Enter zip code',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter zip code';
-                        }
-                        if (!RegExp(r'^\d{5}(?:[-\s]\d{4})?$').hasMatch(value)) {
-                          return 'Invalid zip code';
-                        }
-                        return null;
-                      },
-                      icon: Icons.pin_drop,
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 12),
-              _buildTextFormField(
-                controller: _phoneController,
-                labelText: 'Phone Number',
-                hintText: 'Enter your phone number',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your phone number';
-                  }
-                  if (!RegExp(r'^\(\d{3}\) \d{3}-\d{4}$|^\d{10}$|^\d{3}-\d{3}-\d{4}$').hasMatch(value)) {
-                    return 'Please enter a valid phone number';
-                  }
-                  return null;
-                },
-                icon: Icons.phone,
-                keyboardType: TextInputType.phone,
-              ),
-              SizedBox(height: 12),
+
+              // Add option to use saved address or enter a new one
+              if (_userProfile != null &&
+                  _userProfile!['address'] != null &&
+                  _userProfile!['address'].toString().isNotEmpty)
+                _buildAddressToggle(),
+
+              // Only show form fields if not using saved address or there is no saved address
+              if (!_useSavedAddress || _userProfile == null ||
+                  _userProfile!['address'] == null ||
+                  _userProfile!['address'].toString().isEmpty)
+                ..._buildAddressForm()
+              else
+                _buildSavedAddressCard(),
+
+              SizedBox(height: 24),
+
+              _buildSectionTitle('Payment Method'),
+              _buildPaymentMethodSelection(),
+              SizedBox(height: 24),
+
+              _buildSectionTitle('Order Details'),
+              _buildOrderItemsList(),
+              SizedBox(height: 24),
+
               _buildTextFormField(
                 controller: _notesController,
-                labelText: 'Delivery Notes (Optional)',
+                labelText: 'Delivery Notes',
                 hintText: 'Any special instructions for delivery?',
                 validator: null,
                 icon: Icons.note,
@@ -315,15 +310,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
               SizedBox(height: 24),
 
-              _buildSectionTitle('Payment Method'),
-              _buildPaymentMethodSelection(),
-              SizedBox(height: 24),
-
               _buildSectionTitle('Order Summary'),
               SizedBox(height: 12),
 
               _buildOrderSummaryItem('Items (${widget.cartItems.length})', '\$${widget.subtotal.toStringAsFixed(2)}'),
-              _buildOrderSummaryItem('Tax', '\$${widget.taxAmount.toStringAsFixed(2)}'),
+              _buildOrderSummaryItem('Tax (15%)', '\$${widget.taxAmount.toStringAsFixed(2)}'),
               _buildOrderSummaryItem('Delivery Fee', '\$${widget.deliveryFee.toStringAsFixed(2)}'),
               Divider(height: 24),
               _buildOrderSummaryItem(
@@ -367,6 +358,253 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               SizedBox(height: 24),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  // Build the toggle switch for using saved address
+  Widget _buildAddressToggle() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Row(
+        children: [
+          Switch(
+            value: _useSavedAddress,
+            onChanged: (value) {
+              setState(() {
+                _useSavedAddress = value;
+              });
+            },
+            activeColor: hangryYellow,
+          ),
+          Text(
+            'Use saved address',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Build a card displaying the saved address
+  Widget _buildSavedAddressCard() {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Saved Address',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: hangryBlue,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.edit, color: hangryYellow),
+                  onPressed: () {
+                    setState(() {
+                      _useSavedAddress = false;
+                    });
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            Text(_userProfile!['address'] ?? '', style: TextStyle(fontSize: 16)),
+            SizedBox(height: 4),
+            Text(
+              '${_userProfile!['city'] ?? ''}, ${_userProfile!['postalCode'] ?? ''}',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 4),
+            Text(
+              'Phone: ${_userProfile!['phoneNumber'] ?? ''}',
+              style: TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Build the address form fields
+  List<Widget> _buildAddressForm() {
+    return [
+      _buildTextFormField(
+        controller: _addressController,
+        labelText: 'Street Address',
+        hintText: 'Enter your street address',
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter your street address';
+          }
+          return null;
+        },
+        icon: Icons.home,
+      ),
+      SizedBox(height: 12),
+      Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: _buildTextFormField(
+              controller: _cityController,
+              labelText: 'City',
+              hintText: 'Enter your city',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your city';
+                }
+                return null;
+              },
+              icon: Icons.location_city,
+            ),
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            flex: 1,
+            child: _buildTextFormField(
+              controller: _postalCodeController,
+              labelText: 'Postal Code',
+              hintText: 'Enter postal code',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter postal code';
+                }
+                // Fixed regex for Canadian Postal Code
+                if (!RegExp(r'^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$|^\d{5}(?:[-\s]\d{4})?$').hasMatch(value)) {
+                  return 'Invalid postal code';
+                }
+                return null;
+              },
+              icon: Icons.pin_drop,
+              keyboardType: TextInputType.number,
+            ),
+          ),
+        ],
+      ),
+      SizedBox(height: 12),
+      _buildTextFormField(
+        controller: _phoneController,
+        labelText: 'Phone Number',
+        hintText: 'Enter your phone number',
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter your phone number';
+          }
+          // Fixed regex for Canada
+          if (!RegExp(r'^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$').hasMatch(value)) {
+            return 'Please enter a valid phone number';
+          }
+          return null;
+        },
+        icon: Icons.phone,
+        keyboardType: TextInputType.phone,
+      ),
+      // Add a "Save this address" checkbox
+      if (!_useSavedAddress)
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Row(
+            children: [
+              Checkbox(
+                value: true,
+                onChanged: (value) {},
+                activeColor: hangryYellow,
+              ),
+              Text('Save this address for future orders'),
+            ],
+          ),
+        ),
+    ];
+  }
+
+  // Keep rest of the widgets from original implementation
+  Widget _buildOrderItemsList() {
+    // Same as original code
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      elevation: 1,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ...widget.cartItems.entries.map((entry) {
+              final item = entry.value;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${item.quantity}x ${item.name}',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '\$${(item.price * item.quantity).toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (item.comment != null && item.comment!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0, left: 8.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.comment,
+                              size: 14,
+                              color: Colors.grey[600],
+                            ),
+                            SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                item.comment!,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    if (entry.key != widget.cartItems.keys.last)
+                      Divider(height: 24),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
         ),
       ),
     );
