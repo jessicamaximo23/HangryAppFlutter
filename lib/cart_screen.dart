@@ -32,6 +32,9 @@ class _CartScreenState extends State<CartScreen> {
   double _total = 0.0;
   final double _taxRate = 0.15; // 15% tax rate
 
+  // for the comment section
+  final TextEditingController _orderCommentController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -62,6 +65,16 @@ class _CartScreenState extends State<CartScreen> {
     });
 
     // Notify parent widget about the updated cart
+    widget.onCartUpdate(_currentCartItems);
+  }
+
+  // Adding comment method
+  void _addCommentToItem(String itemId, String comment) {
+    setState(() {
+      if (_currentCartItems.containsKey(itemId)) {
+        _currentCartItems[itemId]!.comment = comment;
+      }
+    });
     widget.onCartUpdate(_currentCartItems);
   }
 
