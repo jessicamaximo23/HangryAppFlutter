@@ -1,9 +1,66 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
-class ProfileScreen extends StatelessWidget {
+
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
+
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String? _profileImageUrl;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileImage();
+  }
+
+Future<void> _loadProfileImage() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final profileSnapshot = await FirebaseDatabase.instance
+            .ref("users/${user.uid}/profile/profileImageUrl")
+            .get();
+
+        if (profileSnapshot.exists) {
+          setState(() {
+            _profileImageUrl = profileSnapshot.value as String?;
+          });
+          return;
+        }
+
+        final rootSnapshot = await FirebaseDatabase.instance
+            .ref("users/${user.uid}/profileImageUrl")
+            .get();
+
+        if (rootSnapshot.exists) {
+          setState(() {
+            _profileImageUrl = rootSnapshot.value as String?;
+          });
+          return;
+        }
+
+        // If nothing in DB, use the user's photoURL from Firebase Auth
+        if (user.photoURL != null) {
+          setState(() {
+            _profileImageUrl = user.photoURL;
+          });
+        }
+      } catch (e) {
+        print("Error loading profile image: $e");
+      }
+    }
+}
+
 
   Future<String?> getUserName(String userId) async {
     try {
@@ -84,19 +141,110 @@ class ProfileScreen extends StatelessWidget {
             children: [
               const SizedBox(height: 20),
               Center(
-                child: CircleAvatar(
-                  radius: 50.0,
-                  backgroundColor: Colors.grey,
-                  backgroundImage: user?.photoURL != null
-                      ? NetworkImage(user!.photoURL!)
-                      : null,
-                  child: user?.photoURL == null
-                      ? Icon(
-                    Icons.person,
-                    size: 50,
-                    color: Colors.white,
-                  )
-                      : null,
+                child: GestureDetector(
+                  onTap: () async {
+                    if (_isLoading) return; // Prevent multiple uploads
+
+                    setState(() {
+                      _isLoading = true;
+                    });
+
+                    try {
+                      final ImagePicker _picker = ImagePicker();
+                      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+                      if (image != null && user != null) {
+                        // Show loading indicator
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Uploading image...')),
+                        );
+
+                        // Create a properly formatted storage path with sanitized email
+                        final sanitizedEmail = user.email?.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_') ?? 'unknown';
+                        final storageRef = FirebaseStorage.instance
+                            .ref()
+                            .child('user_profileImage/$sanitizedEmail.jpg');
+
+                        // Upload the image
+                        final uploadTask = await storageRef.putFile(File(image.path));
+                        final downloadURL = await uploadTask.ref.getDownloadURL();
+
+                        // Update Firebase Auth profile
+                        await user.updatePhotoURL(downloadURL);
+
+                        // Update in the database root level
+                        DatabaseReference userRef = FirebaseDatabase.instance.ref("users/${user.uid}");
+                        await userRef.update({'profileImageUrl': downloadURL});
+
+                        // Update in the database under profile/profileImageUrl
+                        DatabaseReference profileRef = FirebaseDatabase.instance.ref("users/${user.uid}/profile");
+                        await profileRef.update({'profileImageUrl': downloadURL});
+
+                        // Update local state to show the new image immediately
+                        setState(() {
+                          _profileImageUrl = downloadURL;
+                        });
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Profile picture updated successfully')),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error updating profile picture: $e')),
+                      );
+                    } finally {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    }
+                  },
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 50.0,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: _profileImageUrl != null
+                            ? NetworkImage(_profileImageUrl!)
+                            : (user != null && user.photoURL != null
+                            ? NetworkImage(user.photoURL!)
+                            : null),
+                        child: (_profileImageUrl == null && (user == null || user.photoURL == null))
+                            ? Icon(Icons.person, size: 50, color: Colors.white)
+                            : null,
+                      ),
+                      if (_isLoading)
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black45,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: hangryYellow,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -161,9 +309,13 @@ class ProfileScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EditProfileScreen(userId: user.uid),
+                        builder: (context) => EditProfileScreen(
+                            userId: user.uid, email: user.email ?? ""),
                       ),
-                    );
+                    ).then((_) {
+                      // Refresh the profile image when returning from Edit Profile
+                      _loadProfileImage();
+                    });
                   }
                 },
               ),
@@ -171,6 +323,18 @@ class ProfileScreen extends StatelessWidget {
               _buildProfileItem(context, Icons.settings, 'App Settings'),
               _buildProfileItem(context, Icons.delivery_dining, 'Delivery Driver'),
               _buildProfileItem(context, Icons.admin_panel_settings, 'Admin'),
+
+              // Add Order History section for user profile
+              _buildProfileItem(
+                context,
+                Icons.receipt_long,
+                'Order History',
+                onTap: () {
+                  print('Order History button pressed');
+                  // You can navigate to an order history screen here
+                },
+              ),
+
               const SizedBox(height: 100),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -198,12 +362,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileItem(
-      BuildContext context,
-      IconData icon,
-      String title, {
-        VoidCallback? onTap,
-      }) {
+  Widget _buildProfileItem(BuildContext context, IconData icon, String title, {VoidCallback? onTap}) {
     return ListTile(
       leading: Icon(icon, color: Color(0xFF003049)),
       title: Text(title),
@@ -259,8 +418,13 @@ class ProfileScreen extends StatelessWidget {
 
 class EditProfileScreen extends StatefulWidget {
   final String userId;
+  final String email;
 
-  const EditProfileScreen({Key? key, required this.userId}) : super(key: key);
+  const EditProfileScreen({
+    Key? key,
+    required this.userId,
+    required this.email,
+  }) : super(key: key);
 
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
@@ -273,6 +437,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final cityController = TextEditingController();
   final zipCodeController = TextEditingController();
 
+  String? _profileImageUrl;
+  bool _isLoading = false;
+
   final Color hangryYellow = Color(0xFFFCBF49);
   final Color hangryBlue = Color(0xFF003049);
 
@@ -283,58 +450,128 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _loadProfileData() async {
-    DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
-    DatabaseEvent event = await ref.once();
+    setState(() {
+      _isLoading = true;
+    });
 
-    if (event.snapshot.value != null) {
-      final data = event.snapshot.value as Map<dynamic, dynamic>;
-      setState(() {
-        fullnameController.text = data['fullName'] ?? '';
-        phoneNumberController.text = data['phoneNumber'] ?? '';
-        addressController.text = data['address'] ?? '';
-        cityController.text = data['city'] ?? '';
-        zipCodeController.text = data['zipCode'] ?? '';
-      });
-    }
-  }
-  Future<void> updateUserDetails(
-      BuildContext context,
-      String userId,
-      String fullname,
-      String phonenumber,
-      String address,
-      String city,
-      String zipCode) async {
     try {
-      DatabaseReference userRef = FirebaseDatabase.instance.ref("users/$userId/profile");
-      await userRef.update({
-        "fullName": fullname,
-        "phoneNumber": phonenumber,
-        "address": address,
-        "city": city,
-        "zipCode": zipCode,
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated successfully')),
-      );
+      DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
+      DatabaseEvent event = await ref.once();
+
+      if (event.snapshot.value != null) {
+        final data = event.snapshot.value as Map<dynamic, dynamic>;
+        setState(() {
+          fullnameController.text = data['fullName'] ?? '';
+          phoneNumberController.text = data['phoneNumber'] ?? '';
+          addressController.text = data['address'] ?? '';
+          cityController.text = data['city'] ?? '';
+          zipCodeController.text = data['zipCode'] ?? '';
+          _profileImageUrl = data['profileImageUrl'];
+        });
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error updating profile: $e')),
+        SnackBar(content: Text('Error loading profile data: $e')),
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
   Future<void> _saveProfileData() async {
-    await updateUserDetails(
-      context,
-      widget.userId,
-      fullnameController.text.trim(),
-      phoneNumberController.text.trim(),
-      addressController.text.trim(),
-      cityController.text.trim(),
-      zipCodeController.text.trim(),
-    );
-    Navigator.pop(context);
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
+      await ref.update({
+        'fullName': fullnameController.text.trim(),
+        'phoneNumber': phoneNumberController.text.trim(),
+        'address': addressController.text.trim(),
+        'city': cityController.text.trim(),
+        'zipCode': zipCodeController.text.trim(),
+        'profileImageUrl': _profileImageUrl,
+      });
+
+      // Also update the name at root level for consistency
+      await FirebaseDatabase.instance.ref("users/${widget.userId}").update({
+        'name': fullnameController.text.trim()
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile updated successfully')),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating profile: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _pickProfileImage() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final ImagePicker _picker = ImagePicker();
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+      if (image != null) {
+        // Sanitize email for storage path
+        final sanitizedEmail = widget.email.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
+
+        // Use a consistent storage path
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('user_profileImage/$sanitizedEmail.jpg');
+
+        // Upload the image
+        final uploadTask = await storageRef.putFile(File(image.path));
+        final downloadURL = await uploadTask.ref.getDownloadURL();
+
+        // Update Firebase Auth profile
+        User? user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          await user.updatePhotoURL(downloadURL);
+        }
+
+        // Update root level
+        await FirebaseDatabase.instance.ref("users/${widget.userId}").update({
+          'profileImageUrl': downloadURL,
+        });
+
+        // Update profile with the profile image URL
+        DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
+        await ref.update({
+          'profileImageUrl': downloadURL,
+        });
+
+        setState(() {
+          _profileImageUrl = downloadURL;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile picture updated successfully!')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating profile picture: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -345,7 +582,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         backgroundColor: hangryYellow,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -364,6 +603,43 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               const SizedBox(height: 20),
 
+              // Profile Image
+              Center(
+                child: GestureDetector(
+                  onTap: _pickProfileImage,
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 50.0,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: _profileImageUrl != null
+                            ? NetworkImage(_profileImageUrl!)
+                            : null,
+                        child: _profileImageUrl == null
+                            ? Icon(Icons.person, size: 50, color: Colors.white)
+                            : null,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: hangryYellow,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
 
               _buildStyledTextField(fullnameController, 'Full Name'),
               _buildStyledTextField(phoneNumberController, 'Phone Number'),
@@ -372,7 +648,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               _buildStyledTextField(zipCodeController, 'Zip Code'),
 
               const SizedBox(height: 20),
-
 
               Center(
                 child: ElevatedButton(
