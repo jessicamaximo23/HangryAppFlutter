@@ -3,9 +3,9 @@ import 'package:hangry_app_flutter/signin_screen.dart';
 import 'package:hangry_app_flutter/signup_screen.dart';
 import 'package:hangry_app_flutter/resetpassword_screen.dart';
 
-void main() {
-  runApp(AccountScreen());
-}
+// void main() {
+//   runApp(AccountScreen());
+// }
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({Key? key}) : super(key: key);
@@ -16,8 +16,8 @@ class AccountScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return Scaffold(
+      // home: Scaffold(
         backgroundColor: Colors.white,
         body: Center(
           child: Container(
@@ -81,8 +81,7 @@ class AccountScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 
   Widget _buildAccountButton(BuildContext context, String title, String accountType) {

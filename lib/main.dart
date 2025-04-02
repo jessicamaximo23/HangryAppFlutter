@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+// Remove the flutter_stripe import
 import 'package:hangry_app_flutter/signin_screen.dart';
 import 'package:hangry_app_flutter/driver_screen.dart';
 import 'package:hangry_app_flutter/admin_panel_screen.dart';
@@ -10,10 +11,12 @@ import 'package:hangry_app_flutter/account_screen.dart';
 import 'package:provider/provider.dart';
 import 'authentication_manager.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  // Remove the Stripe initialization lines
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => AuthenticationManager(),
@@ -41,7 +44,7 @@ class MyApp extends StatelessWidget {
         '/driver': (context) => DriverScreen(),
         '/restaurant': (context) => RestaurantScreen(),
         '/user': (context) => UserScreen(),
-         '/admin': (context) => AdminDashboardScreen(),
+        '/admin': (context) => AdminDashboardScreen(),
       },
     );
   }
@@ -51,16 +54,13 @@ class AuthWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authManager = Provider.of<AuthenticationManager>(context);
-
     if (authManager.isLoading) {
       return Center(child: CircularProgressIndicator());
     }
-
     if (authManager.isAuthenticated) {
       if (authManager.accountType == 'admin') {
         return AdminDashboardScreen();
       }
-
       switch (authManager.accountType) {
         case 'restaurant':
           return RestaurantScreen();
@@ -72,10 +72,7 @@ class AuthWrapper extends StatelessWidget {
           return AccountScreen();
       }
     } else {
-
       return SplashScreen();
     }
   }
-
-
 }

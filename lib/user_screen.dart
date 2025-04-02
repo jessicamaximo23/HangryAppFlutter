@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'userprofile_screen.dart';
+import 'restaurant_listing_screen.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({Key? key}) : super(key: key);
@@ -94,7 +95,10 @@ class _UserScreenState extends State<UserScreen> {
                     icon: Icons.restaurant,
                     title: 'Restaurant ',
                     onTap: () {
-                      // Navigate to schedule screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RestaurantsListingScreen())
+                      );
                     },
                   ),
                   _buildDashboardCard(

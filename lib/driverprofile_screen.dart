@@ -6,8 +6,42 @@ import 'package:hangry_app_flutter/driver_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class ProfileScreenDriver extends StatelessWidget {
+
+class ProfileScreenDriver extends StatefulWidget {
   const ProfileScreenDriver({Key? key}) : super(key: key);
+
+  @override
+  _ProfileScreenDriverState createState() => _ProfileScreenDriverState();
+}
+
+class _ProfileScreenDriverState extends State<ProfileScreenDriver> {
+  String? _profileImageUrl;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileImage();
+  }
+
+  Future<void> _loadProfileImage() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final snapshot = await FirebaseDatabase.instance
+            .ref("users/${user.uid}/profile/profileImageUrl")
+            .get();
+
+        if (snapshot.exists) {
+          setState(() {
+            _profileImageUrl = snapshot.value as String?;
+          });
+        }
+      } catch (e) {
+        print("Error loading profile image: $e");
+      }
+    }
+  }
 
   Future<String?> getUserName(String userId) async {
     try {
@@ -76,7 +110,7 @@ class ProfileScreenDriver extends StatelessWidget {
     }
   }
 
-    @override
+  @override
   Widget build(BuildContext context) {
     User? user = FirebaseAuth.instance.currentUser;
 
@@ -98,38 +132,103 @@ class ProfileScreenDriver extends StatelessWidget {
               Center(
                 child: GestureDetector(
                   onTap: () async {
+                    if (_isLoading) return; // Prevent multiple uploads
 
-                    final ImagePicker _picker = ImagePicker();
-                    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                    setState(() {
+                      _isLoading = true;
+                    });
 
-                    if (image != null && user != null) {
+                    try {
+                      final ImagePicker _picker = ImagePicker();
+                      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
 
-                      final storageRef = FirebaseStorage.instance
-                          .ref()
-                          .child('driver_profileImage/${user.email}');
+                      if (image != null && user != null) {
+                        // Show loading indicator
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Uploading image...')),
+                        );
 
-                      final uploadTask = await storageRef.putFile(File(image.path));
-                      final downloadURL = await uploadTask.ref.getDownloadURL();
+                        // Create a properly formatted storage path with sanitized email
+                        final sanitizedEmail = user.email?.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_') ?? 'unknown';
+                        final storageRef = FirebaseStorage.instance
+                            .ref()
+                            .child('driver_profileImage/$sanitizedEmail.jpg');
 
-                      await user.updatePhotoURL(downloadURL);
+                        // Upload the image
+                        final uploadTask = await storageRef.putFile(File(image.path));
+                        final downloadURL = await uploadTask.ref.getDownloadURL();
 
-                      DatabaseReference userRef = FirebaseDatabase.instance.ref("users/${user.uid}/profile");
-                      await userRef.update({'photoURL': downloadURL});
+                        // Update Firebase Auth profile
+                        await user.updatePhotoURL(downloadURL);
 
+                        // Update in the database under profile/profileImageUrl
+                        DatabaseReference profileRef = FirebaseDatabase.instance.ref("users/${user.uid}/profile");
+                        await profileRef.update({'profileImageUrl': downloadURL});
+
+                        // Update local state to show the new image immediately
+                        setState(() {
+                          _profileImageUrl = downloadURL;
+                        });
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Profile picture updated successfully')),
+                        );
+                      }
+                    } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Profile picture updated successfully')),
+                        SnackBar(content: Text('Error updating profile picture: $e')),
                       );
+                    } finally {
+                      setState(() {
+                        _isLoading = false;
+                      });
                     }
                   },
-                  child: CircleAvatar(
-                    radius: 50.0,
-                    backgroundColor: Colors.grey,
-                    backgroundImage: user != null && user.photoURL != null
-                        ? NetworkImage(user.photoURL!)
-                        : null,
-                    child: user == null || user.photoURL == null
-                        ? Icon(Icons.person, size: 50, color: Colors.white)
-                        : null,
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 50.0,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: _profileImageUrl != null
+                            ? NetworkImage(_profileImageUrl!)
+                            : (user != null && user.photoURL != null
+                            ? NetworkImage(user.photoURL!)
+                            : null),
+                        child: (_profileImageUrl == null && (user == null || user.photoURL == null))
+                            ? Icon(Icons.person, size: 50, color: Colors.white)
+                            : null,
+                      ),
+                      if (_isLoading)
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black45,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: hangryYellow,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -198,7 +297,10 @@ class ProfileScreenDriver extends StatelessWidget {
                         builder: (context) => EditProfileScreenDriver(
                             userId: user.uid, email: user.email ?? ""),
                       ),
-                    );
+                    ).then((_) {
+                      // Refresh the profile image when returning from Edit Profile
+                      _loadProfileImage();
+                    });
                   }
                 },
               ),
@@ -232,7 +334,6 @@ class ProfileScreenDriver extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildProfileItem(BuildContext context, IconData icon, String title, {VoidCallback? onTap}) {
     return ListTile(
@@ -300,7 +401,6 @@ class EditProfileScreenDriver extends StatefulWidget {
 
   @override
   _EditProfileScreenDriverState createState() => _EditProfileScreenDriverState();
-
 }
 
 class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
@@ -315,6 +415,210 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
 
   File? _driverLicenseImage;
   String? _driverLicenseUrl;
+  String? _profileImageUrl;
+  bool _isLoading = false;
+
+  final Color hangryYellow = Color(0xFFFCBF49);
+  final Color hangryBlue = Color(0xFF003049);
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileData();
+  }
+
+  Future<void> _loadProfileData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
+      DatabaseEvent event = await ref.once();
+
+      if (event.snapshot.value != null) {
+        final data = event.snapshot.value as Map<dynamic, dynamic>;
+        setState(() {
+          fullnameController.text = data['fullName'] ?? '';
+          phoneNumberController.text = data['phoneNumber'] ?? '';
+          addressController.text = data['address'] ?? '';
+          cityController.text = data['city'] ?? '';
+          zipCodeController.text = data['zipCode'] ?? '';
+          carModelController.text = data['carModel'] ?? '';
+          carColorController.text = data['carColor'] ?? '';
+          plateNumberController.text = data['plateNumber'] ?? '';
+          _driverLicenseUrl = data['driverLicenseUrl'];
+          _profileImageUrl = data['profileImageUrl'];
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading profile data: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _saveProfileData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
+      await ref.update({
+        'fullName': fullnameController.text.trim(),
+        'phoneNumber': phoneNumberController.text.trim(),
+        'address': addressController.text.trim(),
+        'city': cityController.text.trim(),
+        'zipCode': zipCodeController.text.trim(),
+        'carModel': carModelController.text.trim(),
+        'carColor': carColorController.text.trim(),
+        'plateNumber': plateNumberController.text.trim(),
+        'driverLicenseUrl': _driverLicenseUrl,
+        'profileImageUrl': _profileImageUrl,
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile updated successfully')),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating profile: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _pickImage() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final ImagePicker _picker = ImagePicker();
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+      if (image != null) {
+        setState(() {
+          _driverLicenseImage = File(image.path);
+        });
+        await _uploadDriverLicense(_driverLicenseImage!);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking image: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _uploadDriverLicense(File image) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Sanitize email for storage path
+      final sanitizedEmail = widget.email.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
+
+      // Use a consistent storage path
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('driver_license/$sanitizedEmail.jpg');
+
+      // Upload the image
+      final uploadTask = await storageRef.putFile(image);
+      final downloadURL = await uploadTask.ref.getDownloadURL();
+
+      // Update profile with the license URL
+      DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
+      await ref.update({
+        'driverLicenseUrl': downloadURL,
+        'status': 'pending',
+      });
+
+      setState(() {
+        _driverLicenseUrl = downloadURL;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Driver license uploaded successfully! Awaiting admin approval.')),
+      );
+    } catch (e) {
+      print("Error uploading image: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error uploading driver license: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _pickProfileImage() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final ImagePicker _picker = ImagePicker();
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+      if (image != null) {
+        // Sanitize email for storage path
+        final sanitizedEmail = widget.email.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
+
+        // Use a consistent storage path
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('driver_profileImage/$sanitizedEmail.jpg');
+
+        // Upload the image
+        final uploadTask = await storageRef.putFile(File(image.path));
+        final downloadURL = await uploadTask.ref.getDownloadURL();
+
+        // Update Firebase Auth profile
+        User? user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          await user.updatePhotoURL(downloadURL);
+        }
+
+        // Update profile with the profile image URL
+        DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
+        await ref.update({
+          'profileImageUrl': downloadURL,
+        });
+
+        setState(() {
+          _profileImageUrl = downloadURL;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile picture updated successfully!')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating profile picture: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -324,7 +628,9 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
         backgroundColor: hangryYellow,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -342,6 +648,45 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
                 ),
               ),
               const SizedBox(height: 20),
+
+              // Profile Image
+              Center(
+                child: GestureDetector(
+                  onTap: _pickProfileImage,
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 50.0,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: _profileImageUrl != null
+                            ? NetworkImage(_profileImageUrl!)
+                            : null,
+                        child: _profileImageUrl == null
+                            ? Icon(Icons.person, size: 50, color: Colors.white)
+                            : null,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: hangryYellow,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
               _buildStyledTextField(fullnameController, 'Full Name'),
               _buildStyledTextField(phoneNumberController, 'Phone Number'),
               _buildStyledTextField(addressController, 'Address'),
@@ -427,6 +772,37 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
                         }
                       },
                     ),
+                    if (_driverLicenseUrl != null)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: double.infinity,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Image.network(
+                            _driverLicenseUrl!,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return Center(
+                                child: Icon(Icons.error, color: Colors.red),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
                     ElevatedButton(
                       onPressed: _pickImage,
                       style: ElevatedButton.styleFrom(
@@ -457,101 +833,6 @@ class _EditProfileScreenDriverState extends State<EditProfileScreenDriver> {
       ),
     );
   }
-
-  @override
-  void initState() {
-    super.initState();
-
-    _loadProfileData();
-    // _checkDriverLicenseStatus();
-  }
-
-  Future<void> _loadProfileData() async {
-    DatabaseReference ref = FirebaseDatabase.instance.ref(
-        "users/${widget.userId}/profile");
-    DatabaseEvent event = await ref.once();
-
-    if (event.snapshot.value != null) {
-      final data = event.snapshot.value as Map<dynamic, dynamic>;
-      setState(() {
-        fullnameController.text = data['fullName'] ?? '';
-        phoneNumberController.text = data['phoneNumber'] ?? '';
-        addressController.text = data['address'] ?? '';
-        cityController.text = data['city'] ?? '';
-        zipCodeController.text = data['zipCode'] ?? '';
-        carModelController.text = data['carModel'] ?? '';
-        carColorController.text = data['carColor'] ?? '';
-        plateNumberController.text = data['plateNumber'] ?? '';
-        _driverLicenseUrl = data['driverLicenseUrl'];
-      });
-    }
-  }
-
-  Future<void> _saveProfileData() async {
-    DatabaseReference ref = FirebaseDatabase.instance.ref(
-        "users/${widget.userId}/profile");
-    await ref.update({
-      'fullName': fullnameController.text.trim(),
-      'phoneNumber': phoneNumberController.text.trim(),
-      'address': addressController.text.trim(),
-      'city': cityController.text.trim(),
-      'zipCode': zipCodeController.text.trim(),
-      'carModel': carModelController.text.trim(),
-      'carColor': carColorController.text.trim(),
-      'plateNumber': plateNumberController.text.trim(),
-      'driverLicenseUrl': _driverLicenseUrl,
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Profile updated successfully')),
-    );
-    Navigator.pop(context);
-  }
-
-  Future<void> _pickImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      _driverLicenseImage = File(image.path);
-      _uploadDriverLicense(_driverLicenseImage!);
-    }
-  }
-
-  Future<void> _uploadDriverLicense(File image) async {
-    try {
-
-      final sanitizedEmail = widget.email.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
-
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('driver_license/$sanitizedEmail');
-
-      final uploadTask = await storageRef.putFile(image);
-      final downloadURL = await uploadTask.ref.getDownloadURL();
-
-
-      DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
-      await ref.update({
-        'driverlicenseUrl': downloadURL,
-        'status': 'pending',
-      });
-
-      setState(() {
-        _driverLicenseUrl = downloadURL;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Photo uploaded successfully! Awaiting admin approval.')),
-      );
-    } catch (e) {
-      print("Error uploading image:");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error uploading photo: $e')),
-      );
-    }
-  }
-
 
   Widget _buildStyledTextField(TextEditingController controller, String label) {
     return Padding(

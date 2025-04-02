@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="ANALYZE_INJECTED_CODE" value="false" />
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="">
+
+    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="Added order_confirmation_screen.dart">
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config_subset" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config_subset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/66725k2m/arm64-v8a/configure_fingerprint.bin" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/66725k2m/arm64-v8a/configure_fingerprint.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/66725k2m/armeabi-v7a/configure_fingerprint.bin" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/66725k2m/armeabi-v7a/configure_fingerprint.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/66725k2m/x86/configure_fingerprint.bin" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/66725k2m/x86/configure_fingerprint.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/66725k2m/x86_64/configure_fingerprint.bin" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/66725k2m/x86_64/configure_fingerprint.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/signup_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/signup_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/checkout_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/checkout_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/order_confirmation_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/order_confirmation_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,6 +51,18 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;JulienVillanti&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/jessicamaximo23/HangryAppFlutter.git&quot;,
+    &quot;accountId&quot;: &quot;b8af2c0e-f326-4b56-a98c-e944bc48d058&quot;
+  }
+}</component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -57,32 +75,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Flutter.account_screen.dart.executor&quot;: &quot;Run&quot;,
-    &quot;Flutter.main.dart.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle./Users/jessicamaximo/Desktop/HangryAppFlutter/android/build.gradle.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;ScreenshotViewer.SavePath&quot;: &quot;/Users/jessicamaximo/Desktop/HangryAppFlutter&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/jessicamaximo/Desktop/HangryAppFlutter&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.22145669&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2696335&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;AndroidSdkUpdater&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Flutter.account_screen.dart.executor": "Run",
+    "Flutter.main.dart.executor": "Run",
+    "Gradle./Users/jessicamaximo/Desktop/HangryAppFlutter/android/build.gradle.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ScreenshotViewer.SavePath": "/Users/jessicamaximo/Desktop/HangryAppFlutter",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "dev-julien-local",
+    "ignore.virus.scanning.warn.message": "true",
+    "io.flutter.reload.alreadyRun": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/jessicamaximo/Desktop/HangryAppFlutter",
+    "project.structure.last.edited": "SDKs",
+    "project.structure.proportion": "0.22145669",
+    "project.structure.side.proportion": "0.2696335",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "AndroidSdkUpdater",
+    "show.migrate.to.gradle.popup": "false"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\wandr\AndroidStudioProjects\HangryAppFlutter\android\app" />
@@ -135,6 +154,374 @@
       <option name="presentableId" value="Default" />
       <updated>1739562604307</updated>
     </task>
+    <task id="LOCAL-00001" summary="Changed gradle version and java path to fit my machine, among other changes">
+      <option name="closed" value="true" />
+      <created>1742478498425</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1742478498425</updated>
+    </task>
+    <task id="LOCAL-00002" summary="version change">
+      <option name="closed" value="true" />
+      <created>1742478519939</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1742478519939</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Added category dropdown and availability dropdown options and their respective logic, saving it to firebase, changed some UI stuff, added containers, text">
+      <option name="closed" value="true" />
+      <created>1742479988567</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1742479988567</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Changed profileImageUrl storage path to fit with the rest of the app languages(IOS and Android), added cuisine types">
+      <option name="closed" value="true" />
+      <created>1742480068107</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1742480068107</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Added logic, UI and elements to make the CRUD apply to the list of items">
+      <option name="closed" value="true" />
+      <created>1742480131091</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1742480131091</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Modified admin restaurant part 1">
+      <option name="closed" value="true" />
+      <created>1742490364568</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1742490364568</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Changed toggle status for restaurant">
+      <option name="closed" value="true" />
+      <created>1742495556654</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1742495556654</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Created admin_user_screen.dart">
+      <option name="closed" value="true" />
+      <created>1742495579918</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1742495579918</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Created admin_driver_screen.dart plus logic">
+      <option name="closed" value="true" />
+      <created>1742497192081</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1742497192081</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Updated route to the user screen for admin">
+      <option name="closed" value="true" />
+      <created>1742501846712</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1742501846712</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Removed main as it was causing issues to log in">
+      <option name="closed" value="true" />
+      <created>1742521752880</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1742521752880</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Removed main as it was causing issues to log in">
+      <option name="closed" value="true" />
+      <created>1742521768622</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1742521768622</updated>
+    </task>
+    <task id="LOCAL-00013" summary="trying to add Rammetto font for UI purposes(does not work for now)">
+      <option name="closed" value="true" />
+      <created>1742521805749</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1742521805749</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Tried to import Google fonts to try having Rammetto">
+      <option name="closed" value="true" />
+      <created>1742521924883</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1742521924883</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Created admin User screen and implemented logic to display and modify users">
+      <option name="closed" value="true" />
+      <created>1742522194719</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1742522194720</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Modified logic as accessing the app was not possible anymore(added some debugging print to help identify the errors)">
+      <option name="closed" value="true" />
+      <created>1742522475832</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1742522475832</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Modified splash screen to include authManager, to fix accessing the app.&#10;Added some space as well">
+      <option name="closed" value="true" />
+      <created>1742522692961</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1742522692961</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Removed font as it was causing errors">
+      <option name="closed" value="true" />
+      <created>1742573706391</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1742573706391</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Removed font as it was causing errors">
+      <option name="closed" value="true" />
+      <created>1742573717887</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1742573717887</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Added edit to the admin restaurant listing">
+      <option name="closed" value="true" />
+      <created>1742573760016</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1742573760016</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Created restaurant listing component, starting with the logic">
+      <option name="closed" value="true" />
+      <created>1742574160690</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1742574160690</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Imported new restaurant_listing_screen.dart for routing">
+      <option name="closed" value="true" />
+      <created>1742576585501</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1742576585501</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Restaurant listing done, based on the Firebase infos">
+      <option name="closed" value="true" />
+      <created>1742577313364</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1742577313364</updated>
+    </task>
+    <task id="LOCAL-00024" summary="version change">
+      <option name="closed" value="true" />
+      <created>1743004188667</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1743004188667</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Changed profileImage firebase location , changed driver's license logic, cleaned up UI a little">
+      <option name="closed" value="true" />
+      <created>1743004403204</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1743004403204</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Nothing much(2 more empty lines)">
+      <option name="closed" value="true" />
+      <created>1743004435080</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1743004435080</updated>
+    </task>
+    <task id="LOCAL-00027" summary="version">
+      <option name="closed" value="true" />
+      <created>1743037113214</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1743037113214</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Added filters for type of dish and type of cuisine for the user. Added a search bar, to be completed wit Google Maps later on">
+      <option name="closed" value="true" />
+      <created>1743037233067</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1743037233067</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Created menu screen">
+      <option name="closed" value="true" />
+      <created>1743037533884</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1743037533884</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Added import to menu screen">
+      <option name="closed" value="true" />
+      <created>1743039071417</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1743039071418</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Created menu screen to check items and add those to cart">
+      <option name="closed" value="true" />
+      <created>1743106554972</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1743106554972</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Created cart screen">
+      <option name="closed" value="true" />
+      <created>1743106709794</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1743106709794</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Started adding the cart logic into the restaurant_menu_screen">
+      <option name="closed" value="true" />
+      <created>1743108047136</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1743108047136</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Modified UI, added some methods for the prices in cart, added cartItem class">
+      <option name="closed" value="true" />
+      <created>1743169358524</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1743169358524</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Created new checkout screen">
+      <option name="closed" value="true" />
+      <created>1743169756162</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1743169756162</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Added UI and methods to calculate cart's total, clear cart and add items">
+      <option name="closed" value="true" />
+      <created>1743169912145</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1743169912145</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Formatted file">
+      <option name="closed" value="true" />
+      <created>1743170205340</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1743170205340</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Added stateful widget and checkout screen const to start">
+      <option name="closed" value="true" />
+      <created>1743170253591</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1743170253591</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Added dependencies for checkout animation and API calls, added Stripe">
+      <option name="closed" value="true" />
+      <created>1743170288126</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1743170288126</updated>
+    </task>
+    <task id="LOCAL-00040" summary="version">
+      <option name="closed" value="true" />
+      <created>1743170308640</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1743170308640</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Added order_confirmation_screen.dart">
+      <option name="closed" value="true" />
+      <created>1743170623596</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1743170623596</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Created admin User screen and implemented logic to display and modify users" />
+    <MESSAGE value="Modified logic as accessing the app was not possible anymore(added some debugging print to help identify the errors)" />
+    <MESSAGE value="Modified splash screen to include authManager, to fix accessing the app.&#10;Added some space as well" />
+    <MESSAGE value="Removed font as it was causing errors" />
+    <MESSAGE value="Added edit to the admin restaurant listing" />
+    <MESSAGE value="Created restaurant listing component, starting with the logic" />
+    <MESSAGE value="Imported new restaurant_listing_screen.dart for routing" />
+    <MESSAGE value="Restaurant listing done, based on the Firebase infos" />
+    <MESSAGE value="version change" />
+    <MESSAGE value="Changed profileImage firebase location , changed driver's license logic, cleaned up UI a little" />
+    <MESSAGE value="Nothing much(2 more empty lines)" />
+    <MESSAGE value="Added filters for type of dish and type of cuisine for the user. Added a search bar, to be completed wit Google Maps later on" />
+    <MESSAGE value="Created menu screen" />
+    <MESSAGE value="Added import to menu screen" />
+    <MESSAGE value="Created menu screen to check items and add those to cart" />
+    <MESSAGE value="Created cart screen" />
+    <MESSAGE value="Started adding the cart logic into the restaurant_menu_screen" />
+    <MESSAGE value="Modified UI, added some methods for the prices in cart, added cartItem class" />
+    <MESSAGE value="Created new checkout screen" />
+    <MESSAGE value="Added UI and methods to calculate cart's total, clear cart and add items" />
+    <MESSAGE value="Formatted file" />
+    <MESSAGE value="Added stateful widget and checkout screen const to start" />
+    <MESSAGE value="Added dependencies for checkout animation and API calls, added Stripe" />
+    <MESSAGE value="version" />
+    <MESSAGE value="Added order_confirmation_screen.dart" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added order_confirmation_screen.dart" />
   </component>
 </project>

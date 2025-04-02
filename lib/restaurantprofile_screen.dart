@@ -99,17 +99,24 @@ class _ProfileScreenRestaurantState extends State<ProfileScreenRestaurant> {
       final downloadUrl = await snapshot.ref.getDownloadURL();
 
       // Update the image URL in the Realtime Database
-      DatabaseReference userRef = FirebaseDatabase.instance.ref("users/${user.uid}/profile");
+      DatabaseReference userRef = FirebaseDatabase.instance.ref("users/${user.uid}");
       await userRef.update({
+        "profileImageUrl": downloadUrl,
+      });
+
+      // For the photo url inside the profile node
+      DatabaseReference profileRef = FirebaseDatabase.instance.ref("users/${user.uid}/profile");
+      await profileRef.update({
         "photoUrl": downloadUrl,
       });
 
-      // Show a success message
+
+      // success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Profile picture updated successfully')),
       );
     } catch (e) {
-      // Show an error message
+      //  error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error uploading profile picture: $e')),
       );
@@ -128,9 +135,22 @@ class _ProfileScreenRestaurantState extends State<ProfileScreenRestaurant> {
 
   Future<String?> getProfileImageUrl(String userId) async {
     try {
-      DatabaseReference ref = FirebaseDatabase.instance.ref("users/$userId/profile/photoUrl");
-      DatabaseEvent event = await ref.once();
-      return event.snapshot.value as String?;
+      DatabaseReference ref = FirebaseDatabase.instance.ref("users/$userId/profileImageUrl");
+      DatabaseEvent rootEvent = await ref.once();
+
+      if(rootEvent.snapshot.exists) {
+        return rootEvent.snapshot.value as String?;
+      }
+
+      // Fallback option
+      DatabaseReference profileRef = FirebaseDatabase.instance.ref("users/$userId/profile/photoUrl");
+      DatabaseEvent profileEvent = await profileRef.once();
+
+      if (profileEvent.snapshot.exists) {
+        return profileEvent.snapshot.value as String?;
+      }
+
+      return null;
     } catch (e) {
       print("Error fetching profile image URL: $e");
       return null;
@@ -325,6 +345,7 @@ class _EditProfileScreenRestaurantState extends State<EditProfileScreenRestauran
     'Italian',
     'Japanese',
     'Mexican',
+    'Colombian'
   ];
 
   String? selectedCuisine;
