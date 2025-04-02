@@ -7,8 +7,15 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="Added UI and methods to calculate cart's total, clear cart and add items">
+    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="Added order_confirmation_screen.dart">
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config_subset" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config_subset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/checkout_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/checkout_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/order_confirmation_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/order_confirmation_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -434,7 +441,47 @@
       <option name="project" value="LOCAL" />
       <updated>1743169912145</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="Formatted file">
+      <option name="closed" value="true" />
+      <created>1743170205340</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1743170205340</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Added stateful widget and checkout screen const to start">
+      <option name="closed" value="true" />
+      <created>1743170253591</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1743170253591</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Added dependencies for checkout animation and API calls, added Stripe">
+      <option name="closed" value="true" />
+      <created>1743170288126</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1743170288126</updated>
+    </task>
+    <task id="LOCAL-00040" summary="version">
+      <option name="closed" value="true" />
+      <created>1743170308640</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1743170308640</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Added order_confirmation_screen.dart">
+      <option name="closed" value="true" />
+      <created>1743170623596</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1743170623596</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -449,10 +496,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Updated route to the user screen for admin" />
-    <MESSAGE value="Removed main as it was causing issues to log in" />
-    <MESSAGE value="trying to add Rammetto font for UI purposes(does not work for now)" />
-    <MESSAGE value="Tried to import Google fonts to try having Rammetto" />
     <MESSAGE value="Created admin User screen and implemented logic to display and modify users" />
     <MESSAGE value="Modified logic as accessing the app was not possible anymore(added some debugging print to help identify the errors)" />
     <MESSAGE value="Modified splash screen to include authManager, to fix accessing the app.&#10;Added some space as well" />
@@ -464,7 +507,6 @@
     <MESSAGE value="version change" />
     <MESSAGE value="Changed profileImage firebase location , changed driver's license logic, cleaned up UI a little" />
     <MESSAGE value="Nothing much(2 more empty lines)" />
-    <MESSAGE value="version" />
     <MESSAGE value="Added filters for type of dish and type of cuisine for the user. Added a search bar, to be completed wit Google Maps later on" />
     <MESSAGE value="Created menu screen" />
     <MESSAGE value="Added import to menu screen" />
@@ -474,6 +516,11 @@
     <MESSAGE value="Modified UI, added some methods for the prices in cart, added cartItem class" />
     <MESSAGE value="Created new checkout screen" />
     <MESSAGE value="Added UI and methods to calculate cart's total, clear cart and add items" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added UI and methods to calculate cart's total, clear cart and add items" />
+    <MESSAGE value="Formatted file" />
+    <MESSAGE value="Added stateful widget and checkout screen const to start" />
+    <MESSAGE value="Added dependencies for checkout animation and API calls, added Stripe" />
+    <MESSAGE value="version" />
+    <MESSAGE value="Added order_confirmation_screen.dart" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added order_confirmation_screen.dart" />
   </component>
 </project>

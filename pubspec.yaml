@@ -43,9 +43,9 @@ dependencies:
   intl: ^0.18.1
   confetti: ^0.7.0
 
-  # Stripe
-  flutter_stripe: ^9.4.0
-  http: ^1.1.0
+#  # Stripe
+#  flutter_stripe: ^9.4.0
+#  http: ^1.1.0
 
 
   # The following adds the Cupertino Icons font to your application.
