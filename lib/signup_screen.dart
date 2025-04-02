@@ -76,7 +76,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         await _databaseRef
             .child("users")
             .child(userId)
-            .set(userData); 
+            .set(userData);
 
         _showToast("Sign up successful!");
         Navigator.pushReplacement(
