@@ -279,27 +279,27 @@ Future<void> _loadProfileImage() async {
                 },
               ),
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildTopButton(
-                    icon: Icons.wallet,
-                    label: 'Wallet',
-                    onPressed: () {
-                      print('Wallet button pressed');
-                    },
-                    color: hangryYellow,
-                  ),
-                  _buildTopButton(
-                    icon: Icons.favorite,
-                    label: 'Favorites',
-                    onPressed: () {
-                      print('Favorites button pressed');
-                    },
-                    color: hangryYellow,
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //   children: [
+              //     _buildTopButton(
+              //       icon: Icons.wallet,
+              //       label: 'Wallet',
+              //       onPressed: () {
+              //         print('Wallet button pressed');
+              //       },
+              //       color: hangryYellow,
+              //     ),
+              //     _buildTopButton(
+              //       icon: Icons.favorite,
+              //       label: 'Favorites',
+              //       onPressed: () {
+              //         print('Favorites button pressed');
+              //       },
+              //       color: hangryYellow,
+              //     ),
+              //   ],
+              // ),
               _buildProfileItem(
                 context,
                 Icons.person,
