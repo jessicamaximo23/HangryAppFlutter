@@ -30,7 +30,7 @@ class _CartScreenState extends State<CartScreen> {
   double _taxAmount = 0.0;
   double _deliveryFee = 3.99;
   double _total = 0.0;
-  final double _taxRate = 0.08; // 8% tax rate
+  final double _taxRate = 0.15; // 15% tax rate
 
   @override
   void initState() {
@@ -184,7 +184,7 @@ class _CartScreenState extends State<CartScreen> {
           ),
           SizedBox(height: 8),
           Text(
-            'Add some delicious items to your cart',
+            'Add some items to your cart',
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[500],
@@ -397,7 +397,7 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      '\${item.price.toStringAsFixed(2)}',
+                      '\$${item.price.toStringAsFixed(2)}',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[700],
@@ -405,7 +405,7 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'Subtotal: \${(item.price * item.quantity).toStringAsFixed(2)}',
+                      'Subtotal: \$${(item.price * item.quantity).toStringAsFixed(2)}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -498,14 +498,14 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ),
           SizedBox(height: 12),
-          _buildSummaryRow('Subtotal', '\${_subtotal.toStringAsFixed(2)}'),
-          _buildSummaryRow('Tax (8%)', '\${_taxAmount.toStringAsFixed(2)}'),
+          _buildSummaryRow('Subtotal', '\$${_subtotal.toStringAsFixed(2)}'),
+          _buildSummaryRow('Tax (15%)', '\$${_taxAmount.toStringAsFixed(2)}'),
           _buildSummaryRow(
-              'Delivery Fee', '\${_deliveryFee.toStringAsFixed(2)}'),
+              'Delivery Fee', '\$${_deliveryFee.toStringAsFixed(2)}'),
           Divider(height: 24),
           _buildSummaryRow(
             'Total',
-            '\${_total.toStringAsFixed(2)}',
+            '\$${_total.toStringAsFixed(2)}',
             isTotal: true,
           ),
           SizedBox(height: 16),
