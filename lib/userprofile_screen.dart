@@ -80,7 +80,7 @@ Future<void> _loadProfileImage() async {
       String phonenumber,
       String address,
       String city,
-      String zipCode) async {
+      String postalCode) async {
     try {
       DatabaseReference userRef = FirebaseDatabase.instance.ref("users/$userId/profile");
       await userRef.update({
@@ -88,7 +88,7 @@ Future<void> _loadProfileImage() async {
         "phoneNumber": phonenumber,
         "address": address,
         "city": city,
-        "zipCode": zipCode,
+        "zipCode": postalCode,
       });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Profile updated successfully')),
@@ -435,7 +435,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final phoneNumberController = TextEditingController();
   final addressController = TextEditingController();
   final cityController = TextEditingController();
-  final zipCodeController = TextEditingController();
+  final postalCodeController = TextEditingController();
 
   String? _profileImageUrl;
   bool _isLoading = false;
@@ -465,7 +465,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           phoneNumberController.text = data['phoneNumber'] ?? '';
           addressController.text = data['address'] ?? '';
           cityController.text = data['city'] ?? '';
-          zipCodeController.text = data['zipCode'] ?? '';
+          postalCodeController.text = data['zipCode'] ?? '';
           _profileImageUrl = data['profileImageUrl'];
         });
       }
@@ -492,7 +492,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         'phoneNumber': phoneNumberController.text.trim(),
         'address': addressController.text.trim(),
         'city': cityController.text.trim(),
-        'zipCode': zipCodeController.text.trim(),
+        'zipCode': postalCodeController.text.trim(),
         'profileImageUrl': _profileImageUrl,
       });
 
@@ -645,7 +645,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               _buildStyledTextField(phoneNumberController, 'Phone Number'),
               _buildStyledTextField(addressController, 'Address'),
               _buildStyledTextField(cityController, 'City'),
-              _buildStyledTextField(zipCodeController, 'Zip Code'),
+              _buildStyledTextField(postalCodeController, 'Zip Code'),
 
               const SizedBox(height: 20),
 
