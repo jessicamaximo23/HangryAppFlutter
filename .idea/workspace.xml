@@ -7,7 +7,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="version and components modification" />
+    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="Added Stripe initialisation">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -143,54 +145,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1739562604307</updated>
-    </task>
-    <task id="LOCAL-00002" summary="version change">
-      <option name="closed" value="true" />
-      <created>1742478519939</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1742478519939</updated>
-    </task>
-    <task id="LOCAL-00003" summary="Added category dropdown and availability dropdown options and their respective logic, saving it to firebase, changed some UI stuff, added containers, text">
-      <option name="closed" value="true" />
-      <created>1742479988567</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1742479988567</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Changed profileImageUrl storage path to fit with the rest of the app languages(IOS and Android), added cuisine types">
-      <option name="closed" value="true" />
-      <created>1742480068107</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1742480068107</updated>
-    </task>
-    <task id="LOCAL-00005" summary="Added logic, UI and elements to make the CRUD apply to the list of items">
-      <option name="closed" value="true" />
-      <created>1742480131091</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1742480131091</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Modified admin restaurant part 1">
-      <option name="closed" value="true" />
-      <created>1742490364568</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1742490364568</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Changed toggle status for restaurant">
-      <option name="closed" value="true" />
-      <created>1742495556654</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1742495556654</updated>
     </task>
     <task id="LOCAL-00008" summary="Created admin_user_screen.dart">
       <option name="closed" value="true" />
@@ -536,7 +490,55 @@
       <option name="project" value="LOCAL" />
       <updated>1743628611116</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="removed wallet and favorites button for more clarity">
+      <option name="closed" value="true" />
+      <created>1743628941348</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1743628941348</updated>
+    </task>
+    <task id="LOCAL-00052" summary="Added and modified Stripe and stripe setting to work with Flutter(had to modify flutter fragment in Kotlin, modified pubspec, main.activity.kt, etc)">
+      <option name="closed" value="true" />
+      <created>1743645056259</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1743645056259</updated>
+    </task>
+    <task id="LOCAL-00053" summary="Added Stripe for payment, changed default payment method to credit card and added payment processing method">
+      <option name="closed" value="true" />
+      <created>1743645140882</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1743645140882</updated>
+    </task>
+    <task id="LOCAL-00054" summary="formatted file">
+      <option name="closed" value="true" />
+      <created>1743645156891</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1743645156892</updated>
+    </task>
+    <task id="LOCAL-00055" summary="Created Stripe component and logic for payment processing">
+      <option name="closed" value="true" />
+      <created>1743645194960</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1743645194960</updated>
+    </task>
+    <task id="LOCAL-00056" summary="Added Stripe initialisation">
+      <option name="closed" value="true" />
+      <created>1743645215264</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1743645215264</updated>
+    </task>
+    <option name="localTasksCounter" value="57" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -551,12 +553,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Changed profileImage firebase location , changed driver's license logic, cleaned up UI a little" />
-    <MESSAGE value="Nothing much(2 more empty lines)" />
-    <MESSAGE value="Added filters for type of dish and type of cuisine for the user. Added a search bar, to be completed wit Google Maps later on" />
-    <MESSAGE value="Created menu screen" />
-    <MESSAGE value="Added import to menu screen" />
-    <MESSAGE value="Created menu screen to check items and add those to cart" />
     <MESSAGE value="Created cart screen" />
     <MESSAGE value="Started adding the cart logic into the restaurant_menu_screen" />
     <MESSAGE value="Modified UI, added some methods for the prices in cart, added cartItem class" />
@@ -576,6 +572,12 @@
     <MESSAGE value="modified zipcode for postal code" />
     <MESSAGE value="added comments and ability to use a different address for delivery. Comments are available per items and per order(for delivery specific info)" />
     <MESSAGE value="version and components modification" />
-    <option name="LAST_COMMIT_MESSAGE" value="version and components modification" />
+    <MESSAGE value="removed wallet and favorites button for more clarity" />
+    <MESSAGE value="Added and modified Stripe and stripe setting to work with Flutter(had to modify flutter fragment in Kotlin, modified pubspec, main.activity.kt, etc)" />
+    <MESSAGE value="Added Stripe for payment, changed default payment method to credit card and added payment processing method" />
+    <MESSAGE value="formatted file" />
+    <MESSAGE value="Created Stripe component and logic for payment processing" />
+    <MESSAGE value="Added Stripe initialisation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Stripe initialisation" />
   </component>
 </project>
