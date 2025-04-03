@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 class StripePaymentService {
   // Your Stripe API keys
   static const String _publishableKey = "pk_test_51R6vLbFNw9lp138rinCEx1OsqiOLmXUiMmhMrC25g1cpa1jPFEoG6rWadbyCrTW409h4H6Gt0S038B25bunhtDdk00kXLNh9zk";
-  static const String _secretKey = "";
+  static const String _secretKey = "sk_test_51R6vLbFNw9lp138rL8MYJLz7DcnWZFL6TrWPAFO6uOxSLTBnWtF2y4P3YeGGh2xuEe5PfCtlCdDy94SE8SXqVmbp00i6RabSAU";
 
   // API URLs
   static const String _customersUrl = "https://api.stripe.com/v1/customers";
