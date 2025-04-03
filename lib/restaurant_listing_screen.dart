@@ -71,7 +71,7 @@ class _RestaurantsScreenState extends State<RestaurantsListingScreen> {
 
       if (event.snapshot.value != null) {
         Map<dynamic, dynamic> usersMap =
-            event.snapshot.value as Map<dynamic, dynamic>;
+        event.snapshot.value as Map<dynamic, dynamic>;
 
         List<Map<String, dynamic>> fetchedRestaurants = [];
         Set<String> cuisines = {'All Cuisines'};
@@ -88,7 +88,7 @@ class _RestaurantsScreenState extends State<RestaurantsListingScreen> {
               }
               if (value['profile']['openDays'] != null) {
                 openDays = value['profile']
-                    ['openDays']; // Fixed: assign to openDays, not openingHours
+                ['openDays']; // Fixed: assign to openDays, not openingHours
               }
               if (value['profile']['typeofcuisine'] != null) {
                 cuisine = value['profile']['typeofcuisine'];
@@ -100,7 +100,7 @@ class _RestaurantsScreenState extends State<RestaurantsListingScreen> {
             if (value['menu'] != null) {
               try {
                 Map<dynamic, dynamic> menu =
-                    value['menu'] as Map<dynamic, dynamic>;
+                value['menu'] as Map<dynamic, dynamic>;
                 menu.forEach((menuKey, menuItem) {
                   if (menuItem is Map && menuItem.containsKey('category')) {
                     String category = menuItem['category'] as String;
@@ -122,7 +122,7 @@ class _RestaurantsScreenState extends State<RestaurantsListingScreen> {
               'openDays': openDays,
               'description': value['profile'] != null
                   ? value['profile']['description'] ??
-                      'No description available'
+                  'No description available'
                   : 'No description available',
               'cuisine': value['profile'] != null
                   ? value['profile']['typeofcuisine'] ?? 'Not specified'
@@ -259,11 +259,11 @@ class _RestaurantsScreenState extends State<RestaurantsListingScreen> {
                 prefixIcon: Icon(Icons.search, color: hangryBlue),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
-                        icon: Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                        },
-                      )
+                  icon: Icon(Icons.clear),
+                  onPressed: () {
+                    _searchController.clear();
+                  },
+                )
                     : null,
                 filled: true,
                 fillColor: Colors.grey[200],
@@ -296,55 +296,55 @@ class _RestaurantsScreenState extends State<RestaurantsListingScreen> {
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: _activeFilterTab == 'Cuisine'
                   ? Row(
-                      children: availableCuisines.map((cuisine) {
-                        final isSelected = _selectedCuisineFilter == cuisine;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: FilterChip(
-                            label: Text(cuisine),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              _updateCuisineFilter(cuisine);
-                            },
-                            selectedColor: hangryYellow,
-                            checkmarkColor: hangryBlue,
-                            backgroundColor: Colors.grey[200],
-                            shape: StadiumBorder(
-                              side: BorderSide(
-                                color: isSelected
-                                    ? hangryYellow
-                                    : Colors.transparent,
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    )
-                  : Row(
-                      children: availableDishTypes.map((dishType) {
-                        final isSelected = _selectedDishTypeFilter == dishType;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: FilterChip(
-                            label: Text(dishType),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              _updateDishTypeFilter(dishType);
-                            },
-                            selectedColor: hangryYellow,
-                            checkmarkColor: hangryBlue,
-                            backgroundColor: Colors.grey[200],
-                            shape: StadiumBorder(
-                              side: BorderSide(
-                                color: isSelected
-                                    ? hangryYellow
-                                    : Colors.transparent,
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
+                children: availableCuisines.map((cuisine) {
+                  final isSelected = _selectedCuisineFilter == cuisine;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: FilterChip(
+                      label: Text(cuisine),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        _updateCuisineFilter(cuisine);
+                      },
+                      selectedColor: hangryYellow,
+                      checkmarkColor: hangryBlue,
+                      backgroundColor: Colors.grey[200],
+                      shape: StadiumBorder(
+                        side: BorderSide(
+                          color: isSelected
+                              ? hangryYellow
+                              : Colors.transparent,
+                        ),
+                      ),
                     ),
+                  );
+                }).toList(),
+              )
+                  : Row(
+                children: availableDishTypes.map((dishType) {
+                  final isSelected = _selectedDishTypeFilter == dishType;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: FilterChip(
+                      label: Text(dishType),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        _updateDishTypeFilter(dishType);
+                      },
+                      selectedColor: hangryYellow,
+                      checkmarkColor: hangryBlue,
+                      backgroundColor: Colors.grey[200],
+                      shape: StadiumBorder(
+                        side: BorderSide(
+                          color: isSelected
+                              ? hangryYellow
+                              : Colors.transparent,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
           ),
 
@@ -353,7 +353,7 @@ class _RestaurantsScreenState extends State<RestaurantsListingScreen> {
               _selectedDishTypeFilter != 'All Dishes')
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -384,14 +384,14 @@ class _RestaurantsScreenState extends State<RestaurantsListingScreen> {
                           },
                           icon: Icon(Icons.clear_all, size: 16),
                           label:
-                              Text('Clear All', style: TextStyle(fontSize: 12)),
+                          Text('Clear All', style: TextStyle(fontSize: 12)),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: hangryBlue,
                             padding: EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 0),
                             minimumSize: Size(80, 30),
                             side:
-                                BorderSide(color: hangryBlue.withOpacity(0.5)),
+                            BorderSide(color: hangryBlue.withOpacity(0.5)),
                           ),
                         ),
                     ],
@@ -404,113 +404,113 @@ class _RestaurantsScreenState extends State<RestaurantsListingScreen> {
           Expanded(
             child: _isLoading
                 ? Center(
-                    child: CircularProgressIndicator(
-                      color: hangryYellow,
-                    ),
-                  )
+              child: CircularProgressIndicator(
+                color: hangryYellow,
+              ),
+            )
                 : _errorMessage.isNotEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.error_outline,
-                                size: 48, color: Colors.red),
-                            SizedBox(height: 16),
-                            Text(
-                              'Error loading restaurants',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Text(_errorMessage),
-                            SizedBox(height: 24),
-                            ElevatedButton(
-                              onPressed: fetchRestaurants,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: hangryYellow,
-                              ),
-                              child: Text('Try Again'),
-                            ),
-                          ],
+                ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline,
+                      size: 48, color: Colors.red),
+                  SizedBox(height: 16),
+                  Text(
+                    'Error loading restaurants',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(_errorMessage),
+                  SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: fetchRestaurants,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: hangryYellow,
+                    ),
+                    child: Text('Try Again'),
+                  ),
+                ],
+              ),
+            )
+                : filteredRestaurants.isEmpty
+                ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.restaurant_menu,
+                      size: 64, color: Colors.grey),
+                  SizedBox(height: 16),
+                  Text(
+                    _searchQuery.isEmpty &&
+                        _selectedCuisineFilter ==
+                            'All Cuisines' &&
+                        _selectedDishTypeFilter ==
+                            'All Dishes'
+                        ? 'No restaurants available'
+                        : 'No restaurants match your filters',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    _searchQuery.isEmpty &&
+                        _selectedCuisineFilter ==
+                            'All Cuisines' &&
+                        _selectedDishTypeFilter ==
+                            'All Dishes'
+                        ? 'Check back later!'
+                        : 'Try adjusting your filters',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  if (_searchQuery.isNotEmpty ||
+                      _selectedCuisineFilter != 'All Cuisines' ||
+                      _selectedDishTypeFilter != 'All Dishes')
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _searchController.clear();
+                            _selectedCuisineFilter =
+                            'All Cuisines';
+                            _selectedDishTypeFilter =
+                            'All Dishes';
+                            _applyFilters();
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: hangryYellow,
                         ),
-                      )
-                    : filteredRestaurants.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.restaurant_menu,
-                                    size: 64, color: Colors.grey),
-                                SizedBox(height: 16),
-                                Text(
-                                  _searchQuery.isEmpty &&
-                                          _selectedCuisineFilter ==
-                                              'All Cuisines' &&
-                                          _selectedDishTypeFilter ==
-                                              'All Dishes'
-                                      ? 'No restaurants available'
-                                      : 'No restaurants match your filters',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey[700],
-                                  ),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  _searchQuery.isEmpty &&
-                                          _selectedCuisineFilter ==
-                                              'All Cuisines' &&
-                                          _selectedDishTypeFilter ==
-                                              'All Dishes'
-                                      ? 'Check back later!'
-                                      : 'Try adjusting your filters',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                                if (_searchQuery.isNotEmpty ||
-                                    _selectedCuisineFilter != 'All Cuisines' ||
-                                    _selectedDishTypeFilter != 'All Dishes')
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 16.0),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _searchController.clear();
-                                          _selectedCuisineFilter =
-                                              'All Cuisines';
-                                          _selectedDishTypeFilter =
-                                              'All Dishes';
-                                          _applyFilters();
-                                        });
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: hangryYellow,
-                                      ),
-                                      child: Text('Clear Filters'),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          )
-                        : RefreshIndicator(
-                            onRefresh: () async {
-                              fetchRestaurants();
-                            },
-                            color: hangryYellow,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: ListView.builder(
-                                itemCount: filteredRestaurants.length,
-                                itemBuilder: (context, index) {
-                                  return _buildRestaurantCard(
-                                      filteredRestaurants[index]);
-                                },
-                              ),
-                            ),
-                          ),
+                        child: Text('Clear Filters'),
+                      ),
+                    ),
+                ],
+              ),
+            )
+                : RefreshIndicator(
+              onRefresh: () async {
+                fetchRestaurants();
+              },
+              color: hangryYellow,
+              child: Padding(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 16.0),
+                child: ListView.builder(
+                  itemCount: filteredRestaurants.length,
+                  itemBuilder: (context, index) {
+                    return _buildRestaurantCard(
+                        filteredRestaurants[index]);
+                  },
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -579,43 +579,43 @@ class _RestaurantsScreenState extends State<RestaurantsListingScreen> {
             ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
               child: restaurant['profileImageUrl'] != null &&
-                      restaurant['profileImageUrl'].isNotEmpty
+                  restaurant['profileImageUrl'].isNotEmpty
                   ? CachedNetworkImage(
-                      imageUrl: restaurant['profileImageUrl'],
-                      height: 150,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        height: 150,
-                        width: double.infinity,
-                        color: Colors.grey[300],
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: hangryYellow,
-                          ),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        height: 150,
-                        width: double.infinity,
-                        color: Colors.grey[300],
-                        child: Icon(
-                          Icons.restaurant,
-                          size: 50,
-                          color: hangryYellow,
-                        ),
-                      ),
-                    )
-                  : Container(
-                      height: 150,
-                      width: double.infinity,
-                      color: Colors.grey[300],
-                      child: Icon(
-                        Icons.restaurant,
-                        size: 50,
-                        color: hangryYellow,
-                      ),
+                imageUrl: restaurant['profileImageUrl'],
+                height: 150,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  height: 150,
+                  width: double.infinity,
+                  color: Colors.grey[300],
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: hangryYellow,
                     ),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  height: 150,
+                  width: double.infinity,
+                  color: Colors.grey[300],
+                  child: Icon(
+                    Icons.restaurant,
+                    size: 50,
+                    color: hangryYellow,
+                  ),
+                ),
+              )
+                  : Container(
+                height: 150,
+                width: double.infinity,
+                color: Colors.grey[300],
+                child: Icon(
+                  Icons.restaurant,
+                  size: 50,
+                  color: hangryYellow,
+                ),
+              ),
             ),
 
             // Restaurant details
@@ -643,7 +643,7 @@ class _RestaurantsScreenState extends State<RestaurantsListingScreen> {
                       ),
                       Container(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: hangryYellow.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(12),
@@ -767,7 +767,7 @@ class _RestaurantsScreenState extends State<RestaurantsListingScreen> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         padding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       ),
                       child: Text('View Menu'),
                     ),
