@@ -13,6 +13,7 @@ class _Restaurant_ListOfItemsState extends State<Restaurant_ListOfItems> {
   late DatabaseReference _databaseRef;
   String _selectedCategory = 'All';
 
+
   @override
   void initState() {
     super.initState();
@@ -30,7 +31,6 @@ class _Restaurant_ListOfItemsState extends State<Restaurant_ListOfItems> {
         .child('menu');
   }
 
-  // ========================
   bool _isMenuItem(String key, dynamic value) {
     return key.startsWith('item') &&
         value is Map &&
@@ -80,7 +80,7 @@ class _Restaurant_ListOfItemsState extends State<Restaurant_ListOfItems> {
 
                 if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
                   Map<dynamic, dynamic> userData =
-                      snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
+                  snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
                   List<Map<String, dynamic>> menuItems = [];
 
                   // Extract menu items from user data
@@ -98,22 +98,44 @@ class _Restaurant_ListOfItemsState extends State<Restaurant_ListOfItems> {
                     }
                   });
 
+                  // Apply filters: category and availability
+                  var filteredItems = menuItems;
+
                   // Filter by category if not 'All'
                   if (_selectedCategory != 'All') {
-                    menuItems = menuItems
+                    filteredItems = filteredItems
                         .where((item) => item['category'] == _selectedCategory)
                         .toList();
                   }
 
-                  if (menuItems.isEmpty) {
-                    return Center(child: Text('No items in this category.'));
+
+                  if (filteredItems.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.restaurant_menu, size: 64, color: Colors.grey),
+                          SizedBox(height: 16),
+                          Text(
+                            _selectedCategory == 'All'
+                                ? 'No items available'
+                                : 'No ${_selectedCategory} items available',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   }
 
                   return ListView.builder(
                     padding: EdgeInsets.all(16),
-                    itemCount: menuItems.length,
+                    itemCount: filteredItems.length,
                     itemBuilder: (context, index) {
-                      return _buildMenuItemCard(menuItems[index]);
+                      return _buildMenuItemCard(filteredItems[index]);
                     },
                   );
                 } else {
@@ -163,6 +185,8 @@ class _Restaurant_ListOfItemsState extends State<Restaurant_ListOfItems> {
   }
 
   Widget _buildMenuItemCard(Map<String, dynamic> item) {
+    final bool isAvailable = item['availability'] == 'Yes';
+
     return Card(
       margin: EdgeInsets.only(bottom: 16),
       elevation: 2,
@@ -172,128 +196,150 @@ class _Restaurant_ListOfItemsState extends State<Restaurant_ListOfItems> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Item details section
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Item image
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: item['imageUrl'].isNotEmpty
-                      ? Image.network(
-                          item['imageUrl'],
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              width: 100,
-                              height: 100,
-                              color: Colors.grey[300],
-                              child: Icon(Icons.error,
-                                  size: 40, color: Colors.red),
-                            );
-                          },
-                        )
-                      : Container(
-                          width: 100,
-                          height: 100,
-                          color: Colors.grey[300],
-                          child: Icon(Icons.fastfood,
-                              size: 40, color: Colors.grey[600]),
-                        ),
-                ),
-                SizedBox(width: 16),
+          // Item details section with visual indication for unavailable items
+          Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Item image
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: item['imageUrl'].isNotEmpty
+                          ? Image.network(
+                        item['imageUrl'],
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 100,
+                            height: 100,
+                            color: Colors.grey[300],
+                            child: Icon(Icons.error,
+                                size: 40, color: Colors.red),
+                          );
+                        },
+                      )
+                          : Container(
+                        width: 100,
+                        height: 100,
+                        color: Colors.grey[300],
+                        child: Icon(Icons.fastfood,
+                            size: 40, color: Colors.grey[600]),
+                      ),
+                    ),
+                    SizedBox(width: 16),
 
-                // Item info
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // Item info
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: Text(
-                              item['name'],
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  item['name'],
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: !isAvailable ? Colors.grey : null,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                              SizedBox(width: 8),
+                              Text(
+                                '\$${item['price'].toString()}',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: !isAvailable ? Colors.grey : null,
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(width: 8),
+                          SizedBox(height: 8),
                           Text(
-                            '\$${item['price'].toString()}',
+                            item['description'],
                             style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: !isAvailable ? Colors.grey : Colors.grey[700],
                             ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue[100],
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  item['category'],
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.blue[900],
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: item['availability'] == 'Yes'
+                                      ? Colors.green[100]
+                                      : Colors.red[100],
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  item['availability'] == 'Yes'
+                                      ? 'Available'
+                                      : 'Not Available',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: item['availability'] == 'Yes'
+                                        ? Colors.green[900]
+                                        : Colors.red[900],
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                      SizedBox(height: 8),
-                      Text(
-                        item['description'],
-                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.blue[100],
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              item['category'],
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.blue[900],
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: item['availability'] == 'Yes'
-                                  ? Colors.green[100]
-                                  : Colors.red[100],
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              item['availability'] == 'Yes'
-                                  ? 'Available'
-                                  : 'Not Available',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: item['availability'] == 'Yes'
-                                    ? Colors.green[900]
-                                    : Colors.red[900],
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // Visual overlay for unavailable items (without blocking interaction)
+              if (!isAvailable)
+                Positioned.fill(
+                  child: Container(
+                    margin: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    // We don't put any interactive elements here, so clicks pass through
                   ),
                 ),
-              ],
-            ),
+            ],
           ),
 
-          // Action buttons
+          // Action buttons (outside the Stack to ensure they're always accessible)
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
             child: Row(
