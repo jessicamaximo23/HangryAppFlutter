@@ -7,9 +7,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="modified item availability that did not show">
+    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="added secret key for testing">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/stripe_payment_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/stripe_payment_service.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -146,14 +145,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1739562604307</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Removed main as it was causing issues to log in">
-      <option name="closed" value="true" />
-      <created>1742521752880</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1742521752880</updated>
     </task>
     <task id="LOCAL-00012" summary="Removed main as it was causing issues to log in">
       <option name="closed" value="true" />
@@ -539,7 +530,15 @@
       <option name="project" value="LOCAL" />
       <updated>1743716035896</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="added secret key for testing">
+      <option name="closed" value="true" />
+      <created>1743716329236</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1743716329236</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -554,7 +553,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Created new checkout screen" />
     <MESSAGE value="Added UI and methods to calculate cart's total, clear cart and add items" />
     <MESSAGE value="Formatted file" />
     <MESSAGE value="Added stateful widget and checkout screen const to start" />
@@ -579,6 +577,7 @@
     <MESSAGE value="changed path" />
     <MESSAGE value="changed skey" />
     <MESSAGE value="modified item availability that did not show" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified item availability that did not show" />
+    <MESSAGE value="added secret key for testing" />
+    <option name="LAST_COMMIT_MESSAGE" value="added secret key for testing" />
   </component>
 </project>

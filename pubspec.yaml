@@ -44,7 +44,9 @@ dependencies:
   confetti: ^0.7.0
   flutter_stripe: ^9.4.0
   http: ^1.1.0
-
+  google_maps_flutter: ^2.3.0
+  location: ^4.4.0
+  geocoding: ^2.1.0
 
 
 
