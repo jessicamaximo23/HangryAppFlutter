@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:hangry_app_flutter/stripe_payment_service.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
 import 'order_confirmation_screen.dart';
@@ -44,10 +45,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final _notesController = TextEditingController();
 
   // Payment method selection
-  String _selectedPaymentMethod = 'Cash on Delivery';
+  String _selectedPaymentMethod = 'Credit Card';
   final List<String> _paymentMethods = [
+    'Credit Card',
     'Cash on Delivery',
-    'Credit Card (Coming Soon)',
   ];
 
   bool _isLoading = false;
@@ -59,6 +60,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     super.initState();
     _loadUserProfile();
 
+    // Stripe initialisation
+    StripePaymentService.initialize();
+    
     // Initialize notes controller with order comments if any
     if (widget.orderComments.isNotEmpty) {
       _notesController.text = widget.orderComments;
@@ -158,6 +162,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       // Generate a unique order ID
       String orderId = _generateOrderId();
+      
+      // Payment processing following credit card selection
+      if (_selectedPaymentMethod == 'Credit Card') {
+        bool paymentSuccess = await StripePaymentService.processPayment(context, widget.total);
+        if (!paymentSuccess) {
+          _showErrorSnackBar('Failed payment. Please try again.');
+          setState(() {
+            _isLoading = false;
+          });
+          return;
+        }
+      }
 
       // Format current date
       String orderDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
@@ -188,7 +204,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'total': widget.total,
         'status': 'pending',
         'paymentMethod': _selectedPaymentMethod,
-        'paymentStatus': 'pending',
+        'paymentStatus': _selectedPaymentMethod == 'Credit Card' ? 'paid' : 'pending',
         'deliveryAddress': {
           'address': _addressController.text,
           'city': _cityController.text,
@@ -200,7 +216,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       // Save to user's orders in the database
       await FirebaseDatabase.instance
-          .ref('users/${currentUser.uid}/orders/$orderId')
+          .ref('users/${currentUser.uid}/profile/orders/$orderId')
           .set(orderData);
 
       // Also save to restaurant's orders
