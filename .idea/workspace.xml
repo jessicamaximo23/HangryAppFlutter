@@ -7,8 +7,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="added secret key for testing">
+    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="added dependencies for Google Maps">
+      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config_subset" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config_subset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,14 +151,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1739562604307</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Removed main as it was causing issues to log in">
-      <option name="closed" value="true" />
-      <created>1742521768622</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1742521768622</updated>
     </task>
     <task id="LOCAL-00013" summary="trying to add Rammetto font for UI purposes(does not work for now)">
       <option name="closed" value="true" />
@@ -538,7 +536,15 @@
       <option name="project" value="LOCAL" />
       <updated>1743716329236</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="added dependencies for Google Maps">
+      <option name="closed" value="true" />
+      <created>1743718142575</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1743718142575</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -553,7 +559,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added UI and methods to calculate cart's total, clear cart and add items" />
     <MESSAGE value="Formatted file" />
     <MESSAGE value="Added stateful widget and checkout screen const to start" />
     <MESSAGE value="Added dependencies for checkout animation and API calls, added Stripe" />
@@ -578,6 +583,7 @@
     <MESSAGE value="changed skey" />
     <MESSAGE value="modified item availability that did not show" />
     <MESSAGE value="added secret key for testing" />
-    <option name="LAST_COMMIT_MESSAGE" value="added secret key for testing" />
+    <MESSAGE value="added dependencies for Google Maps" />
+    <option name="LAST_COMMIT_MESSAGE" value="added dependencies for Google Maps" />
   </component>
 </project>
