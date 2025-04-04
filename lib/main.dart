@@ -11,8 +11,10 @@ import 'package:hangry_app_flutter/restaurant_screen.dart';
 import 'package:hangry_app_flutter/account_screen.dart';
 import 'package:provider/provider.dart';
 import 'authentication_manager.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
+  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
 
   // Stripe

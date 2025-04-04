@@ -9,15 +9,15 @@
     },
     {
       "name": "async",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/async-2.11.0",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/async-2.12.0",
       "packageUri": "lib/",
-      "languageVersion": "2.18"
+      "languageVersion": "3.4"
     },
     {
       "name": "boolean_selector",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/boolean_selector-2.1.1",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/boolean_selector-2.1.2",
       "packageUri": "lib/",
-      "languageVersion": "2.17"
+      "languageVersion": "3.1"
     },
     {
       "name": "cached_network_image",
@@ -39,15 +39,15 @@
     },
     {
       "name": "characters",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/characters-1.3.0",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/characters-1.4.0",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "3.4"
     },
     {
       "name": "clock",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/clock-1.1.1",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/clock-1.1.2",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "3.4"
     },
     {
       "name": "cloud_firestore",
@@ -69,7 +69,7 @@
     },
     {
       "name": "collection",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/collection-1.19.0",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/collection-1.19.1",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -105,9 +105,9 @@
     },
     {
       "name": "fake_async",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/fake_async-1.3.1",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/fake_async-1.3.2",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "3.3"
     },
     {
       "name": "ffi",
@@ -227,7 +227,7 @@
       "name": "flutter",
       "rootUri": "file:///Users/julien/development/flutter/packages/flutter",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.7"
     },
     {
       "name": "flutter_cache_manager",
@@ -263,13 +263,13 @@
       "name": "flutter_test",
       "rootUri": "file:///Users/julien/development/flutter/packages/flutter_test",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.7"
     },
     {
       "name": "flutter_web_plugins",
       "rootUri": "file:///Users/julien/development/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
-      "languageVersion": "3.2"
+      "languageVersion": "3.7"
     },
     {
       "name": "freezed_annotation",
@@ -429,13 +429,13 @@
     },
     {
       "name": "leak_tracker",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/leak_tracker-10.0.7",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/leak_tracker-10.0.8",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "leak_tracker_flutter_testing",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/leak_tracker_flutter_testing-3.0.8",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/leak_tracker_flutter_testing-3.0.9",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -453,27 +453,27 @@
     },
     {
       "name": "location",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/location-4.4.0",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/location-5.0.3",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.18"
     },
     {
       "name": "location_platform_interface",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/location_platform_interface-2.3.0",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/location_platform_interface-3.1.2",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.18"
     },
     {
       "name": "location_web",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/location_web-3.1.1",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/location_web-4.2.0",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.18"
     },
     {
       "name": "matcher",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/matcher-0.12.16+1",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/matcher-0.12.17",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.4"
     },
     {
       "name": "material_color_utilities",
@@ -483,7 +483,7 @@
     },
     {
       "name": "meta",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/meta-1.15.0",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/meta-1.16.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -507,9 +507,9 @@
     },
     {
       "name": "path",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/path-1.9.0",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/path-1.9.1",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.4"
     },
     {
       "name": "path_provider",
@@ -581,13 +581,13 @@
       "name": "sky_engine",
       "rootUri": "file:///Users/julien/development/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
-      "languageVersion": "3.2"
+      "languageVersion": "3.7"
     },
     {
       "name": "source_span",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/source_span-1.10.0",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/source_span-1.10.1",
       "packageUri": "lib/",
-      "languageVersion": "2.18"
+      "languageVersion": "3.1"
     },
     {
       "name": "sprintf",
@@ -627,15 +627,15 @@
     },
     {
       "name": "stack_trace",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/stack_trace-1.12.0",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/stack_trace-1.12.1",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
     {
       "name": "stream_channel",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/stream_channel-2.1.2",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/stream_channel-2.1.4",
       "packageUri": "lib/",
-      "languageVersion": "2.19"
+      "languageVersion": "3.3"
     },
     {
       "name": "stream_transform",
@@ -645,7 +645,7 @@
     },
     {
       "name": "string_scanner",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/string_scanner-1.3.0",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/string_scanner-1.4.1",
       "packageUri": "lib/",
       "languageVersion": "3.1"
     },
@@ -675,15 +675,15 @@
     },
     {
       "name": "term_glyph",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/term_glyph-1.2.1",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/term_glyph-1.2.2",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "3.1"
     },
     {
       "name": "test_api",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/test_api-0.7.3",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/test_api-0.7.4",
       "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.5"
     },
     {
       "name": "typed_data",
@@ -705,7 +705,7 @@
     },
     {
       "name": "vm_service",
-      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/vm_service-14.3.0",
+      "rootUri": "file:///Users/julien/.pub-cache/hosted/pub.dev/vm_service-14.3.1",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -728,10 +728,10 @@
       "languageVersion": "3.5"
     }
   ],
-  "generated": "2025-04-04T00:28:17.433452Z",
+  "generated": "2025-04-04T00:51:14.900789Z",
   "generator": "pub",
-  "generatorVersion": "3.6.0",
+  "generatorVersion": "3.7.2",
   "flutterRoot": "file:///Users/julien/development/flutter",
-  "flutterVersion": "3.27.0",
+  "flutterVersion": "3.29.2",
   "pubCache": "file:///Users/julien/.pub-cache"
 }
