@@ -780,6 +780,7 @@ class CartItem {
   final String imageUrl;
   final String description;
   int quantity;
+  String? comment;
 
   CartItem({
     required this.id,
@@ -788,5 +789,6 @@ class CartItem {
     required this.imageUrl,
     required this.description,
     this.quantity = 1,
+    this.comment,
   });
 }

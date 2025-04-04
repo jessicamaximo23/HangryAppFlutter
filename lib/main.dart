@@ -1,8 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-// Remove the flutter_stripe import
 import 'package:hangry_app_flutter/signin_screen.dart';
 import 'package:hangry_app_flutter/driver_screen.dart';
+// Stripe import?
+import 'package:hangry_app_flutter/stripe_payment_service.dart';
 import 'package:hangry_app_flutter/admin_panel_screen.dart';
 import 'package:hangry_app_flutter/splash_screen.dart';
 import 'package:hangry_app_flutter/user_screen.dart';
@@ -13,9 +14,13 @@ import 'authentication_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Stripe
+  await StripePaymentService.initialize();
+
+  // Firebase initialization
   await Firebase.initializeApp();
 
-  // Remove the Stripe initialization lines
 
   runApp(
     ChangeNotifierProvider(

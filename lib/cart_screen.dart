@@ -30,7 +30,10 @@ class _CartScreenState extends State<CartScreen> {
   double _taxAmount = 0.0;
   double _deliveryFee = 3.99;
   double _total = 0.0;
-  final double _taxRate = 0.08; // 8% tax rate
+  final double _taxRate = 0.15; // 15% tax rate
+
+  // for the comment section
+  final TextEditingController _orderCommentController = TextEditingController();
 
   @override
   void initState() {
@@ -62,6 +65,16 @@ class _CartScreenState extends State<CartScreen> {
     });
 
     // Notify parent widget about the updated cart
+    widget.onCartUpdate(_currentCartItems);
+  }
+
+  // Adding comment method
+  void _addCommentToItem(String itemId, String comment) {
+    setState(() {
+      if (_currentCartItems.containsKey(itemId)) {
+        _currentCartItems[itemId]!.comment = comment;
+      }
+    });
     widget.onCartUpdate(_currentCartItems);
   }
 
@@ -184,7 +197,7 @@ class _CartScreenState extends State<CartScreen> {
           ),
           SizedBox(height: 8),
           Text(
-            'Add some delicious items to your cart',
+            'Add some items to your cart',
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[500],
@@ -340,39 +353,31 @@ class _CartScreenState extends State<CartScreen> {
         ),
         child: Padding(
           padding: const EdgeInsets.all(12.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: Column(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: item.imageUrl.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: item.imageUrl,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: item.imageUrl.isNotEmpty
+                        ? CachedNetworkImage(
+                      imageUrl: item.imageUrl,
+                      width: 70,
+                      height: 70,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
                         width: 70,
                         height: 70,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          width: 70,
-                          height: 70,
-                          color: Colors.grey[300],
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: hangryYellow,
-                              strokeWidth: 2,
-                            ),
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          width: 70,
-                          height: 70,
-                          color: Colors.grey[300],
-                          child: Icon(
-                            Icons.fastfood,
+                        color: Colors.grey[300],
+                        child: Center(
+                          child: CircularProgressIndicator(
                             color: hangryYellow,
+                            strokeWidth: 2,
                           ),
                         ),
-                      )
-                    : Container(
+                      ),
+                      errorWidget: (context, url, error) => Container(
                         width: 70,
                         height: 70,
                         color: Colors.grey[300],
@@ -381,74 +386,213 @@ class _CartScreenState extends State<CartScreen> {
                           color: hangryYellow,
                         ),
                       ),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.name,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: hangryBlue,
+                    )
+                        : Container(
+                      width: 70,
+                      height: 70,
+                      color: Colors.grey[300],
+                      child: Icon(
+                        Icons.fastfood,
+                        color: hangryYellow,
                       ),
                     ),
-                    SizedBox(height: 4),
-                    Text(
-                      '\${item.price.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Subtotal: \${(item.price * item.quantity).toStringAsFixed(2)}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _buildQuantityButton(
-                        icon: Icons.remove,
-                        onPressed: () =>
-                            _updateItemQuantity(itemId, item.quantity - 1),
-                      ),
-                      Container(
-                        width: 40,
-                        alignment: Alignment.center,
-                        child: Text(
-                          '${item.quantity}',
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.name,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
+                            color: hangryBlue,
                           ),
                         ),
+                        SizedBox(height: 4),
+                        Text(
+                          '\$${item.price.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'Subtotal: \$${(item.price * item.quantity).toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildQuantityButton(
+                            icon: Icons.remove,
+                            onPressed: () =>
+                                _updateItemQuantity(itemId, item.quantity - 1),
+                          ),
+                          Container(
+                            width: 40,
+                            alignment: Alignment.center,
+                            child: Text(
+                              '${item.quantity}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          _buildQuantityButton(
+                            icon: Icons.add,
+                            onPressed: () =>
+                                _updateItemQuantity(itemId, item.quantity + 1),
+                          ),
+                        ],
                       ),
-                      _buildQuantityButton(
-                        icon: Icons.add,
-                        onPressed: () =>
-                            _updateItemQuantity(itemId, item.quantity + 1),
+                      SizedBox(height: 8),
+                      InkWell(
+                        onTap: () {
+                          _showItemCommentDialog(itemId, item);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: item.comment?.isNotEmpty == true
+                                ? hangryYellow.withOpacity(0.2)
+                                : Colors.grey[200],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.comment,
+                                size: 14,
+                                color: item.comment?.isNotEmpty == true
+                                    ? hangryBlue
+                                    : Colors.grey[700],
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                item.comment?.isNotEmpty == true ? 'Edit' : 'Add Note',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: item.comment?.isNotEmpty == true
+                                      ? hangryBlue
+                                      : Colors.grey[700],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ],
               ),
+              // Show comment if it exists
+              if (item.comment?.isNotEmpty == true)
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.only(top: 8),
+                  margin: EdgeInsets.only(top: 8),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(
+                        color: Colors.grey[300]!,
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.sticky_note_2_outlined,
+                        size: 16,
+                        color: Colors.grey[600],
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          item.comment!,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.grey[800],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  void _showItemCommentDialog(String itemId, CartItem item) {
+    final TextEditingController commentController = TextEditingController(text: item.comment ?? '');
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Special Instructions'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Add special instructions for ${item.name}',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+              ),
+              SizedBox(height: 8),
+              TextField(
+                controller: commentController,
+                decoration: InputDecoration(
+                  hintText: 'Examples: No onions, Extra sauce, etc.',
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
+                maxLines: 3,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                _addCommentToItem(itemId, commentController.text);
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Save',
+                style: TextStyle(color: hangryBlue),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -469,6 +613,53 @@ class _CartScreenState extends State<CartScreen> {
           size: 18,
           color: hangryBlue,
         ),
+      ),
+    );
+  }
+
+  Widget _buildOrderCommentsSection() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        border: Border(
+          top: BorderSide(
+            color: Colors.grey[300]!,
+            width: 1,
+          ),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Order Comments',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: hangryBlue,
+            ),
+          ),
+          SizedBox(height: 8),
+          TextField(
+            controller: _orderCommentController,
+            decoration: InputDecoration(
+              hintText: 'Add any special instructions for the entire order...',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.grey[400]!),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: hangryYellow, width: 2),
+              ),
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+            maxLines: 2,
+          ),
+        ],
       ),
     );
   }
@@ -498,14 +689,13 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ),
           SizedBox(height: 12),
-          _buildSummaryRow('Subtotal', '\${_subtotal.toStringAsFixed(2)}'),
-          _buildSummaryRow('Tax (8%)', '\${_taxAmount.toStringAsFixed(2)}'),
-          _buildSummaryRow(
-              'Delivery Fee', '\${_deliveryFee.toStringAsFixed(2)}'),
+          _buildSummaryRow('Subtotal', '\$${_subtotal.toStringAsFixed(2)}'),
+          _buildSummaryRow('Tax (15%)', '\$${_taxAmount.toStringAsFixed(2)}'),
+          _buildSummaryRow('Delivery Fee', '\$${_deliveryFee.toStringAsFixed(2)}'),
           Divider(height: 24),
           _buildSummaryRow(
             'Total',
-            '\${_total.toStringAsFixed(2)}',
+            '\$${_total.toStringAsFixed(2)}',
             isTotal: true,
           ),
           SizedBox(height: 16),
