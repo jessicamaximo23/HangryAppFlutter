@@ -7,17 +7,24 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="trying to get something to work again">
+    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="it works again, somehow, updated flutter to latest version, location dependency too">
+      <change afterPath="$PROJECT_DIR$/lib/order_details_screen.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/order_history_screen.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/restaurant_orders_details_screen.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/restaurant_orders_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/dartpad/web_plugin_registrant.dart" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/dartpad/web_plugin_registrant.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/package_config_subset" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config_subset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dart_tool/version" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/version" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/location_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/location_service.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/restaurant_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/restaurant_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/track_order_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/track_order_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/tracking_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/tracking_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/user_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/user_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/windows/flutter/generated_plugin_registrant.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/windows/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/windows/flutter/generated_plugins.cmake" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +106,7 @@
     &quot;project.structure.proportion&quot;: &quot;0.22145669&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2696335&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;AndroidSdkUpdater&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
 }</component>
@@ -493,7 +500,15 @@
       <option name="project" value="LOCAL" />
       <updated>1743726941743</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="it works again, somehow, updated flutter to latest version, location dependency too">
+      <option name="closed" value="true" />
+      <created>1743728203066</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1743728203066</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -508,7 +523,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Modified logic as accessing the app was not possible anymore(added some debugging print to help identify the errors)" />
     <MESSAGE value="Modified splash screen to include authManager, to fix accessing the app.&#10;Added some space as well" />
     <MESSAGE value="Removed font as it was causing errors" />
     <MESSAGE value="Added edit to the admin restaurant listing" />
@@ -533,6 +547,7 @@
     <MESSAGE value="version" />
     <MESSAGE value="Added order_confirmation_screen.dart" />
     <MESSAGE value="trying to get something to work again" />
-    <option name="LAST_COMMIT_MESSAGE" value="trying to get something to work again" />
+    <MESSAGE value="it works again, somehow, updated flutter to latest version, location dependency too" />
+    <option name="LAST_COMMIT_MESSAGE" value="it works again, somehow, updated flutter to latest version, location dependency too" />
   </component>
 </project>

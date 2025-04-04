@@ -48,6 +48,7 @@ dependencies:
   geocoding: ^2.1.0
   flutter_dotenv: ^5.1.0
   location: ^5.0.3
+  geolocator: ^10.0.1
 
 
 
