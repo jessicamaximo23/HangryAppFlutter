@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hangry_app_flutter/order_history_screen.dart';
 import 'userprofile_screen.dart';
 import 'restaurant_listing_screen.dart';
 
@@ -81,14 +82,17 @@ class _UserScreenState extends State<UserScreen> {
                     icon: Icons.list,
                     title: 'Previous Orders',
                     onTap: () {
-                      // Navigate to deliveries screen
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => OrderHistoryScreen()),
+                      );
                     },
                   ),
                   _buildDashboardCard(
                     icon: Icons.map,
                     title: 'Track my order',
                     onTap: () {
-                      // Navigate to earnings screen
+                      // Navigate to tracking screen
                     },
                   ),
                   _buildDashboardCard(
