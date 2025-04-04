@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hangry_app_flutter/restaurant_ListOfitens.dart';
 import 'package:hangry_app_flutter/restaurantprofile_screen.dart';
+import 'restaurant_orders_screen.dart';
 
 class RestaurantScreen extends StatefulWidget {
   const RestaurantScreen({Key? key}) : super(key: key);
@@ -80,10 +81,13 @@ class _RestaurantScreen extends State<RestaurantScreen> {
                 mainAxisSpacing: 14,
                 children: [
                   _buildDashboardCard(
-                    icon: Icons.graphic_eq,
-                    title: 'Graphics',
+                    icon: Icons.menu_open,
+                    title: 'Orders',
                     onTap: () {
-                      // Navigate to deliveries screen
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => RestaurantOrdersScreen()),
+                      );
                     },
                   ),
                   _buildDashboardCard(
