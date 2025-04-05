@@ -7,24 +7,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="it works again, somehow, updated flutter to latest version, location dependency too">
+    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="Added MAterialPAgeRoute to the order history from the tile on the user's screen">
       <change afterPath="$PROJECT_DIR$/lib/order_details_screen.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/order_history_screen.dart" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/lib/restaurant_orders_details_screen.dart" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/lib/restaurant_orders_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dart_tool/dartpad/web_plugin_registrant.dart" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/dartpad/web_plugin_registrant.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config_subset" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config_subset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/restaurant_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/restaurant_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/track_order_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/track_order_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/tracking_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/tracking_service.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/user_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/user_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/windows/flutter/generated_plugin_registrant.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/windows/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/windows/flutter/generated_plugins.cmake" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -508,7 +497,39 @@
       <option name="project" value="LOCAL" />
       <updated>1743728203066</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="Geolocator added">
+      <option name="closed" value="true" />
+      <created>1743734449599</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1743734449599</updated>
+    </task>
+    <task id="LOCAL-00045" summary="Created order_history_screen to track past orders for users">
+      <option name="closed" value="true" />
+      <created>1743734507878</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1743734507878</updated>
+    </task>
+    <task id="LOCAL-00046" summary="Created order_history_screen to track past orders for users">
+      <option name="closed" value="true" />
+      <created>1743734539899</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1743734539899</updated>
+    </task>
+    <task id="LOCAL-00047" summary="Added MAterialPAgeRoute to the order history from the tile on the user's screen">
+      <option name="closed" value="true" />
+      <created>1743734974316</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1743734974316</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -523,9 +544,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Modified splash screen to include authManager, to fix accessing the app.&#10;Added some space as well" />
-    <MESSAGE value="Removed font as it was causing errors" />
-    <MESSAGE value="Added edit to the admin restaurant listing" />
     <MESSAGE value="Created restaurant listing component, starting with the logic" />
     <MESSAGE value="Imported new restaurant_listing_screen.dart for routing" />
     <MESSAGE value="Restaurant listing done, based on the Firebase infos" />
@@ -548,6 +566,9 @@
     <MESSAGE value="Added order_confirmation_screen.dart" />
     <MESSAGE value="trying to get something to work again" />
     <MESSAGE value="it works again, somehow, updated flutter to latest version, location dependency too" />
-    <option name="LAST_COMMIT_MESSAGE" value="it works again, somehow, updated flutter to latest version, location dependency too" />
+    <MESSAGE value="Geolocator added" />
+    <MESSAGE value="Created order_history_screen to track past orders for users" />
+    <MESSAGE value="Added MAterialPAgeRoute to the order history from the tile on the user's screen" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added MAterialPAgeRoute to the order history from the tile on the user's screen" />
   </component>
 </project>
