@@ -7,14 +7,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="Added charts dependencies">
-      <change afterPath="$PROJECT_DIR$/lib/restaurant_earnings_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config_subset" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config_subset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="Added components and dependencies">
       <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/restaurant_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/restaurant_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -151,30 +145,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1739562604307</updated>
-    </task>
-    <task id="LOCAL-00014" summary="Tried to import Google fonts to try having Rammetto">
-      <option name="closed" value="true" />
-      <created>1742521924883</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1742521924883</updated>
-    </task>
-    <task id="LOCAL-00015" summary="Created admin User screen and implemented logic to display and modify users">
-      <option name="closed" value="true" />
-      <created>1742522194719</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1742522194720</updated>
-    </task>
-    <task id="LOCAL-00016" summary="Modified logic as accessing the app was not possible anymore(added some debugging print to help identify the errors)">
-      <option name="closed" value="true" />
-      <created>1742522475832</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1742522475832</updated>
     </task>
     <task id="LOCAL-00017" summary="Modified splash screen to include authManager, to fix accessing the app.&#10;Added some space as well">
       <option name="closed" value="true" />
@@ -544,7 +514,31 @@
       <option name="project" value="LOCAL" />
       <updated>1744128302794</updated>
     </task>
-    <option name="localTasksCounter" value="63" />
+    <task id="LOCAL-00063" summary="Created logic to show earnings and filter those (weekly, monthly). Need to implement the drivers pickup status to finish updating the process and test that it works properly">
+      <option name="closed" value="true" />
+      <created>1744131604487</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1744131604487</updated>
+    </task>
+    <task id="LOCAL-00064" summary="Modified routing and imported earning component">
+      <option name="closed" value="true" />
+      <created>1744131662569</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1744131662570</updated>
+    </task>
+    <task id="LOCAL-00065" summary="Added components and dependencies">
+      <option name="closed" value="true" />
+      <created>1744131691941</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1744131691941</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -559,9 +553,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added stateful widget and checkout screen const to start" />
-    <MESSAGE value="Added dependencies for checkout animation and API calls, added Stripe" />
-    <MESSAGE value="version" />
     <MESSAGE value="Added order_confirmation_screen.dart" />
     <MESSAGE value="cleaned UI, added profile picture upload that was missing" />
     <MESSAGE value="removed stripe for now" />
@@ -584,6 +575,9 @@
     <MESSAGE value="added secret key for testing" />
     <MESSAGE value="added dependencies for Google Maps" />
     <MESSAGE value="Added charts dependencies" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added charts dependencies" />
+    <MESSAGE value="Created logic to show earnings and filter those (weekly, monthly). Need to implement the drivers pickup status to finish updating the process and test that it works properly" />
+    <MESSAGE value="Modified routing and imported earning component" />
+    <MESSAGE value="Added components and dependencies" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added components and dependencies" />
   </component>
 </project>
