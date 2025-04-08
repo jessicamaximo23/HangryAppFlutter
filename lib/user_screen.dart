@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hangry_app_flutter/order_history_screen.dart';
 import 'userprofile_screen.dart';
 import 'restaurant_listing_screen.dart';
+import 'package:hangry_app_flutter/restaurant_listing_screen.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({Key? key}) : super(key: key);
@@ -101,7 +102,7 @@ class _UserScreenState extends State<UserScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => RestaurantsListingScreen())
+                        MaterialPageRoute(builder: (context) => RestaurantListingScreen())
                       );
                     },
                   ),
