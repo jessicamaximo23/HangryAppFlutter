@@ -7,10 +7,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="Added new components">
-      <change afterPath="$PROJECT_DIR$/android/app/inject-api-key.gradle" afterDir="false" />
+    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="Added charts dependencies">
+      <change afterPath="$PROJECT_DIR$/lib/restaurant_earnings_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config_subset" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config_subset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/restaurant_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/restaurant_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,34 +73,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Flutter.account_screen.dart.executor&quot;: &quot;Run&quot;,
-    &quot;Flutter.main.dart.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle./Users/jessicamaximo/Desktop/HangryAppFlutter/android/build.gradle.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;ScreenshotViewer.SavePath&quot;: &quot;/Users/jessicamaximo/Desktop/HangryAppFlutter&quot;,
-    &quot;ToolWindow.Device Manager 2.ShowToolbar&quot;: &quot;false&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev-julien-local&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/jessicamaximo/Desktop/HangryAppFlutter&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.22145669&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2696335&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Flutter.account_screen.dart.executor": "Run",
+    "Flutter.main.dart.executor": "Run",
+    "Gradle./Users/jessicamaximo/Desktop/HangryAppFlutter/android/build.gradle.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ScreenshotViewer.SavePath": "/Users/jessicamaximo/Desktop/HangryAppFlutter",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "Res13",
+    "ignore.virus.scanning.warn.message": "true",
+    "io.flutter.reload.alreadyRun": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/jessicamaximo/Desktop/HangryAppFlutter",
+    "project.structure.last.edited": "SDKs",
+    "project.structure.proportion": "0.22145669",
+    "project.structure.side.proportion": "0.2696335",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "AndroidSdkUpdater",
+    "show.migrate.to.gradle.popup": "false"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\wandr\AndroidStudioProjects\HangryAppFlutter\android\app" />
@@ -137,8 +140,6 @@
       <list>
         <item itemvalue="Gradle./Users/jessicamaximo/Desktop/HangryAppFlutter/android/build.gradle" />
         <item itemvalue="Flutter.account_screen.dart" />
-        <item itemvalue="Gradle./Users/jessicamaximo/Desktop/HangryAppFlutter/android/build.gradle" />
-        <item itemvalue="Flutter.account_screen.dart" />
       </list>
     </recent_temporary>
   </component>
@@ -150,86 +151,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1739562604307</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Changed profileImageUrl storage path to fit with the rest of the app languages(IOS and Android), added cuisine types">
-      <option name="closed" value="true" />
-      <created>1742480068107</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1742480068107</updated>
-    </task>
-    <task id="LOCAL-00005" summary="Added logic, UI and elements to make the CRUD apply to the list of items">
-      <option name="closed" value="true" />
-      <created>1742480131091</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1742480131091</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Modified admin restaurant part 1">
-      <option name="closed" value="true" />
-      <created>1742490364568</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1742490364568</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Changed toggle status for restaurant">
-      <option name="closed" value="true" />
-      <created>1742495556654</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1742495556654</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Created admin_user_screen.dart">
-      <option name="closed" value="true" />
-      <created>1742495579918</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1742495579918</updated>
-    </task>
-    <task id="LOCAL-00009" summary="Created admin_driver_screen.dart plus logic">
-      <option name="closed" value="true" />
-      <created>1742497192081</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1742497192081</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Updated route to the user screen for admin">
-      <option name="closed" value="true" />
-      <created>1742501846712</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1742501846712</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Removed main as it was causing issues to log in">
-      <option name="closed" value="true" />
-      <created>1742521752880</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1742521752880</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Removed main as it was causing issues to log in">
-      <option name="closed" value="true" />
-      <created>1742521768622</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1742521768622</updated>
-    </task>
-    <task id="LOCAL-00013" summary="trying to add Rammetto font for UI purposes(does not work for now)">
-      <option name="closed" value="true" />
-      <created>1742521805749</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1742521805749</updated>
     </task>
     <task id="LOCAL-00014" summary="Tried to import Google fonts to try having Rammetto">
       <option name="closed" value="true" />
@@ -455,95 +376,175 @@
       <option name="project" value="LOCAL" />
       <updated>1743170623596</updated>
     </task>
-    <task id="LOCAL-00042" summary="trying to get something to work again">
+    <task id="LOCAL-00042" summary="cleaned UI, added profile picture upload that was missing">
       <option name="closed" value="true" />
-      <created>1743726941742</created>
+      <created>1743608661628</created>
       <option name="number" value="00042" />
       <option name="presentableId" value="LOCAL-00042" />
       <option name="project" value="LOCAL" />
-      <updated>1743726941743</updated>
+      <updated>1743608661628</updated>
     </task>
-    <task id="LOCAL-00043" summary="it works again, somehow, updated flutter to latest version, location dependency too">
+    <task id="LOCAL-00043" summary="removed stripe for now">
       <option name="closed" value="true" />
-      <created>1743728203066</created>
+      <created>1743608683941</created>
       <option name="number" value="00043" />
       <option name="presentableId" value="LOCAL-00043" />
       <option name="project" value="LOCAL" />
-      <updated>1743728203066</updated>
+      <updated>1743608683941</updated>
     </task>
-    <task id="LOCAL-00044" summary="Geolocator added">
+    <task id="LOCAL-00044" summary="tried some screens for order confirm">
       <option name="closed" value="true" />
-      <created>1743734449599</created>
+      <created>1743608719903</created>
       <option name="number" value="00044" />
       <option name="presentableId" value="LOCAL-00044" />
       <option name="project" value="LOCAL" />
-      <updated>1743734449599</updated>
+      <updated>1743608719903</updated>
     </task>
-    <task id="LOCAL-00045" summary="Created order_history_screen to track past orders for users">
+    <task id="LOCAL-00045" summary="fixed issue where cart was not showing item prices">
       <option name="closed" value="true" />
-      <created>1743734507878</created>
+      <created>1743611301897</created>
       <option name="number" value="00045" />
       <option name="presentableId" value="LOCAL-00045" />
       <option name="project" value="LOCAL" />
-      <updated>1743734507878</updated>
+      <updated>1743611301897</updated>
     </task>
-    <task id="LOCAL-00046" summary="Created order_history_screen to track past orders for users">
+    <task id="LOCAL-00046" summary="Added comment option to the CartItem class and comment method to the">
       <option name="closed" value="true" />
-      <created>1743734539899</created>
+      <created>1743613885548</created>
       <option name="number" value="00046" />
       <option name="presentableId" value="LOCAL-00046" />
       <option name="project" value="LOCAL" />
-      <updated>1743734539899</updated>
+      <updated>1743613885548</updated>
     </task>
-    <task id="LOCAL-00047" summary="Added MAterialPAgeRoute to the order history from the tile on the user's screen">
+    <task id="LOCAL-00047" summary="Added comment option to the CartItem class and comment method to the cart_screen.dart, plus the UI for the comment">
       <option name="closed" value="true" />
-      <created>1743734974316</created>
+      <created>1743614442691</created>
       <option name="number" value="00047" />
       <option name="presentableId" value="LOCAL-00047" />
       <option name="project" value="LOCAL" />
-      <updated>1743734974316</updated>
+      <updated>1743614442691</updated>
     </task>
-    <task id="LOCAL-00048" summary="No modification but it is there">
+    <task id="LOCAL-00048" summary="modified zipcode for postal code">
       <option name="closed" value="true" />
-      <created>1744078038087</created>
+      <created>1743628393695</created>
       <option name="number" value="00048" />
       <option name="presentableId" value="LOCAL-00048" />
       <option name="project" value="LOCAL" />
-      <updated>1744078038087</updated>
+      <updated>1743628393695</updated>
     </task>
-    <task id="LOCAL-00049" summary="Created component to locate user and restaurants on Gmaps">
+    <task id="LOCAL-00049" summary="added comments and ability to use a different address for delivery. Comments are available per items and per order(for delivery specific info)">
       <option name="closed" value="true" />
-      <created>1744079648239</created>
+      <created>1743628495089</created>
       <option name="number" value="00049" />
       <option name="presentableId" value="LOCAL-00049" />
       <option name="project" value="LOCAL" />
-      <updated>1744079648239</updated>
+      <updated>1743628495089</updated>
     </task>
-    <task id="LOCAL-00050" summary="Changed import">
+    <task id="LOCAL-00050" summary="version and components modification">
       <option name="closed" value="true" />
-      <created>1744079672687</created>
+      <created>1743628611115</created>
       <option name="number" value="00050" />
       <option name="presentableId" value="LOCAL-00050" />
       <option name="project" value="LOCAL" />
-      <updated>1744079672687</updated>
+      <updated>1743628611116</updated>
     </task>
-    <task id="LOCAL-00051" summary="Modified restaurant listings to add a button localizing the restaurant on GMaps. Supposed to lcoate user to but not entirely accurate so far">
+    <task id="LOCAL-00051" summary="removed wallet and favorites button for more clarity">
       <option name="closed" value="true" />
-      <created>1744079750104</created>
+      <created>1743628941348</created>
       <option name="number" value="00051" />
       <option name="presentableId" value="LOCAL-00051" />
       <option name="project" value="LOCAL" />
-      <updated>1744079750104</updated>
+      <updated>1743628941348</updated>
     </task>
-    <task id="LOCAL-00052" summary="Added new components">
+    <task id="LOCAL-00052" summary="Added and modified Stripe and stripe setting to work with Flutter(had to modify flutter fragment in Kotlin, modified pubspec, main.activity.kt, etc)">
       <option name="closed" value="true" />
-      <created>1744079767023</created>
+      <created>1743645056259</created>
       <option name="number" value="00052" />
       <option name="presentableId" value="LOCAL-00052" />
       <option name="project" value="LOCAL" />
-      <updated>1744079767023</updated>
+      <updated>1743645056259</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="Added Stripe for payment, changed default payment method to credit card and added payment processing method">
+      <option name="closed" value="true" />
+      <created>1743645140882</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1743645140882</updated>
+    </task>
+    <task id="LOCAL-00054" summary="formatted file">
+      <option name="closed" value="true" />
+      <created>1743645156891</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1743645156892</updated>
+    </task>
+    <task id="LOCAL-00055" summary="Created Stripe component and logic for payment processing">
+      <option name="closed" value="true" />
+      <created>1743645194960</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1743645194960</updated>
+    </task>
+    <task id="LOCAL-00056" summary="Added Stripe initialisation">
+      <option name="closed" value="true" />
+      <created>1743645215264</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1743645215264</updated>
+    </task>
+    <task id="LOCAL-00057" summary="changed path">
+      <option name="closed" value="true" />
+      <created>1743645354993</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1743645354993</updated>
+    </task>
+    <task id="LOCAL-00058" summary="changed skey">
+      <option name="closed" value="true" />
+      <created>1743645664432</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1743645664432</updated>
+    </task>
+    <task id="LOCAL-00059" summary="modified item availability that did not show">
+      <option name="closed" value="true" />
+      <created>1743716035896</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1743716035896</updated>
+    </task>
+    <task id="LOCAL-00060" summary="added secret key for testing">
+      <option name="closed" value="true" />
+      <created>1743716329236</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1743716329236</updated>
+    </task>
+    <task id="LOCAL-00061" summary="added dependencies for Google Maps">
+      <option name="closed" value="true" />
+      <created>1743718142575</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1743718142575</updated>
+    </task>
+    <task id="LOCAL-00062" summary="Added charts dependencies">
+      <option name="closed" value="true" />
+      <created>1744128302794</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1744128302794</updated>
+    </task>
+    <option name="localTasksCounter" value="63" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -558,31 +559,31 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Nothing much(2 more empty lines)" />
-    <MESSAGE value="Added filters for type of dish and type of cuisine for the user. Added a search bar, to be completed wit Google Maps later on" />
-    <MESSAGE value="Created menu screen" />
-    <MESSAGE value="Added import to menu screen" />
-    <MESSAGE value="Created menu screen to check items and add those to cart" />
-    <MESSAGE value="Created cart screen" />
-    <MESSAGE value="Started adding the cart logic into the restaurant_menu_screen" />
-    <MESSAGE value="Modified UI, added some methods for the prices in cart, added cartItem class" />
-    <MESSAGE value="Created new checkout screen" />
-    <MESSAGE value="Added UI and methods to calculate cart's total, clear cart and add items" />
-    <MESSAGE value="Formatted file" />
     <MESSAGE value="Added stateful widget and checkout screen const to start" />
     <MESSAGE value="Added dependencies for checkout animation and API calls, added Stripe" />
     <MESSAGE value="version" />
     <MESSAGE value="Added order_confirmation_screen.dart" />
-    <MESSAGE value="trying to get something to work again" />
-    <MESSAGE value="it works again, somehow, updated flutter to latest version, location dependency too" />
-    <MESSAGE value="Geolocator added" />
-    <MESSAGE value="Created order_history_screen to track past orders for users" />
-    <MESSAGE value="Added MAterialPAgeRoute to the order history from the tile on the user's screen" />
-    <MESSAGE value="No modification but it is there" />
-    <MESSAGE value="Created component to locate user and restaurants on Gmaps" />
-    <MESSAGE value="Changed import" />
-    <MESSAGE value="Modified restaurant listings to add a button localizing the restaurant on GMaps. Supposed to lcoate user to but not entirely accurate so far" />
-    <MESSAGE value="Added new components" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added new components" />
+    <MESSAGE value="cleaned UI, added profile picture upload that was missing" />
+    <MESSAGE value="removed stripe for now" />
+    <MESSAGE value="tried some screens for order confirm" />
+    <MESSAGE value="fixed issue where cart was not showing item prices" />
+    <MESSAGE value="Added comment option to the CartItem class and comment method to the" />
+    <MESSAGE value="Added comment option to the CartItem class and comment method to the cart_screen.dart, plus the UI for the comment" />
+    <MESSAGE value="modified zipcode for postal code" />
+    <MESSAGE value="added comments and ability to use a different address for delivery. Comments are available per items and per order(for delivery specific info)" />
+    <MESSAGE value="version and components modification" />
+    <MESSAGE value="removed wallet and favorites button for more clarity" />
+    <MESSAGE value="Added and modified Stripe and stripe setting to work with Flutter(had to modify flutter fragment in Kotlin, modified pubspec, main.activity.kt, etc)" />
+    <MESSAGE value="Added Stripe for payment, changed default payment method to credit card and added payment processing method" />
+    <MESSAGE value="formatted file" />
+    <MESSAGE value="Created Stripe component and logic for payment processing" />
+    <MESSAGE value="Added Stripe initialisation" />
+    <MESSAGE value="changed path" />
+    <MESSAGE value="changed skey" />
+    <MESSAGE value="modified item availability that did not show" />
+    <MESSAGE value="added secret key for testing" />
+    <MESSAGE value="added dependencies for Google Maps" />
+    <MESSAGE value="Added charts dependencies" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added charts dependencies" />
   </component>
 </project>
