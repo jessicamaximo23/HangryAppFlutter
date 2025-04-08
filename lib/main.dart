@@ -23,7 +23,6 @@ void main() async {
   // Firebase initialization
   await Firebase.initializeApp();
 
-
   runApp(
     ChangeNotifierProvider(
       create: (_) => AuthenticationManager(),
