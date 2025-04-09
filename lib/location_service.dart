@@ -199,4 +199,180 @@ class LocationService {
 
     return 12742 * asin(sqrt(a)); // 2 * R; R = 6371 km
   }
+
+  // Accept order - called when a driver accepts an order
+  Future<bool> acceptOrder({
+    required String driverId,
+    required String orderId,
+    required String restaurantId,
+    required String userId,
+  }) async {
+    try {
+      // Update order in restaurant's database
+      await _database.child('users/$restaurantId/orders/$orderId').update({
+        'status': 'on_the_way',
+        'assignedDriver': driverId,
+        'assignedAt': ServerValue.timestamp,
+      });
+
+      // Update order in user's database
+      await _database.child('users/$userId/profile/orders/$orderId').update({
+        'status': 'on_the_way',
+        'assignedDriver': driverId,
+        'assignedAt': ServerValue.timestamp,
+      });
+
+      // Add to driver's assignments
+      await _database.child('users/$driverId/assignments/$orderId').set({
+        'orderId': orderId,
+        'restaurantId': restaurantId,
+        'userId': userId,
+        'status': 'accepted',
+        'acceptedAt': ServerValue.timestamp,
+      });
+
+      // Start location tracking
+      await startTracking(
+        driverId: driverId,
+        orderId: orderId,
+        userId: userId,
+        restaurantId: restaurantId,
+      );
+
+      return true;
+    } catch (e) {
+      print('Error accepting order: $e');
+      return false;
+    }
+  }
+
+  // Mark order as delivered
+  Future<bool> completeDelivery({
+    required String driverId,
+    required String orderId,
+    required String restaurantId,
+    required String userId,
+  }) async {
+    try {
+      // Update status in restaurant's record
+      await _database.child('users/$restaurantId/orders/$orderId').update({
+        'status': 'delivered',
+        'deliveredAt': ServerValue.timestamp,
+      });
+
+      // Update status in customer's record
+      await _database.child('users/$userId/profile/orders/$orderId').update({
+        'status': 'delivered',
+        'deliveredAt': ServerValue.timestamp,
+      });
+
+      // Update driver's assignment
+      await _database.child('users/$driverId/assignments/$orderId').update({
+        'status': 'completed',
+        'completedAt': ServerValue.timestamp,
+      });
+
+      // Stop location tracking
+      stopTracking();
+
+      return true;
+    } catch (e) {
+      print('Error completing delivery: $e');
+      return false;
+    }
+  }
+
+  // Initialize tracking for order
+  Future<bool> initializeOrderTracking({
+    required String orderId,
+    required String restaurantId,
+    required String userId,
+  }) async {
+    try {
+      // Check if tracking is already enabled
+      final trackingSnapshot = await _database
+          .child('users/$userId/profile/orders/$orderId/tracking')
+          .get();
+
+      if (trackingSnapshot.exists) {
+        print('Tracking already enabled');
+        return true;
+      }
+
+      // Get delivery address
+      final deliveryAddressSnapshot = await _database
+          .child('users/$userId/profile/orders/$orderId/deliveryAddress')
+          .get();
+
+      if (!deliveryAddressSnapshot.exists) {
+        print('Delivery address not found');
+        return false;
+      }
+
+      final deliveryAddress =
+          deliveryAddressSnapshot.value as Map<dynamic, dynamic>;
+      final addressString =
+          '${deliveryAddress['address']}, ${deliveryAddress['city'] ?? ''}, ${deliveryAddress['zipCode'] ?? ''}';
+
+      // Default location (Montreal) in case geocoding fails
+      Map<String, dynamic> deliveryLocation = {
+        'lat': 45.5019,
+        'lng': -73.5674,
+        'address': addressString,
+      };
+
+      // Default restaurant location
+      Map<String, dynamic> restaurantLocation = {
+        'lat': 45.5080,
+        'lng': -73.5800,
+      };
+
+      // Try to get actual restaurant location
+      final restaurantSnapshot =
+          await _database.child('users/$restaurantId/profile').get();
+
+      if (restaurantSnapshot.exists) {
+        final restaurantProfile =
+            restaurantSnapshot.value as Map<dynamic, dynamic>?;
+
+        if (restaurantProfile != null &&
+            restaurantProfile.containsKey('location')) {
+          restaurantLocation =
+              Map<String, dynamic>.from(restaurantProfile['location'] as Map);
+        } else if (restaurantProfile != null &&
+            restaurantProfile.containsKey('address') &&
+            restaurantProfile.containsKey('city')) {
+          // Use restaurant address as fallback
+          restaurantLocation['address'] =
+              '${restaurantProfile['address']}, ${restaurantProfile['city']}';
+        }
+      }
+
+      // Setup tracking data structure
+      final Map<String, dynamic> trackingData = {
+        'tracking': {
+          'isTracking': true,
+          'lastUpdated': ServerValue.timestamp,
+        },
+        'deliveryLocation': deliveryLocation,
+        'restaurantLocation': restaurantLocation,
+      };
+
+      // Update in user's order
+      await _database
+          .child('users/$userId/profile/orders/$orderId')
+          .update(trackingData);
+
+      // Update in restaurant's order
+      await _database
+          .child('users/$restaurantId/orders/$orderId')
+          .update(trackingData);
+
+      print('Tracking enabled for order $orderId');
+      return true;
+    } catch (e) {
+      print('Error enabling tracking: $e');
+      return false;
+    }
+  }
 }

@@ -263,28 +263,29 @@ class _ProfileScreenDriverState extends State<ProfileScreenDriver> {
                   }
                 },
               ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildTopButton(
-                    icon: Icons.wallet,
-                    label: 'Wallet',
-                    onPressed: () {
-                      print('Wallet button pressed');
-                    },
-                    color: hangryYellow,
-                  ),
-                  _buildTopButton(
-                    icon: Icons.favorite,
-                    label: 'Favorites',
-                    onPressed: () {
-                      print('Favorites button pressed');
-                    },
-                    color: hangryYellow,
-                  ),
-                ],
-              ),
+              // Removing the 2 options for wallets and favorites for a cleaner look
+              // const SizedBox(height: 20),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //   children: [
+              //     _buildTopButton(
+              //       icon: Icons.wallet,
+              //       label: 'Wallet',
+              //       onPressed: () {
+              //         print('Wallet button pressed');
+              //       },
+              //       color: hangryYellow,
+              //     ),
+              //     _buildTopButton(
+              //       icon: Icons.favorite,
+              //       label: 'Favorites',
+              //       onPressed: () {
+              //         print('Favorites button pressed');
+              //       },
+              //       color: hangryYellow,
+              //     ),
+              //   ],
+              // ),
               _buildProfileItem(
                 context,
                 Icons.person,
