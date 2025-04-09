@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hangry_app_flutter/driverprofile_screen.dart';
 import 'package:hangry_app_flutter/driver_available_orders_screen.dart';
 import 'package:hangry_app_flutter/driver_active_orders_screen.dart';
+import 'package:hangry_app_flutter/driver_earnings_screen.dart';
 
 class DriverScreen extends StatefulWidget {
   const DriverScreen({Key? key}) : super(key: key);
@@ -108,10 +109,10 @@ class _DriverScreenState extends State<DriverScreen> {
                     icon: Icons.attach_money,
                     title: 'Earnings',
                     onTap: () {
-                      // Navigate to earnings screen
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text('Earnings feature coming soon!')),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DriverEarningsScreen()),
                       );
                     },
                   ),
