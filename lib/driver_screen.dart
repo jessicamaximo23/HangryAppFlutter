@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hangry_app_flutter/driverprofile_screen.dart';
+import 'package:hangry_app_flutter/driver_available_orders_screen.dart';
+import 'package:hangry_app_flutter/driver_active_orders_screen.dart';
 
 class DriverScreen extends StatefulWidget {
   const DriverScreen({Key? key}) : super(key: key);
@@ -9,7 +11,7 @@ class DriverScreen extends StatefulWidget {
   _DriverScreenState createState() => _DriverScreenState();
 }
 
-// Define custom colors
+// Custom app colors
 final Color hangryYellow = Color(0xFFFCBF49);
 final Color hangryBlue = Color(0xFF003049);
 
@@ -61,16 +63,16 @@ class _DriverScreenState extends State<DriverScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-        Text(
-          'Driver DashBoard',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-          textAlign: TextAlign.center,
-        ),
-          const SizedBox(height: 20),
+            Text(
+              'Driver DashBoard',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
 
             // Dashboard cards
             Expanded(
@@ -80,10 +82,26 @@ class _DriverScreenState extends State<DriverScreen> {
                 mainAxisSpacing: 14,
                 children: [
                   _buildDashboardCard(
+                    icon: Icons.add_circle,
+                    title: 'Available Orders',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                DriverAvailableOrdersScreen()),
+                      );
+                    },
+                  ),
+                  _buildDashboardCard(
                     icon: Icons.delivery_dining,
                     title: 'My Deliveries',
                     onTap: () {
-                      // Navigate to deliveries screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DriverActiveOrdersScreen()),
+                      );
                     },
                   ),
                   _buildDashboardCard(
@@ -91,25 +109,21 @@ class _DriverScreenState extends State<DriverScreen> {
                     title: 'Earnings',
                     onTap: () {
                       // Navigate to earnings screen
-                    },
-                  ),
-                  _buildDashboardCard(
-                    icon: Icons.schedule,
-                    title: 'Schedule',
-                    onTap: () {
-                      // Navigate to schedule screen
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text('Earnings feature coming soon!')),
+                      );
                     },
                   ),
                   _buildDashboardCard(
                     icon: Icons.person,
                     title: 'Profile',
                     onTap: () {
-
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ProfileScreenDriver()),
+                        MaterialPageRoute(
+                            builder: (context) => ProfileScreenDriver()),
                       );
-                      // Navigate to profile screen
                     },
                   ),
                 ],
@@ -163,7 +177,8 @@ class _DriverScreenState extends State<DriverScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 40, color: hangryYellow), // Use custom yellow color
+              Icon(icon,
+                  size: 40, color: hangryYellow), // Use custom yellow color
               const SizedBox(height: 10),
               Text(
                 title,
