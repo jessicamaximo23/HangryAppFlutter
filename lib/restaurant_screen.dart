@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hangry_app_flutter/restaurant_ListOfitens.dart';
+import 'package:hangry_app_flutter/restaurant_earnings_screen.dart'; // Import the earnings screen
 import 'package:hangry_app_flutter/restaurantprofile_screen.dart';
 import 'restaurant_orders_screen.dart';
 
@@ -13,7 +14,6 @@ class RestaurantScreen extends StatefulWidget {
 
 final Color hangryYellow = Color(0xFFFCBF49);
 final Color hangryBlue = Color(0xFF003049);
-
 
 class _RestaurantScreen extends State<RestaurantScreen> {
   void _signOut(BuildContext context) async {
@@ -54,8 +54,8 @@ class _RestaurantScreen extends State<RestaurantScreen> {
               height: 150,
             ),
             SizedBox(height: 20),
-            const SizedBox(height: 20),
-            Text('Welcome to Hangry!',
+            Text(
+              'Welcome to Hangry!',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -64,7 +64,8 @@ class _RestaurantScreen extends State<RestaurantScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-            Text('Restaurant DashBoard',
+            Text(
+              'Restaurant DashBoard',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -85,8 +86,9 @@ class _RestaurantScreen extends State<RestaurantScreen> {
                     title: 'Orders',
                     onTap: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => RestaurantOrdersScreen()),
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RestaurantOrdersScreen()),
                       );
                     },
                   ),
@@ -94,7 +96,11 @@ class _RestaurantScreen extends State<RestaurantScreen> {
                     icon: Icons.attach_money,
                     title: 'Earnings',
                     onTap: () {
-                      // Navigate to earnings screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RestaurantEarningsScreen()),
+                      );
                     },
                   ),
                   _buildDashboardCard(
@@ -102,8 +108,9 @@ class _RestaurantScreen extends State<RestaurantScreen> {
                     title: 'Create my menu',
                     onTap: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Restaurant_ListOfItems()),
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Restaurant_ListOfItems()),
                       );
                     },
                   ),
@@ -112,15 +119,15 @@ class _RestaurantScreen extends State<RestaurantScreen> {
                     title: 'Profile',
                     onTap: () {
                       Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ProfileScreenRestaurant()),
-    );
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProfileScreenRestaurant()),
+                      );
                     },
                   ),
                 ],
               ),
             ),
-
 
             const SizedBox(height: 20),
             Padding(
@@ -169,8 +176,8 @@ class _RestaurantScreen extends State<RestaurantScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 40, color: hangryYellow),
-              // Use custom yellow color
+              Icon(icon,
+                  size: 40, color: hangryYellow), // Use custom yellow color
               const SizedBox(height: 10),
               Text(
                 title,
