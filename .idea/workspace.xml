@@ -7,12 +7,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="Created the screens for drivers to see and accept or deny orders coming form restaurants">
-      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
+    <list default="true" id="1c926b53-f080-469c-8e46-ef2d2f994049" name="Changes" comment="path and files change">
+      <change afterPath="$PROJECT_DIR$/lib/driver_earnings_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/driver_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/driver_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/driverprofile_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/driverprofile_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/location_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/location_service.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -152,38 +150,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1739562604307</updated>
-    </task>
-    <task id="LOCAL-00005" summary="Added logic, UI and elements to make the CRUD apply to the list of items">
-      <option name="closed" value="true" />
-      <created>1742480131091</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1742480131091</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Modified admin restaurant part 1">
-      <option name="closed" value="true" />
-      <created>1742490364568</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1742490364568</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Changed toggle status for restaurant">
-      <option name="closed" value="true" />
-      <created>1742495556654</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1742495556654</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Created admin_user_screen.dart">
-      <option name="closed" value="true" />
-      <created>1742495579918</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1742495579918</updated>
     </task>
     <task id="LOCAL-00009" summary="Created admin_driver_screen.dart plus logic">
       <option name="closed" value="true" />
@@ -545,7 +511,39 @@
       <option name="project" value="LOCAL" />
       <updated>1744211307823</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="Modified to add the logic behind driver's orders">
+      <option name="closed" value="true" />
+      <created>1744213387042</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1744213387042</updated>
+    </task>
+    <task id="LOCAL-00055" summary="Cleaned UI a bit by removing wallet and favorites options for drivers">
+      <option name="closed" value="true" />
+      <created>1744213424453</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1744213424453</updated>
+    </task>
+    <task id="LOCAL-00056" summary="Added available for orders to the driver's screen">
+      <option name="closed" value="true" />
+      <created>1744213564452</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1744213564452</updated>
+    </task>
+    <task id="LOCAL-00057" summary="path and files change">
+      <option name="closed" value="true" />
+      <created>1744213595400</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1744213595400</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -560,10 +558,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added filters for type of dish and type of cuisine for the user. Added a search bar, to be completed wit Google Maps later on" />
-    <MESSAGE value="Created menu screen" />
-    <MESSAGE value="Added import to menu screen" />
-    <MESSAGE value="Created menu screen to check items and add those to cart" />
     <MESSAGE value="Created cart screen" />
     <MESSAGE value="Started adding the cart logic into the restaurant_menu_screen" />
     <MESSAGE value="Modified UI, added some methods for the prices in cart, added cartItem class" />
@@ -585,6 +579,10 @@
     <MESSAGE value="Modified restaurant listings to add a button localizing the restaurant on GMaps. Supposed to lcoate user to but not entirely accurate so far" />
     <MESSAGE value="Added new components" />
     <MESSAGE value="Created the screens for drivers to see and accept or deny orders coming form restaurants" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created the screens for drivers to see and accept or deny orders coming form restaurants" />
+    <MESSAGE value="Modified to add the logic behind driver's orders" />
+    <MESSAGE value="Cleaned UI a bit by removing wallet and favorites options for drivers" />
+    <MESSAGE value="Added available for orders to the driver's screen" />
+    <MESSAGE value="path and files change" />
+    <option name="LAST_COMMIT_MESSAGE" value="path and files change" />
   </component>
 </project>
