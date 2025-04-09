@@ -1,29 +1,32 @@
 class ChatMessage {
   final String id;
-  final String orderId;
-  final String senderId;
-  final String receiverId;
   final String message;
+  final String senderId;
+  final String senderName;
+  final String senderType;
+  final String? receiverId;
   final DateTime timestamp;
   final bool isRead;
 
   ChatMessage({
     required this.id,
-    required this.orderId,
-    required this.senderId,
-    required this.receiverId,
     required this.message,
+    required this.senderId,
+    required this.senderName,
+    required this.senderType,
+    this.receiverId,
     required this.timestamp,
-    this.isRead = false,
+    required this.isRead,
   });
 
   factory ChatMessage.fromMap(String id, Map<dynamic, dynamic> data) {
     return ChatMessage(
       id: id,
-      orderId: data['orderId'] ?? '',
-      senderId: data['senderId'] ?? '',
-      receiverId: data['receiverId'] ?? '',
       message: data['message'] ?? '',
+      senderId: data['senderId'] ?? '',
+      senderName: data['orderId'] ?? '',
+      senderType: data['orderId'] ?? '',
+      receiverId: data['receiverId'] ?? '',
       timestamp: data['timestamp'] != null
           ? DateTime.fromMillisecondsSinceEpoch(data['timestamp'])
           : DateTime.now(),
@@ -33,13 +36,18 @@ class ChatMessage {
 
   // Convert to map for Firebase
   Map<String, dynamic> toMap() {
-    return {
-      'orderId': orderId,
-      'senderId': senderId,
-      'receiverId': receiverId,
+    final result = {
       'message': message,
+      'senderId': senderId,
+      'senderName': senderName,
+      'senderType': senderType,
       'timestamp': timestamp.millisecondsSinceEpoch,
       'isRead': isRead,
     };
+
+    if (receiverId != null) {
+      result['receiverId'] = receiverId as Object;
+    }
+    return result;
   }
 }
