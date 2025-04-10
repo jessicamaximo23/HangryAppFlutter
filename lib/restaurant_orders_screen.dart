@@ -115,7 +115,7 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
 
       // 1. Look in standard location used by Flutter app
       final standardOrdersSnapshot =
-      await _databaseRef.child('users/${_user!.uid}/orders').get();
+      await _databaseRef.child('users/${_user!.uid}/profile/orders').get();
 
       if (standardOrdersSnapshot.exists) {
         final ordersData =
@@ -441,7 +441,7 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
 
       // 1. Update in restaurant's direct orders (simplified record)
       try {
-        await _databaseRef.child('users/${_user!.uid}/orders/$orderId').update(
+        await _databaseRef.child('users/${_user!.uid}/profile/orders/$orderId').update(
             updateData);
         anyUpdateSuccessful = true;
       } catch (e) {
