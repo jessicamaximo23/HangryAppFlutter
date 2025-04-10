@@ -19,7 +19,7 @@ class ChatMessage {
     required this.isRead,
   });
 
-  factory ChatMessage.fromMap(String id, Map<dynamic, dynamic> data) {
+  factory ChatMessage.fromExistingStructure(String id, Map<dynamic, dynamic> data) {
     return ChatMessage(
       id: id,
       message: data['message'] ?? '',
