@@ -78,7 +78,7 @@ class DriverLocation extends Location {
     return DriverLocation(
       latitude: map['lat'] as double,
       longitude: map['lng'] as double,
-      lastUpdated: DateTime.now(), // Firebase doesn't always include this
+      lastUpdated: DateTime.now(),
     );
   }
 }
