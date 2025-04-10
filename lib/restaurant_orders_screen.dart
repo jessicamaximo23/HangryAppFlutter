@@ -1,3 +1,35 @@
+// Future<void> _fetchOrders() async {
+//   if (_user == null) {
+//     setState(() {
+//       _isLoading = false;
+//       _errorMessage = 'User not authenticated';
+//     });
+//     return;
+//   }
+//
+//   try {
+//     setState(() {
+//       _isLoading = true;
+//       _errorMessage = '';
+//     });
+//
+//     Map<String, Map<String, dynamic>> allOrders = {};
+//
+//     // 1. Look in standard location used by Flutter app
+//     final standardOrdersSnapshot =
+//     await _databaseRef.child('users/${_user!.uid}/orders').get();
+//
+//     if (standardOrdersSnapshot.exists) {
+//       final ordersData =
+//       standardOrdersSnapshot.value as Map<dynamic, dynamic>;
+//       ordersData.forEach((orderId, orderData) {
+//         if (orderData is Map) {
+//           allOrders[orderId.toString()] =
+//               _normalizeOrderData(orderId.toString(), orderData);
+//         }
+//       });
+//     }
+
 import 'dart:math' as Math;
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,6 +52,9 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
   late TabController _tabController;
   final User? _user = FirebaseAuth.instance.currentUser;
   final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref();
+
+  // Cache for storing complete order data
+  final Map<String, Map<String, dynamic>> _completeOrdersCache = {};
 
   List<Map<String, dynamic>> _pendingOrders = [];
   List<Map<String, dynamic>> _preparingOrders = [];
@@ -48,7 +83,10 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
   void _setupOrderListener() {
     if (_user == null) return;
 
-    _databaseRef.child('users/${_user!.uid}/orders').onValue.listen((event) {
+    _databaseRef
+        .child('users/${_user!.uid}/orders')
+        .onValue
+        .listen((event) {
       if (event.snapshot.exists) {
         _fetchOrders();
       }
@@ -70,78 +108,132 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
         _errorMessage = '';
       });
 
-      final ordersSnapshot =
-          await _databaseRef.child('users/${_user!.uid}/orders').get();
+      Map<String, Map<String, dynamic>> allOrders = {};
 
-      if (!ordersSnapshot.exists) {
-        setState(() {
-          _pendingOrders = [];
-          _preparingOrders = [];
-          _readyOrders = [];
-          _completedOrders = [];
-          _isLoading = false;
+      // Clear the cache when refreshing orders
+      _completeOrdersCache.clear();
+
+      // 1. Look in standard location used by Flutter app
+      final standardOrdersSnapshot =
+      await _databaseRef.child('users/${_user!.uid}/orders').get();
+
+      if (standardOrdersSnapshot.exists) {
+        final ordersData =
+        standardOrdersSnapshot.value as Map<dynamic, dynamic>;
+        ordersData.forEach((orderId, orderData) {
+          if (orderData is Map) {
+            Map<String, dynamic> normalizedOrder =
+            _normalizeOrderData(orderId.toString(), orderData);
+            allOrders[orderId.toString()] = normalizedOrder;
+          } else {
+            // This could be just a status string, create minimal order object
+            allOrders[orderId.toString()] = {
+              'orderId': orderId.toString(),
+              'status': orderData,
+            };
+          }
         });
-        return;
       }
 
-      final ordersData = ordersSnapshot.value as Map<dynamic, dynamic>;
+      // 2. Look in iOS/Android location for complete data
+      final iosAndroidOrdersSnapshot =
+      await _databaseRef.child('users/${_user!.uid}/profile/orders').get();
 
+      if (iosAndroidOrdersSnapshot.exists) {
+        final ordersData =
+        iosAndroidOrdersSnapshot.value as Map<dynamic, dynamic>;
+        ordersData.forEach((orderId, orderData) {
+          if (orderData is Map) {
+            // Only add if not already found or if this data is more complete
+            Map<String, dynamic> normalizedOrder =
+            _normalizeOrderData(orderId.toString(), orderData);
+
+            // Store in cache for future reference
+            _completeOrdersCache[orderId.toString()] = normalizedOrder;
+
+            // If we already have this order but it's just a simplified version, replace with complete
+            if (allOrders.containsKey(orderId.toString())) {
+              Map<String, dynamic> existingOrder = allOrders[orderId
+                  .toString()]!;
+              if (!existingOrder.containsKey('items') ||
+                  existingOrder['items'] == null) {
+                allOrders[orderId.toString()] = normalizedOrder;
+              } else {
+                // Update any missing info from complete data
+                if (existingOrder['status'] == null &&
+                    normalizedOrder['status'] != null) {
+                  allOrders[orderId.toString()]?['status'] =
+                  normalizedOrder['status'];
+                }
+              }
+            } else {
+              allOrders[orderId.toString()] = normalizedOrder;
+            }
+          }
+        });
+      }
+
+      // 3. Check global orders collection as well
+      final globalOrdersSnapshot = await _databaseRef.child('orders').get();
+
+      if (globalOrdersSnapshot.exists) {
+        final globalOrders =
+        globalOrdersSnapshot.value as Map<dynamic, dynamic>;
+        globalOrders.forEach((orderId, orderData) {
+          if (orderData is Map &&
+              orderData['restaurantId'] == _user!.uid &&
+              !allOrders.containsKey(orderId.toString())) {
+            allOrders[orderId.toString()] =
+                _normalizeOrderData(orderId.toString(), orderData);
+          }
+        });
+      }
+
+      // Now process all found orders
       List<Map<String, dynamic>> pending = [];
       List<Map<String, dynamic>> preparing = [];
       List<Map<String, dynamic>> ready = [];
       List<Map<String, dynamic>> completed = [];
 
-      ordersData.forEach((orderId, orderData) {
-        if (orderData is Map) {
-          final Map<String, dynamic> orderMap = {};
-          orderMap['orderId'] = orderId;
+      allOrders.forEach((orderId, orderData) {
+        // Sort into appropriate category based on status
+        String status = orderData['status']?.toString() ?? '';
 
-          // Copy essential information
-          orderMap['userId'] = orderData['userId'] ?? '';
-          orderMap['orderDate'] = orderData['orderDate'] ?? '';
-          orderMap['status'] = orderData['status'] ?? 'pending';
-          orderMap['total'] = orderData['total'] ?? 0.0;
-          orderMap['items'] = orderData['items'] ?? {};
-          orderMap['deliveryAddress'] = orderData['deliveryAddress'] ?? {};
-          orderMap['assignedDriver'] = orderData['assignedDriver'];
+        // Handle iOS/Android status values which might be different
+        status = status.toLowerCase();
+        if (status == "processing") status = "pending";
 
-          // Parse the order date for sorting
-          DateTime dateObject;
-          try {
-            dateObject = DateTime.parse(orderData['orderDate']);
-          } catch (e) {
-            dateObject = DateTime.now(); // Fallback
-          }
-          orderMap['dateObject'] = dateObject;
-
-          // Add to appropriate list based on status
-          switch (orderMap['status']) {
-            case 'pending':
-              pending.add(orderMap);
-              break;
-            case 'preparing':
-              preparing.add(orderMap);
-              break;
-            case 'ready_for_pickup':
-              ready.add(orderMap);
-              break;
-            case 'on_the_way':
-            case 'delivered':
-              completed.add(orderMap);
-              break;
-          }
+        switch (status) {
+          case 'pending':
+            pending.add(orderData);
+            break;
+          case 'preparing':
+            preparing.add(orderData);
+            break;
+          case 'ready_for_pickup':
+            ready.add(orderData);
+            break;
+          case 'on_the_way':
+          case 'delivered':
+          case 'completed':
+            completed.add(orderData);
+            break;
         }
       });
 
-      // Sort orders by date (newest first)
-      pending.sort((a, b) =>
-          (b['dateObject'] as DateTime).compareTo(a['dateObject'] as DateTime));
-      preparing.sort((a, b) =>
-          (b['dateObject'] as DateTime).compareTo(a['dateObject'] as DateTime));
-      ready.sort((a, b) =>
-          (b['dateObject'] as DateTime).compareTo(a['dateObject'] as DateTime));
-      completed.sort((a, b) =>
-          (b['dateObject'] as DateTime).compareTo(a['dateObject'] as DateTime));
+      // Sort each list by date (newest first)
+      final sortByDate = (Map<String, dynamic> a, Map<String, dynamic> b) {
+        // Try to extract date in multiple formats
+        DateTime? aDate = _parseOrderDate(a['orderDate']);
+        DateTime? bDate = _parseOrderDate(b['orderDate']);
+
+        return (bDate ?? DateTime.now()).compareTo(aDate ?? DateTime.now());
+      };
+
+      pending.sort(sortByDate);
+      preparing.sort(sortByDate);
+      ready.sort(sortByDate);
+      completed.sort(sortByDate);
 
       setState(() {
         _pendingOrders = pending;
@@ -159,7 +251,172 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
     }
   }
 
-  String _formatDate(String dateString) {
+  // Helper method to normalize order data from different sources
+  Map<String, dynamic> _normalizeOrderData(String orderId,
+      Map<dynamic, dynamic> data) {
+    // Create a standardized order map that will work with your UI
+    Map<String, dynamic> standardOrder = {
+      'orderId': orderId,
+    };
+
+    // Copy all fields as-is
+    data.forEach((key, value) {
+      standardOrder[key.toString()] = value;
+    });
+
+    // Ensure userId is never null
+    standardOrder['userId'] = standardOrder['userId'] ?? 'unknown';
+
+    // Handle iOS/Android specific formats
+
+    // Convert restaurantId from array to string if needed
+    if (standardOrder['restaurantId'] is List) {
+      standardOrder['restaurantId'] =
+      (standardOrder['restaurantId'] as List).isNotEmpty
+          ? standardOrder['restaurantId'][0]
+          : '';
+    }
+
+    // Convert restaurantName from array to string if needed
+    if (standardOrder['restaurantName'] is List) {
+      standardOrder['restaurantName'] =
+      (standardOrder['restaurantName'] as List).isNotEmpty
+          ? standardOrder['restaurantName'][0]
+          : '';
+    }
+
+    // Handle items in different formats
+    if (standardOrder['items'] is List) {
+      // Convert iOS/Android list of items to Flutter map format
+      Map<String, dynamic> itemsMap = {};
+      List items = standardOrder['items'] as List;
+      for (int i = 0; i < items.length; i++) {
+        itemsMap['item$i'] = {
+          'name': items[i],
+          'price': 0.0, // You might need to extract this from elsewhere
+          'quantity': 1, // Default
+          'subtotal': 0.0,
+          'comment': '',
+        };
+      }
+      standardOrder['items'] = itemsMap;
+    } else if (standardOrder['items'] == null) {
+      // If items is null, set it to an empty map
+      standardOrder['items'] = <String, dynamic>{};
+    }
+
+    // Ensure we have total set
+    if (standardOrder['total'] == null) {
+      standardOrder['total'] = standardOrder['totalPrice'] ?? 0.0;
+    }
+
+    return standardOrder;
+  }
+
+  // Helper to enrich simplified order data with complete details
+  Map<String, dynamic> _enrichOrderData(Map<String, dynamic> order,
+      String orderId) {
+    // If the order already has items and total, it's complete
+    if ((order.containsKey('items') && order['items'] != null &&
+        order['items'] is Map && (order['items'] as Map).isNotEmpty) &&
+        (order.containsKey('total') && order['total'] != null)) {
+      return order;
+    }
+
+    // This is a simplified order, try to find complete data
+    String userId = order['userId']?.toString() ?? '';
+
+    // First check if we can get complete data from cache
+    if (_completeOrdersCache.containsKey(orderId)) {
+      // Start with cached data
+      Map<String, dynamic> completeOrder = Map.from(
+          _completeOrdersCache[orderId]!);
+      // Update with the latest status from the simplified data
+      if (order.containsKey('status')) {
+        completeOrder['status'] = order['status'];
+      }
+      if (order.containsKey('statusUpdatedAt')) {
+        completeOrder['statusUpdatedAt'] = order['statusUpdatedAt'];
+      }
+      return completeOrder;
+    }
+
+    // Otherwise, we'll need to fetch it asynchronously and update later
+    _fetchCompleteOrderData(orderId, userId);
+
+    // Return what we have for now
+    return order;
+  }
+
+  // Asynchronously fetch complete order data and update the UI
+  Future<void> _fetchCompleteOrderData(String orderId, String userId) async {
+    try {
+      // Look in several possible places for the complete order data
+      List<String> potentialPaths = [
+        'users/${_user!.uid}/profile/orders/$orderId',
+      ];
+
+      // Only check user path if we have a valid userId
+      if (userId.isNotEmpty && userId != 'unknown') {
+        potentialPaths.add('users/$userId/profile/orders/$orderId');
+      }
+
+      // Add global path as last resort
+      potentialPaths.add('orders/$orderId');
+
+      for (String path in potentialPaths) {
+        final snapshot = await _databaseRef.child(path).get();
+        if (snapshot.exists && snapshot.value is Map) {
+          Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
+
+          // Normalize the data
+          Map<String, dynamic> normalizedData = _normalizeOrderData(
+              orderId, data);
+
+          // Store in cache
+          _completeOrdersCache[orderId] = normalizedData;
+
+          // If we're still mounted, refresh the UI
+          if (mounted) {
+            setState(() {
+              // Force a rebuild - the cached data will now be used
+            });
+          }
+
+          return;
+        }
+      }
+    } catch (e) {
+      print('Error fetching complete order data: $e');
+    }
+  }
+
+  // Helper to parse dates in different formats
+  DateTime? _parseOrderDate(dynamic dateStr) {
+    if (dateStr == null) return null;
+
+    // Try various date formats
+    try {
+      // Format: "2025-04-10 15:30:45"
+      return DateTime.parse(dateStr.toString());
+    } catch (_) {
+      try {
+        // Format: "Apr 10, 2025 15:30"
+        return DateFormat('MMM d, yyyy HH:mm').parse(dateStr.toString());
+      } catch (_) {
+        try {
+          // Format: "2025-04-10, 3:30 PM"
+          return DateFormat('yyyy-MM-dd, h:mm a').parse(dateStr.toString());
+        } catch (_) {
+          return null;
+        }
+      }
+    }
+  }
+
+  String _formatDate(String? dateString) {
+    if (dateString == null) return 'No date available';
+
     try {
       final dateTime = DateTime.parse(dateString);
       return DateFormat('MMM d, h:mm a').format(dateTime);
@@ -168,27 +425,84 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
     }
   }
 
-  Future<void> _updateOrderStatus(
-      String orderId, String userId, String status) async {
+  Future<void> _updateOrderStatus(String orderId, String userId,
+      String status) async {
     try {
-      // Update in restaurant's record
-      await _databaseRef.child('users/${_user!.uid}/orders/$orderId').update({
+      // Create update data with timestamp
+      Map<String, dynamic> updateData = {
         'status': status,
         'statusUpdatedAt': ServerValue.timestamp,
-      });
+      };
 
-      // Update in user's record
-      await _databaseRef.child('users/$userId/profile/orders/$orderId').update({
-        'status': status,
-        'statusUpdatedAt': ServerValue.timestamp,
-      });
+      // Track which paths we updated successfully
+      bool anyUpdateSuccessful = false;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Order status updated to $status')),
-      );
+      // Update in all potential locations to keep data in sync
 
-      // Refresh orders
-      _fetchOrders();
+      // 1. Update in restaurant's direct orders (simplified record)
+      try {
+        await _databaseRef.child('users/${_user!.uid}/orders/$orderId').update(
+            updateData);
+        anyUpdateSuccessful = true;
+      } catch (e) {
+        print('Error updating restaurant orders: $e');
+      }
+
+      // 2. Update in restaurant's profile/orders (complete record)
+      try {
+        await _databaseRef
+            .child('users/${_user!.uid}/profile/orders/$orderId')
+            .update(updateData);
+        anyUpdateSuccessful = true;
+      } catch (e) {
+        print('Error updating restaurant profile orders: $e');
+      }
+
+      // 3. Update in user's record if valid userId
+      if (userId.isNotEmpty && userId != 'unknown') {
+        try {
+          await _databaseRef
+              .child('users/$userId/profile/orders/$orderId')
+              .update(updateData);
+          anyUpdateSuccessful = true;
+        } catch (e) {
+          print('Error updating user order: $e');
+        }
+      }
+
+      // 4. Update in global orders if it exists
+      try {
+        final globalOrderRef = _databaseRef.child('orders/$orderId');
+        final snapshot = await globalOrderRef.get();
+        if (snapshot.exists) {
+          await globalOrderRef.update(updateData);
+          anyUpdateSuccessful = true;
+        }
+      } catch (e) {
+        print('Error updating global order: $e');
+      }
+
+      if (anyUpdateSuccessful) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Order status updated to $status')),
+        );
+
+        // Also update the cache if we have this order
+        if (_completeOrdersCache.containsKey(orderId)) {
+          _completeOrdersCache[orderId]!['status'] = status;
+          _completeOrdersCache[orderId]!['statusUpdatedAt'] = DateTime
+              .now()
+              .millisecondsSinceEpoch;
+        }
+
+        // Refresh orders
+        _fetchOrders();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Error updating order status. Please try again.')),
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error updating order status: $e')),
@@ -236,77 +550,88 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
       body: _isLoading
           ? Center(child: CircularProgressIndicator(color: hangryYellow))
           : _errorMessage.isNotEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.error_outline, size: 48, color: Colors.red),
-                      SizedBox(height: 16),
-                      Text(
-                        'Error loading orders',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(_errorMessage),
-                      SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: _fetchOrders,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: hangryYellow,
-                        ),
-                        child: Text('Try Again'),
-                      ),
-                    ],
-                  ),
-                )
-              : TabBarView(
-                  controller: _tabController,
-                  children: [
-                    // New Orders Tab
-                    _buildOrdersList(
-                      _pendingOrders,
-                      actions: (order) => [
-                        _buildActionButton(
-                            'Accept',
-                            Colors.green,
-                            () => _updateOrderStatus(order['orderId'],
-                                order['userId'], 'preparing')),
-                        _buildActionButton(
-                            'Decline',
-                            Colors.red,
-                            () => _updateOrderStatus(order['orderId'],
-                                order['userId'], 'cancelled')),
-                      ],
-                    ),
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 48, color: Colors.red),
+            SizedBox(height: 16),
+            Text(
+              'Error loading orders',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(_errorMessage),
+            SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _fetchOrders,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: hangryYellow,
+              ),
+              child: Text('Try Again'),
+            ),
+          ],
+        ),
+      )
+          : TabBarView(
+        controller: _tabController,
+        children: [
+          // New Orders Tab
+          _buildOrdersList(
+            _pendingOrders,
+            actions: (order) =>
+            [
+              _buildActionButton(
+                  'Accept',
+                  Colors.green,
+                      () =>
+                      _updateOrderStatus(
+                          order['orderId']?.toString() ?? '',
+                          order['userId']?.toString() ?? '',
+                          'preparing')),
+              _buildActionButton(
+                  'Decline',
+                  Colors.red,
+                      () =>
+                      _updateOrderStatus(
+                          order['orderId']?.toString() ?? '',
+                          order['userId']?.toString() ?? '',
+                          'cancelled')),
+            ],
+          ),
 
-                    // Preparing Orders Tab
-                    _buildOrdersList(
-                      _preparingOrders,
-                      actions: (order) => [
-                        _buildActionButton(
-                            'Ready for Pickup',
-                            Colors.blue,
-                            () => _updateOrderStatus(order['orderId'],
-                                order['userId'], 'ready_for_pickup')),
-                      ],
-                    ),
+          // Preparing Orders Tab
+          _buildOrdersList(
+            _preparingOrders,
+            actions: (order) =>
+            [
+              _buildActionButton(
+                  'Ready for Pickup',
+                  Colors.blue,
+                      () =>
+                      _updateOrderStatus(
+                          order['orderId']?.toString() ?? '',
+                          order['userId']?.toString() ?? '',
+                          'ready_for_pickup')),
+            ],
+          ),
 
-                    // Ready Orders Tab
-                    _buildOrdersList(
-                      _readyOrders,
-                      showDriverInfo: true,
-                    ),
+          // Ready Orders Tab
+          _buildOrdersList(
+            _readyOrders,
+            showDriverInfo: true,
+          ),
 
-                    // Completed Orders Tab
-                    _buildOrdersList(
-                      _completedOrders,
-                      showDriverInfo: true,
-                    ),
-                  ],
-                ),
+          // Completed Orders Tab
+          _buildOrdersList(
+            _completedOrders,
+            showDriverInfo: true,
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _fetchOrders,
         backgroundColor: hangryYellow,
@@ -315,8 +640,7 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
     );
   }
 
-  Widget _buildOrdersList(
-    List<Map<String, dynamic>> orders, {
+  Widget _buildOrdersList(List<Map<String, dynamic>> orders, {
     List<Widget> Function(Map<String, dynamic>)? actions,
     bool showDriverInfo = false,
   }) {
@@ -359,17 +683,34 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
     );
   }
 
-  Widget _buildOrderCard(
-    BuildContext context,
-    Map<String, dynamic> order, {
-    List<Widget>? actions,
-    bool showDriverInfo = false,
-  }) {
+  Widget _buildOrderCard(BuildContext context,
+      Map<String, dynamic> order, {
+        List<Widget>? actions,
+        bool showDriverInfo = false,
+      }) {
+    // Get order ID and enrich with complete data if needed
+    final orderId = order['orderId']?.toString() ?? '';
+
+    // Enrich with complete data if this is a simplified order
+    Map<String, dynamic> enrichedOrder = _enrichOrderData(order, orderId);
+
     // Calculate items count
     int itemCount = 0;
-    if (order['items'] is Map) {
-      itemCount = (order['items'] as Map).length;
+    if (enrichedOrder['items'] is Map) {
+      itemCount = (enrichedOrder['items'] as Map).length;
+    } else if (enrichedOrder['items'] is List) {
+      itemCount = (enrichedOrder['items'] as List).length;
     }
+
+    // Safely get orderId and handle null or empty
+    final String orderIdDisplay = orderId.isNotEmpty
+        ? 'Order #${orderId.substring(0, Math.min(8, orderId.length))}...'
+        : 'Order #unknown';
+
+    // Get total amount - use a default if not available
+    final String totalAmount = '\$${(enrichedOrder['total'] as num?)
+        ?.toStringAsFixed(2) ??
+        (enrichedOrder['totalPrice'] as num?)?.toStringAsFixed(2) ?? '0.00'}';
 
     return Card(
       margin: EdgeInsets.only(bottom: 16),
@@ -379,15 +720,25 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
       ),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => RestaurantOrderDetailsScreen(
-                orderId: order['orderId'],
-                userId: order['userId'],
+          if (orderId.isNotEmpty) {
+            String userId = enrichedOrder['userId']?.toString() ?? '';
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    RestaurantOrderDetailsScreen(
+                      orderId: orderId,
+                      userId: userId,
+                    ),
               ),
-            ),
-          ).then((_) => _fetchOrders());
+            ).then((_) => _fetchOrders());
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text(
+                      'Cannot view details: Order ID is missing')),
+            );
+          }
         },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
@@ -399,19 +750,19 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Order #${order['orderId'].toString().substring(0, Math.min(8, order['orderId'].toString().length))}...',
+                    orderIdDisplay,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: hangryBlue,
                     ),
                   ),
-                  _buildStatusBadge(order['status']),
+                  _buildStatusBadge(enrichedOrder['status']?.toString() ?? ''),
                 ],
               ),
               SizedBox(height: 8),
               Text(
-                _formatDate(order['orderDate']),
+                _formatDate(enrichedOrder['orderDate']?.toString()),
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey[600],
@@ -429,7 +780,7 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
                     ),
                   ),
                   Text(
-                    '\$${(order['total'] as num).toStringAsFixed(2)}',
+                    totalAmount,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -440,25 +791,28 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
               ),
 
               // Delivery Address
-              if (order.containsKey('deliveryAddress') &&
-                  order['deliveryAddress'] is Map &&
-                  order['deliveryAddress'].isNotEmpty)
+              if (enrichedOrder.containsKey('deliveryAddress') &&
+                  enrichedOrder['deliveryAddress'] is Map &&
+                  (enrichedOrder['deliveryAddress'] as Map).isNotEmpty)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 16),
-                    _buildDeliveryAddressRow(order['deliveryAddress']),
+                    _buildDeliveryAddressRow(
+                        enrichedOrder['deliveryAddress'] as Map<dynamic,
+                            dynamic>),
 
                     // Driver info if assigned and requested
                     if (showDriverInfo &&
-                        order.containsKey('assignedDriver') &&
-                        order['assignedDriver'] != null)
+                        enrichedOrder.containsKey('assignedDriver') &&
+                        enrichedOrder['assignedDriver'] != null)
                       Column(
                         children: [
                           SizedBox(height: 8),
                           FutureBuilder(
                             future: _databaseRef
-                                .child('users/${order['assignedDriver']}')
+                                .child(
+                                'users/${enrichedOrder['assignedDriver']}')
                                 .get(),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
@@ -473,7 +827,7 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
                               }
 
                               final driverData =
-                                  snapshot.data!.value as Map<dynamic, dynamic>;
+                              snapshot.data!.value as Map<dynamic, dynamic>;
                               final driverName = driverData['name'] ?? 'Driver';
 
                               String driverPhone = '';
@@ -482,7 +836,7 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
                               if (driverData.containsKey('profile') &&
                                   driverData['profile'] is Map) {
                                 final profile = driverData['profile']
-                                    as Map<dynamic, dynamic>;
+                                as Map<dynamic, dynamic>;
                                 driverPhone = profile['phoneNumber'] ?? '';
 
                                 final carModel = profile['carModel'] ?? '';
@@ -493,7 +847,7 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
                                 if (carModel.isNotEmpty &&
                                     plateNumber.isNotEmpty) {
                                   vehicle =
-                                      '$carColor $carModel ($plateNumber)';
+                                  '$carColor $carModel ($plateNumber)';
                                 }
                               }
 
@@ -511,7 +865,7 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             'Driver: $driverName',
@@ -553,10 +907,10 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
   }
 
   Widget _buildDeliveryAddressRow(Map<dynamic, dynamic> deliveryAddress) {
-    final address = deliveryAddress['address'] ?? '';
-    final city = deliveryAddress['city'] ?? '';
-    final zipCode = deliveryAddress['zipCode'] ?? '';
-    final phone = deliveryAddress['phone'] ?? '';
+    final address = deliveryAddress['address']?.toString() ?? '';
+    final city = deliveryAddress['city']?.toString() ?? '';
+    final zipCode = deliveryAddress['zipCode']?.toString() ?? '';
+    final phone = deliveryAddress['phone']?.toString() ?? '';
 
     return Row(
       children: [
@@ -604,7 +958,7 @@ class _RestaurantOrdersScreenState extends State<RestaurantOrdersScreen>
     Color color;
     String displayText;
 
-    switch (status) {
+    switch (status.toLowerCase()) {
       case 'pending':
         color = Colors.grey;
         displayText = 'New';
