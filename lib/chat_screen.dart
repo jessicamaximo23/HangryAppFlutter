@@ -244,7 +244,7 @@ class _ChatScreenState extends State<ChatScreen> {
         final message = _messages[index];
         final isMe = message.senderType == widget.userType;
 
-        // Show date divider if it's a different day from previous message
+        // Show date divider
         bool showDateDivider = false;
         if (index == 0) {
           showDateDivider = true;
@@ -313,7 +313,12 @@ class _ChatScreenState extends State<ChatScreen> {
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
                 color: isMe ? hangryYellow : Colors.grey[200],
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                  bottomLeft: Radius.circular(isMe ? 20 : 0),
+                  bottomRight: Radius.circular(isMe ? 0 : 20),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

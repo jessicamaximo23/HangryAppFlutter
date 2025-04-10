@@ -24,8 +24,8 @@ class ChatMessage {
       id: id,
       message: data['message'] ?? '',
       senderId: data['senderId'] ?? '',
-      senderName: data['orderId'] ?? '',
-      senderType: data['orderId'] ?? '',
+      senderName: data['senderName'] ?? '',
+      senderType: data['senderType'] ?? '',
       receiverId: data['receiverId'] ?? '',
       timestamp: data['timestamp'] != null
           ? DateTime.fromMillisecondsSinceEpoch(data['timestamp'])
@@ -34,7 +34,7 @@ class ChatMessage {
     );
   }
 
-  // Convert to map for Firebase
+
   Map<String, dynamic> toMap() {
     final result = {
       'message': message,
