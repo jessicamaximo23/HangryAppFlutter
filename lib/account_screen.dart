@@ -18,73 +18,78 @@ class AccountScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // home: Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(
-          child: Container(
-            padding: EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image.asset(
-                  'images/assets/logobackground.png',
-                  width: 200,
-                  height: 150,
-                ),
-                SizedBox(height: 16.0),
-                Image.asset(
-                  'images/assets/image1.png',
-                  width: 200,
-                  height: 200,
-                ),
-                SizedBox(height: 16.0),
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Container(
+          padding: EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.asset(
+                'images/assets/logobackground.png',
+                width: 200,
+                height: 150,
+              ),
+              SizedBox(height: 16.0),
+              Image.asset(
+                'images/assets/image1.png',
+                width: 200,
+                height: 200,
+              ),
+              SizedBox(height: 16.0),
 
-                // Choose your account Text
-                Text(
-                  'Choose your account',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontFamily: 'RammettoOne-Regular',
-                    color: Colors.grey,
-                  ),
+              // Choose your account Text
+              Text(
+                'Choose your account',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontFamily: 'RammettoOne-Regular',
+                  color: Colors.grey,
                 ),
-                SizedBox(height: 16.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    _buildAccountButton(context, 'Driver', 'driver'),
-                    _buildAccountButton(context, 'User', 'user'),
-                    _buildAccountButton(context, 'Restaurant', 'restaurant'),
-                  ],
-                ),
-                SizedBox(height: 24.0),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        //IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        //need to find a way to not pass accountType here.
-                        builder: (context) => SignInScreen(accountType: "",),
+              ),
+              SizedBox(height: 16.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  _buildAccountButton(context, 'Driver', 'driver'),
+                  SizedBox(width: 12.0),
+                  _buildAccountButton(context, 'User', 'user'),
+                  SizedBox(width: 12.0),
+                  _buildAccountButton(context, 'Restaurant', 'restaurant'),
+                ],
+              ),
+              SizedBox(height: 24.0),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      //IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                      //need to find a way to not pass accountType here.
+                      builder: (context) => SignInScreen(
+                        accountType: "",
                       ),
-                    );
-                  },
-                  child: Text(
-                    'Already have an account? Sign In',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      color: hangryBlue,
-                      fontWeight: FontWeight.bold,
                     ),
+                  );
+                },
+                child: Text(
+                  'Already have an account? Sign In',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: hangryBlue,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    );
   }
 
-  Widget _buildAccountButton(BuildContext context, String title, String accountType) {
+  Widget _buildAccountButton(
+      BuildContext context, String title, String accountType) {
     return ElevatedButton(
       onPressed: () => _redirectToSignUp(context, accountType),
       style: ElevatedButton.styleFrom(
