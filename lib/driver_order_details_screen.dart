@@ -5,6 +5,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hangry_app_flutter/location_service.dart';
 import 'package:intl/intl.dart';
 
+import 'chat_screen.dart';
+import 'chat_service.dart';
+
 class DriverOrderDetailsScreen extends StatefulWidget {
   final String orderId;
   final String restaurantId;
@@ -18,7 +21,8 @@ class DriverOrderDetailsScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _DriverOrderDetailsScreenState createState() => _DriverOrderDetailsScreenState();
+  _DriverOrderDetailsScreenState createState() =>
+      _DriverOrderDetailsScreenState();
 }
 
 class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
@@ -105,7 +109,8 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
         Map<String, dynamic> formattedItems = {};
         (orderData['items'] as Map<dynamic, dynamic>).forEach((key, value) {
           if (value is Map) {
-            formattedItems[key.toString()] = Map<String, dynamic>.from(value as Map);
+            formattedItems[key.toString()] =
+                Map<String, dynamic>.from(value as Map);
           }
         });
         orderDetails['items'] = formattedItems;
@@ -114,17 +119,21 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
       }
 
       // Get delivery address
-      if (orderData.containsKey('deliveryAddress') && orderData['deliveryAddress'] is Map) {
-        orderDetails['deliveryAddress'] = Map<String, dynamic>.from(orderData['deliveryAddress'] as Map);
+      if (orderData.containsKey('deliveryAddress') &&
+          orderData['deliveryAddress'] is Map) {
+        orderDetails['deliveryAddress'] =
+            Map<String, dynamic>.from(orderData['deliveryAddress'] as Map);
       }
 
       // Get tracking information
       if (orderData.containsKey('tracking') && orderData['tracking'] is Map) {
-        orderDetails['tracking'] = Map<String, dynamic>.from(orderData['tracking'] as Map);
+        orderDetails['tracking'] =
+            Map<String, dynamic>.from(orderData['tracking'] as Map);
       }
 
       // Get customer information
-      final userSnapshot = await _databaseRef.child('users/${widget.userId}').get();
+      final userSnapshot =
+          await _databaseRef.child('users/${widget.userId}').get();
       if (userSnapshot.exists) {
         final userData = userSnapshot.value as Map<dynamic, dynamic>;
         orderDetails['customerName'] = userData['name'] ?? 'Customer';
@@ -137,12 +146,15 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
       }
 
       // Get restaurant information
-      final restaurantSnapshot = await _databaseRef.child('users/${widget.restaurantId}').get();
+      final restaurantSnapshot =
+          await _databaseRef.child('users/${widget.restaurantId}').get();
       if (restaurantSnapshot.exists) {
-        final restaurantData = restaurantSnapshot.value as Map<dynamic, dynamic>;
+        final restaurantData =
+            restaurantSnapshot.value as Map<dynamic, dynamic>;
         orderDetails['restaurantName'] = restaurantData['name'] ?? 'Restaurant';
 
-        if (restaurantData.containsKey('profile') && restaurantData['profile'] is Map) {
+        if (restaurantData.containsKey('profile') &&
+            restaurantData['profile'] is Map) {
           final profile = restaurantData['profile'] as Map<dynamic, dynamic>;
           orderDetails['restaurantAddress'] = profile['address'] ?? '';
           orderDetails['restaurantCity'] = profile['city'] ?? '';
@@ -172,18 +184,32 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
     _markers.clear();
     _polylines.clear();
 
+    print("Updating map markers with data: ${_orderDetails!['tracking']}");
+
     // Restaurant location (use default if not available)
     LatLng restaurantLocation = LatLng(45.5017, -73.5673); // Default: Montreal
 
     // Add restaurant marker
     if (_orderDetails!.containsKey('tracking') &&
+        _orderDetails!['tracking'] is Map &&
         _orderDetails!['tracking'].containsKey('restaurantLocation')) {
+      final location = _orderDetails!['tracking']['restaurantLocation']
+          as Map<dynamic, dynamic>;
 
-      final location = _orderDetails!['tracking']['restaurantLocation'] as Map<dynamic, dynamic>;
-      restaurantLocation = LatLng(
-        location['lat'] as double,
-        location['lng'] as double,
-      );
+      if (location.containsKey('lat') && location.containsKey('lng')) {
+        try {
+          // Handle potential types (double, int, string)
+          double lat = _safeToDouble(location['lat']);
+          double lng = _safeToDouble(location['lng']);
+
+          restaurantLocation = LatLng(lat, lng);
+          print("Restaurant location: $lat, $lng");
+        } catch (e) {
+          print("Error parsing restaurant location: $e");
+        }
+      }
+    } else {
+      print("No restaurant location in tracking data");
     }
 
     _markers.add(
@@ -199,16 +225,50 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
     );
 
     // Customer/delivery location
-    LatLng deliveryLocation = LatLng(45.5030, -73.5700); // Default: Near Montreal
+    LatLng deliveryLocation =
+        LatLng(45.5030, -73.5700); // Default: Near Montreal
 
+    // First try from tracking data
     if (_orderDetails!.containsKey('tracking') &&
+        _orderDetails!['tracking'] is Map &&
         _orderDetails!['tracking'].containsKey('deliveryLocation')) {
+      final location = _orderDetails!['tracking']['deliveryLocation']
+          as Map<dynamic, dynamic>;
 
-      final location = _orderDetails!['tracking']['deliveryLocation'] as Map<dynamic, dynamic>;
-      deliveryLocation = LatLng(
-        location['lat'] as double,
-        location['lng'] as double,
-      );
+      if (location.containsKey('lat') && location.containsKey('lng')) {
+        try {
+          double lat = _safeToDouble(location['lat']);
+          double lng = _safeToDouble(location['lng']);
+
+          deliveryLocation = LatLng(lat, lng);
+          print("Delivery location from tracking: $lat, $lng");
+        } catch (e) {
+          print("Error parsing delivery location from tracking: $e");
+        }
+      }
+    }
+    // If not in tracking, try from deliveryLocation directly
+    else if (_orderDetails!.containsKey('deliveryLocation') &&
+        _orderDetails!['deliveryLocation'] is Map) {
+      final location =
+          _orderDetails!['deliveryLocation'] as Map<dynamic, dynamic>;
+
+      // Check if location has lat/lng coordinates
+      if (location.containsKey('lat') && location.containsKey('lng')) {
+        try {
+          double lat = _safeToDouble(location['lat']);
+          double lng = _safeToDouble(location['lng']);
+
+          deliveryLocation = LatLng(lat, lng);
+          print("Delivery location direct: $lat, $lng");
+        } catch (e) {
+          print("Error parsing direct delivery location: $e");
+        }
+      } else {
+        print("Delivery location data doesn't contain coordinates");
+      }
+    } else {
+      print("No delivery location found in data");
     }
 
     _markers.add(
@@ -218,8 +278,9 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
         infoWindow: InfoWindow(
           title: _orderDetails!['customerName'] ?? 'Customer',
-          snippet: _orderDetails!.containsKey('deliveryAddress') ?
-          '${_orderDetails!['deliveryAddress']['address']}, ${_orderDetails!['deliveryAddress']['city']}' : '',
+          snippet: _orderDetails!.containsKey('deliveryAddress')
+              ? '${_orderDetails!['deliveryAddress']['address']}, ${_orderDetails!['deliveryAddress']['city']}'
+              : '',
         ),
       ),
     );
@@ -236,13 +297,38 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
 
     // Update camera position if controller is available
     if (_mapController != null) {
-      _mapController!.animateCamera(
-        CameraUpdate.newLatLngBounds(
-          _getBounds([restaurantLocation, deliveryLocation]),
-          100, // padding
-        ),
-      );
+      try {
+        _mapController!.animateCamera(
+          CameraUpdate.newLatLngBounds(
+            _getBounds([restaurantLocation, deliveryLocation]),
+            100, // padding
+          ),
+        );
+      } catch (e) {
+        print("Error updating camera: $e");
+        // Fallback to a fixed zoom level
+        _mapController!.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(
+                (restaurantLocation.latitude + deliveryLocation.latitude) / 2,
+                (restaurantLocation.longitude + deliveryLocation.longitude) / 2,
+              ),
+              zoom: 12,
+            ),
+          ),
+        );
+      }
     }
+  }
+
+// Helper method to safely convert various types to double
+  double _safeToDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
   }
 
   LatLngBounds _getBounds(List<LatLng> points) {
@@ -271,20 +357,26 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
       });
 
       // Update status in restaurant's record
-      await _databaseRef.child('users/${widget.restaurantId}/orders/${widget.orderId}').update({
+      await _databaseRef
+          .child('users/${widget.restaurantId}/orders/${widget.orderId}')
+          .update({
         'status': 'delivered',
         'deliveredAt': ServerValue.timestamp,
       });
 
       // Update status in customer's record
-      await _databaseRef.child('users/${widget.userId}/profile/orders/${widget.orderId}').update({
+      await _databaseRef
+          .child('users/${widget.userId}/profile/orders/${widget.orderId}')
+          .update({
         'status': 'delivered',
         'deliveredAt': ServerValue.timestamp,
       });
 
       // Update driver's assignment
       if (_user != null) {
-        await _databaseRef.child('users/${_user!.uid}/assignments/${widget.orderId}').update({
+        await _databaseRef
+            .child('users/${_user!.uid}/assignments/${widget.orderId}')
+            .update({
           'status': 'completed',
           'completedAt': ServerValue.timestamp,
         });
@@ -294,15 +386,18 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Order marked as delivered!'), backgroundColor: Colors.green),
+        SnackBar(
+            content: Text('Order marked as delivered!'),
+            backgroundColor: Colors.green),
       );
 
       // Go back to orders screen
       Navigator.pop(context);
-
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error marking order as delivered: $error'), backgroundColor: Colors.red),
+        SnackBar(
+            content: Text('Error marking order as delivered: $error'),
+            backgroundColor: Colors.red),
       );
     } finally {
       setState(() {
@@ -336,10 +431,10 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator(color: hangryYellow))
           : _errorMessage.isNotEmpty
-          ? _buildErrorWidget()
-          : _orderDetails == null
-          ? Center(child: Text('No order details available'))
-          : _buildOrderDetailsContent(),
+              ? _buildErrorWidget()
+              : _orderDetails == null
+                  ? Center(child: Text('No order details available'))
+                  : _buildOrderDetailsContent(),
       bottomNavigationBar: _buildBottomBar(),
     );
   }
@@ -453,10 +548,12 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   decoration: BoxDecoration(
-                    color: _getStatusColor(_orderDetails!['status']).withOpacity(0.1),
+                    color: _getStatusColor(_orderDetails!['status'])
+                        .withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: _getStatusColor(_orderDetails!['status']).withOpacity(0.3),
+                      color: _getStatusColor(_orderDetails!['status'])
+                          .withOpacity(0.3),
                     ),
                   ),
                   child: Row(
@@ -504,12 +601,14 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
                 Divider(height: 24),
 
                 // Customer info
-                _buildSectionTitle('Customer Information'),
-                _buildInfoRow('Name', _orderDetails!['customerName'] ?? 'Customer'),
-                if (_orderDetails!.containsKey('customerPhone') &&
-                    _orderDetails!['customerPhone'].toString().isNotEmpty)
-                  _buildInfoRow('Phone', _orderDetails!['customerPhone']),
+                // _buildSectionTitle('Customer Information'),
+                // _buildInfoRow(
+                //     'Name', _orderDetails!['customerName'] ?? 'Customer'),
+                // if (_orderDetails!.containsKey('customerPhone') &&
+                //     _orderDetails!['customerPhone'].toString().isNotEmpty)
+                //   _buildInfoRow('Phone', _orderDetails!['customerPhone']),
 
+                _buildCustomerInfoSection(),
                 SizedBox(height: 16),
 
                 // Delivery address
@@ -534,6 +633,70 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
                 if (_orderDetails!.containsKey('orderComments') &&
                     _orderDetails!['orderComments'].toString().isNotEmpty)
                   _buildNotesSection(),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCustomerInfoSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('Customer Information'),
+        Card(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: hangryYellow.withOpacity(0.2),
+                  child: Icon(Icons.person, color: hangryYellow),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _orderDetails!['customerName'] ?? 'Customer',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      if (_orderDetails!.containsKey('customerPhone') &&
+                          _orderDetails!['customerPhone'].toString().isNotEmpty)
+                        Text(
+                          _orderDetails!['customerPhone'],
+                          style: TextStyle(
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.phone, color: Colors.green),
+                      onPressed: () {
+                        // Phone call functionality
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text('Call functionality coming soon!')),
+                        );
+                      },
+                    ),
+                    _buildChatButton(),
+                  ],
+                ),
               ],
             ),
           ),
@@ -586,7 +749,8 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
   }
 
   Widget _buildAddressSection() {
-    final deliveryAddress = _orderDetails!['deliveryAddress'] as Map<String, dynamic>;
+    final deliveryAddress =
+        _orderDetails!['deliveryAddress'] as Map<String, dynamic>;
     final address = deliveryAddress['address'] ?? '';
     final city = deliveryAddress['city'] ?? '';
     final zipCode = deliveryAddress['zipCode'] ?? '';
@@ -643,7 +807,8 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
   }
 
   Widget _buildOrderItemsList() {
-    if (!_orderDetails!.containsKey('items') || (_orderDetails!['items'] as Map).isEmpty) {
+    if (!_orderDetails!.containsKey('items') ||
+        (_orderDetails!['items'] as Map).isEmpty) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text('No items found in this order'),
@@ -672,11 +837,12 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
               '${itemData['quantity']}x ${itemData['name']}',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: itemData['comment'] != null && itemData['comment'].toString().isNotEmpty
+            subtitle: itemData['comment'] != null &&
+                    itemData['comment'].toString().isNotEmpty
                 ? Text(
-              'Note: ${itemData['comment']}',
-              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12),
-            )
+                    'Note: ${itemData['comment']}',
+                    style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12),
+                  )
                 : null,
             trailing: Text(
               '\$${(itemData['price'] * itemData['quantity']).toStringAsFixed(2)}',
@@ -840,5 +1006,88 @@ class _DriverOrderDetailsScreenState extends State<DriverOrderDetailsScreen> {
       default:
         return 'Unknown Status';
     }
+  }
+
+  void _navigateToChat(BuildContext context) {
+    if (_user != null &&
+        widget.orderId != null &&
+        widget.userId != null &&
+        _orderDetails != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatScreen(
+            orderId: widget.orderId,
+            receiverId: widget.userId,
+            receiverName: _orderDetails != null &&
+                    _orderDetails!.containsKey('customerName')
+                ? _orderDetails!['customerName']
+                : 'Customer',
+            orderStatus:
+                _orderDetails != null ? _orderDetails!['status'] : 'pending',
+            userType: 'driver', // Fixed as driver in this screen
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget _buildChatButton() {
+    final ChatService _chatService = ChatService();
+
+    return StreamBuilder<int>(
+      stream: Stream.periodic(Duration(seconds: 5)).asyncMap((_) {
+        if (_user != null) {
+          return _chatService.getUnreadMessageCount(
+            orderId: widget.orderId,
+            userId: _user!.uid,
+            userType: 'driver',
+          );
+        }
+        return Future.value(0);
+      }),
+      initialData: 0,
+      builder: (context, snapshot) {
+        final unreadCount = snapshot.data ?? 0;
+
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            FloatingActionButton(
+              heroTag: 'chatBtn',
+              onPressed: () => _navigateToChat(context),
+              backgroundColor: hangryYellow,
+              child: Icon(Icons.chat, color: Colors.black),
+              mini: true,
+            ),
+            if (unreadCount > 0)
+              Positioned(
+                right: -5,
+                top: -5,
+                child: Container(
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: BoxConstraints(
+                    minWidth: 18,
+                    minHeight: 18,
+                  ),
+                  child: Text(
+                    unreadCount.toString(),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
   }
 }
