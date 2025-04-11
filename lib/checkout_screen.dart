@@ -221,13 +221,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       // Also save to restaurant's orders
       await FirebaseDatabase.instance
-          .ref('users/${widget.restaurantData['uid']}/orders/$orderId')
+          .ref('users/${widget.restaurantData['uid']}/profile/orders/$orderId')
           .set(orderData);
 
       // Save to global orders collection for admin
-      await FirebaseDatabase.instance
-          .ref('orders/$orderId')
-          .set(orderData);
+      // await FirebaseDatabase.instance
+      //     .ref('orders/$orderId')
+      //     .set(orderData);
 
       // Navigate to order confirmation screen
       Navigator.pushAndRemoveUntil(
