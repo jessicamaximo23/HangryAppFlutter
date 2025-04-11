@@ -78,7 +78,8 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Location services are disabled. Using Montreal as default location.'),
+            content: Text(
+                'Location services are disabled. Using Montreal as default location.'),
             duration: Duration(seconds: 3),
           ),
         );
@@ -109,7 +110,8 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Location permissions are denied. Using Montreal as default location.'),
+              content: Text(
+                  'Location permissions are denied. Using Montreal as default location.'),
               duration: Duration(seconds: 3),
             ),
           );
@@ -138,7 +140,8 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Location permissions are permanently denied. Using Montreal as default location.'),
+            content: Text(
+                'Location permissions are permanently denied. Using Montreal as default location.'),
             duration: Duration(seconds: 3),
           ),
         );
@@ -185,7 +188,8 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Could not determine your location. Using Montreal as default.'),
+            content: Text(
+                'Could not determine your location. Using Montreal as default.'),
             duration: Duration(seconds: 3),
           ),
         );
@@ -246,7 +250,8 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
     if (_currentUserPosition != null) {
       _mapController?.animateCamera(
         CameraUpdate.newLatLngZoom(
-          LatLng(_currentUserPosition!.latitude, _currentUserPosition!.longitude),
+          LatLng(
+              _currentUserPosition!.latitude, _currentUserPosition!.longitude),
           14.0,
         ),
       );
@@ -286,7 +291,8 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Unable to get your current location. Using Montreal as default.'),
+            content: Text(
+                'Unable to get your current location. Using Montreal as default.'),
             duration: Duration(seconds: 3),
           ),
         );
@@ -305,7 +311,7 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
       });
 
       final DatabaseReference databaseRef =
-      FirebaseDatabase.instance.ref('users');
+          FirebaseDatabase.instance.ref('users');
       final event = await databaseRef
           .orderByChild('accountType')
           .equalTo('restaurant')
@@ -313,7 +319,7 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
 
       if (event.snapshot.value != null) {
         Map<dynamic, dynamic> usersMap =
-        event.snapshot.value as Map<dynamic, dynamic>;
+            event.snapshot.value as Map<dynamic, dynamic>;
         List<Map<String, dynamic>> restaurants = [];
 
         await Future.forEach(usersMap.entries, (MapEntry entry) async {
@@ -329,7 +335,7 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
               'latitude': _montrealLocation.latitude +
                   (restaurants.length * 0.002), // Default coords in Montreal
               'longitude':
-              _montrealLocation.longitude + (restaurants.length * 0.002),
+                  _montrealLocation.longitude + (restaurants.length * 0.002),
             };
 
             // Try to get profile data for address
@@ -361,7 +367,7 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
           if (widget.initialRestaurant != null) {
             final initialUid = widget.initialRestaurant!['uid'];
             final restaurant = _restaurants.firstWhere(
-                  (r) => r['uid'] == initialUid,
+              (r) => r['uid'] == initialUid,
               orElse: () => widget.initialRestaurant!,
             );
 
@@ -452,32 +458,32 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: restaurant['profileImageUrl'] != null &&
-                        restaurant['profileImageUrl'].isNotEmpty
+                            restaurant['profileImageUrl'].isNotEmpty
                         ? CachedNetworkImage(
-                      imageUrl: restaurant['profileImageUrl'],
-                      width: 70,
-                      height: 70,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: Colors.grey[300],
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: hangryYellow,
-                          ),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        color: Colors.grey[300],
-                        child:
-                        Icon(Icons.restaurant, color: hangryYellow),
-                      ),
-                    )
+                            imageUrl: restaurant['profileImageUrl'],
+                            width: 70,
+                            height: 70,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              color: Colors.grey[300],
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: hangryYellow,
+                                ),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              color: Colors.grey[300],
+                              child:
+                                  Icon(Icons.restaurant, color: hangryYellow),
+                            ),
+                          )
                         : Container(
-                      width: 70,
-                      height: 70,
-                      color: Colors.grey[300],
-                      child: Icon(Icons.restaurant, color: hangryYellow),
-                    ),
+                            width: 70,
+                            height: 70,
+                            color: Colors.grey[300],
+                            child: Icon(Icons.restaurant, color: hangryYellow),
+                          ),
                   ),
                   SizedBox(width: 16),
                   Expanded(
@@ -695,32 +701,32 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
                       leading: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: restaurant['profileImageUrl'] != null &&
-                            restaurant['profileImageUrl'].isNotEmpty
+                                restaurant['profileImageUrl'].isNotEmpty
                             ? CachedNetworkImage(
-                          imageUrl: restaurant['profileImageUrl'],
-                          width: 50,
-                          height: 50,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            color: Colors.grey[300],
-                            width: 50,
-                            height: 50,
-                          ),
-                          errorWidget: (context, url, error) => Container(
-                            color: Colors.grey[300],
-                            width: 50,
-                            height: 50,
-                            child: Icon(Icons.restaurant,
-                                color: hangryYellow),
-                          ),
-                        )
+                                imageUrl: restaurant['profileImageUrl'],
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  color: Colors.grey[300],
+                                  width: 50,
+                                  height: 50,
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  color: Colors.grey[300],
+                                  width: 50,
+                                  height: 50,
+                                  child: Icon(Icons.restaurant,
+                                      color: hangryYellow),
+                                ),
+                              )
                             : Container(
-                          color: Colors.grey[300],
-                          width: 50,
-                          height: 50,
-                          child:
-                          Icon(Icons.restaurant, color: hangryYellow),
-                        ),
+                                color: Colors.grey[300],
+                                width: 50,
+                                height: 50,
+                                child:
+                                    Icon(Icons.restaurant, color: hangryYellow),
+                              ),
                       ),
                       title: Text(restaurant['name']),
                       subtitle: Text(restaurant['cuisine'] ?? 'Restaurant'),

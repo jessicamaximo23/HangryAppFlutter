@@ -35,10 +35,7 @@ class OrderStatusService {
 
   // Get stream of orders for a restaurant
   Stream<List<Map<String, dynamic>>> getRestaurantOrders(String restaurantId) {
-    return _database
-        .child('users/$restaurantId/orders')
-        .onValue
-        .map((event) {
+    return _database.child('users/$restaurantId/orders').onValue.map((event) {
       if (!event.snapshot.exists) return [];
 
       final data = event.snapshot.value as Map<dynamic, dynamic>;

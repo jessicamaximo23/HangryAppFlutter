@@ -613,7 +613,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                _buildSummaryRow('Subtotal', '\$${subtotal.toStringAsFixed(2)}'),
+                _buildSummaryRow(
+                    'Subtotal', '\$${subtotal.toStringAsFixed(2)}'),
                 SizedBox(height: 8),
                 _buildSummaryRow('Tax', '\$${tax.toStringAsFixed(2)}'),
                 SizedBox(height: 8),

@@ -38,9 +38,11 @@ class OrderTracking {
       deliveryLocation: map['deliveryLocation'] != null
           ? Location.fromMap(map['deliveryLocation'])
           : null,
-      estimatedArrival: tracking != null && tracking['estimatedArrivalTime'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(tracking['estimatedArrivalTime'])
-          : null,
+      estimatedArrival:
+          tracking != null && tracking['estimatedArrivalTime'] != null
+              ? DateTime.fromMillisecondsSinceEpoch(
+                  tracking['estimatedArrivalTime'])
+              : null,
     );
   }
 }

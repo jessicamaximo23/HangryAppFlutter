@@ -21,16 +21,18 @@ class _SplashScreenState extends State<SplashScreen> {
   void checkAuthAndRedirect() {
     if (!mounted) return;
 
-
-    final authManager = Provider.of<AuthenticationManager>(context, listen: false);
+    final authManager =
+        Provider.of<AuthenticationManager>(context, listen: false);
     if (!authManager.isAuthenticated) {
       Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => AccountScreen(),
-    ),
+        context,
+        MaterialPageRoute(
+          builder: (context) => AccountScreen(),
+        ),
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,14 +41,14 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-      Image.asset(
-          'images/assets/logobackground.png',
-          width: 200,
-          height: 200,
-        ),
-        SizedBox(height: 20),
-        CircularProgressIndicator(),
-  ],
+            Image.asset(
+              'images/assets/logobackground.png',
+              width: 200,
+              height: 200,
+            ),
+            SizedBox(height: 20),
+            CircularProgressIndicator(),
+          ],
         ),
       ),
     );

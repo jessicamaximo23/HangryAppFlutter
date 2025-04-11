@@ -18,7 +18,8 @@ class OrderConfirmationScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _OrderConfirmationScreenState createState() => _OrderConfirmationScreenState();
+  _OrderConfirmationScreenState createState() =>
+      _OrderConfirmationScreenState();
 }
 
 class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
@@ -30,7 +31,8 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
   @override
   void initState() {
     super.initState();
-    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 3));
 
     // Play confetti animation when screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -117,8 +119,10 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                                 ),
                                 SizedBox(height: 24),
                                 _buildInfoRow('Order ID', widget.orderId),
-                                _buildInfoRow('Restaurant', widget.restaurantName),
-                                _buildInfoRow('Total Amount', '\$${widget.orderTotal.toStringAsFixed(2)}'),
+                                _buildInfoRow(
+                                    'Restaurant', widget.restaurantName),
+                                _buildInfoRow('Total Amount',
+                                    '\$${widget.orderTotal.toStringAsFixed(2)}'),
                                 SizedBox(height: 24),
                                 Text(
                                   'Estimated delivery time:',
@@ -144,7 +148,8 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: hangryYellow,
                                       foregroundColor: Colors.black,
-                                      padding: EdgeInsets.symmetric(vertical: 16),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 16),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(25),
                                       ),
@@ -164,7 +169,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                                     // Navigate to order details or tracking screen
                                     // This would be implemented in a future update
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text('Order tracking will be available in the next update!')),
+                                      SnackBar(
+                                          content: Text(
+                                              'Order tracking will be available in the next update!')),
                                     );
                                   },
                                   child: Text(
@@ -242,7 +249,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
   void _navigateToHome() {
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => UserScreen()),
-          (route) => false,
+      (route) => false,
     );
   }
 }

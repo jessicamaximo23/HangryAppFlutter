@@ -5,7 +5,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
-
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
@@ -23,7 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadProfileImage();
   }
 
-Future<void> _loadProfileImage() async {
+  Future<void> _loadProfileImage() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
@@ -59,12 +58,12 @@ Future<void> _loadProfileImage() async {
         print("Error loading profile image: $e");
       }
     }
-}
-
+  }
 
   Future<String?> getUserName(String userId) async {
     try {
-      DatabaseReference ref = FirebaseDatabase.instance.ref("users/$userId/name");
+      DatabaseReference ref =
+          FirebaseDatabase.instance.ref("users/$userId/name");
       DatabaseEvent event = await ref.once();
       return event.snapshot.value as String?;
     } catch (e) {
@@ -82,7 +81,8 @@ Future<void> _loadProfileImage() async {
       String city,
       String postalCode) async {
     try {
-      DatabaseReference userRef = FirebaseDatabase.instance.ref("users/$userId/profile");
+      DatabaseReference userRef =
+          FirebaseDatabase.instance.ref("users/$userId/profile");
       await userRef.update({
         "fullName": fullname,
         "phoneNumber": phonenumber,
@@ -104,7 +104,8 @@ Future<void> _loadProfileImage() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        DatabaseReference userRef = FirebaseDatabase.instance.ref("users/${user.uid}");
+        DatabaseReference userRef =
+            FirebaseDatabase.instance.ref("users/${user.uid}");
         await userRef.remove();
         await user.delete();
 
@@ -151,7 +152,8 @@ Future<void> _loadProfileImage() async {
 
                     try {
                       final ImagePicker _picker = ImagePicker();
-                      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                      final XFile? image =
+                          await _picker.pickImage(source: ImageSource.gallery);
 
                       if (image != null && user != null) {
                         // Show loading indicator
@@ -160,25 +162,32 @@ Future<void> _loadProfileImage() async {
                         );
 
                         // Create a properly formatted storage path with sanitized email
-                        final sanitizedEmail = user.email?.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_') ?? 'unknown';
+                        final sanitizedEmail = user.email
+                                ?.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_') ??
+                            'unknown';
                         final storageRef = FirebaseStorage.instance
                             .ref()
                             .child('user_profileImage/$sanitizedEmail.jpg');
 
                         // Upload the image
-                        final uploadTask = await storageRef.putFile(File(image.path));
-                        final downloadURL = await uploadTask.ref.getDownloadURL();
+                        final uploadTask =
+                            await storageRef.putFile(File(image.path));
+                        final downloadURL =
+                            await uploadTask.ref.getDownloadURL();
 
                         // Update Firebase Auth profile
                         await user.updatePhotoURL(downloadURL);
 
                         // Update in the database root level
-                        DatabaseReference userRef = FirebaseDatabase.instance.ref("users/${user.uid}");
+                        DatabaseReference userRef =
+                            FirebaseDatabase.instance.ref("users/${user.uid}");
                         await userRef.update({'profileImageUrl': downloadURL});
 
                         // Update in the database under profile/profileImageUrl
-                        DatabaseReference profileRef = FirebaseDatabase.instance.ref("users/${user.uid}/profile");
-                        await profileRef.update({'profileImageUrl': downloadURL});
+                        DatabaseReference profileRef = FirebaseDatabase.instance
+                            .ref("users/${user.uid}/profile");
+                        await profileRef
+                            .update({'profileImageUrl': downloadURL});
 
                         // Update local state to show the new image immediately
                         setState(() {
@@ -186,12 +195,16 @@ Future<void> _loadProfileImage() async {
                         });
 
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Profile picture updated successfully')),
+                          const SnackBar(
+                              content:
+                                  Text('Profile picture updated successfully')),
                         );
                       }
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error updating profile picture: $e')),
+                        SnackBar(
+                            content:
+                                Text('Error updating profile picture: $e')),
                       );
                     } finally {
                       setState(() {
@@ -207,9 +220,10 @@ Future<void> _loadProfileImage() async {
                         backgroundImage: _profileImageUrl != null
                             ? NetworkImage(_profileImageUrl!)
                             : (user != null && user.photoURL != null
-                            ? NetworkImage(user.photoURL!)
-                            : null),
-                        child: (_profileImageUrl == null && (user == null || user.photoURL == null))
+                                ? NetworkImage(user.photoURL!)
+                                : null),
+                        child: (_profileImageUrl == null &&
+                                (user == null || user.photoURL == null))
                             ? Icon(Icons.person, size: 50, color: Colors.white)
                             : null,
                       ),
@@ -249,7 +263,8 @@ Future<void> _loadProfileImage() async {
               ),
               const SizedBox(height: 20),
               FutureBuilder<String?>(
-                future: user != null ? getUserName(user.uid) : Future.value(null),
+                future:
+                    user != null ? getUserName(user.uid) : Future.value(null),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
@@ -321,7 +336,8 @@ Future<void> _loadProfileImage() async {
               ),
               _buildProfileItem(context, Icons.location_on, 'Location'),
               _buildProfileItem(context, Icons.settings, 'App Settings'),
-              _buildProfileItem(context, Icons.delivery_dining, 'Delivery Driver'),
+              _buildProfileItem(
+                  context, Icons.delivery_dining, 'Delivery Driver'),
               _buildProfileItem(context, Icons.admin_panel_settings, 'Admin'),
 
               // Add Order History section for user profile
@@ -362,7 +378,8 @@ Future<void> _loadProfileImage() async {
     );
   }
 
-  Widget _buildProfileItem(BuildContext context, IconData icon, String title, {VoidCallback? onTap}) {
+  Widget _buildProfileItem(BuildContext context, IconData icon, String title,
+      {VoidCallback? onTap}) {
     return ListTile(
       leading: Icon(icon, color: Color(0xFF003049)),
       title: Text(title),
@@ -455,7 +472,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
 
     try {
-      DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
+      DatabaseReference ref =
+          FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
       DatabaseEvent event = await ref.once();
 
       if (event.snapshot.value != null) {
@@ -486,7 +504,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
 
     try {
-      DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
+      DatabaseReference ref =
+          FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
       await ref.update({
         'fullName': fullnameController.text.trim(),
         'phoneNumber': phoneNumberController.text.trim(),
@@ -497,9 +516,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       });
 
       // Also update the name at root level for consistency
-      await FirebaseDatabase.instance.ref("users/${widget.userId}").update({
-        'name': fullnameController.text.trim()
-      });
+      await FirebaseDatabase.instance
+          .ref("users/${widget.userId}")
+          .update({'name': fullnameController.text.trim()});
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Profile updated successfully')),
@@ -527,7 +546,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       if (image != null) {
         // Sanitize email for storage path
-        final sanitizedEmail = widget.email.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
+        final sanitizedEmail =
+            widget.email.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
 
         // Use a consistent storage path
         final storageRef = FirebaseStorage.instance
@@ -550,7 +570,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         });
 
         // Update profile with the profile image URL
-        DatabaseReference ref = FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
+        DatabaseReference ref =
+            FirebaseDatabase.instance.ref("users/${widget.userId}/profile");
         await ref.update({
           'profileImageUrl': downloadURL,
         });
@@ -560,7 +581,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile picture updated successfully!')),
+          const SnackBar(
+              content: Text('Profile picture updated successfully!')),
         );
       }
     } catch (e) {
@@ -585,85 +607,88 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              Center(
-                child: Text(
-                  'Edit Your Profile',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: hangryBlue,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Profile Image
-              Center(
-                child: GestureDetector(
-                  onTap: _pickProfileImage,
-                  child: Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: 50.0,
-                        backgroundColor: Colors.grey,
-                        backgroundImage: _profileImageUrl != null
-                            ? NetworkImage(_profileImageUrl!)
-                            : null,
-                        child: _profileImageUrl == null
-                            ? Icon(Icons.person, size: 50, color: Colors.white)
-                            : null,
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          padding: EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: hangryYellow,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.camera_alt,
-                            color: Colors.white,
-                            size: 20,
-                          ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    Center(
+                      child: Text(
+                        'Edit Your Profile',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: hangryBlue,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Profile Image
+                    Center(
+                      child: GestureDetector(
+                        onTap: _pickProfileImage,
+                        child: Stack(
+                          children: [
+                            CircleAvatar(
+                              radius: 50.0,
+                              backgroundColor: Colors.grey,
+                              backgroundImage: _profileImageUrl != null
+                                  ? NetworkImage(_profileImageUrl!)
+                                  : null,
+                              child: _profileImageUrl == null
+                                  ? Icon(Icons.person,
+                                      size: 50, color: Colors.white)
+                                  : null,
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Container(
+                                padding: EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: hangryYellow,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    _buildStyledTextField(fullnameController, 'Full Name'),
+                    _buildStyledTextField(
+                        phoneNumberController, 'Phone Number'),
+                    _buildStyledTextField(addressController, 'Address'),
+                    _buildStyledTextField(cityController, 'City'),
+                    _buildStyledTextField(postalCodeController, 'Zip Code'),
+
+                    const SizedBox(height: 20),
+
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: _saveProfileData,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: hangryYellow,
+                          foregroundColor: Colors.black,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 15),
+                        ),
+                        child: const Text('Save Profile'),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-
-              _buildStyledTextField(fullnameController, 'Full Name'),
-              _buildStyledTextField(phoneNumberController, 'Phone Number'),
-              _buildStyledTextField(addressController, 'Address'),
-              _buildStyledTextField(cityController, 'City'),
-              _buildStyledTextField(postalCodeController, 'Zip Code'),
-
-              const SizedBox(height: 20),
-
-              Center(
-                child: ElevatedButton(
-                  onPressed: _saveProfileData,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: hangryYellow,
-                    foregroundColor: Colors.black,
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  ),
-                  child: const Text('Save Profile'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
