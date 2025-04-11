@@ -75,7 +75,7 @@ class _RestaurantOrderDetailsScreenState
       final restaurantOrderPath =
           'users/${_user!.uid}/orders/${widget.orderId}';
       final restaurantOrderSnapshot =
-          await _databaseRef.child(restaurantOrderPath).get();
+      await _databaseRef.child(restaurantOrderPath).get();
 
       Map<String, dynamic> orderData = {};
       if (restaurantOrderSnapshot.exists) {
@@ -99,7 +99,7 @@ class _RestaurantOrderDetailsScreenState
       final profileOrderPath =
           'users/${_user!.uid}/profile/orders/${widget.orderId}';
       final profileOrderSnapshot =
-          await _databaseRef.child(profileOrderPath).get();
+      await _databaseRef.child(profileOrderPath).get();
 
       if (profileOrderSnapshot.exists) {
         _dataSourcePaths['restaurant_profile'] = profileOrderPath;
@@ -109,7 +109,7 @@ class _RestaurantOrderDetailsScreenState
           // If profile data is a Map, merge important properties
           if (profileOrderSnapshot.value is Map) {
             Map<dynamic, dynamic> profileData =
-                profileOrderSnapshot.value as Map<dynamic, dynamic>;
+            profileOrderSnapshot.value as Map<dynamic, dynamic>;
 
             // Always get status from the most recent source
             if (profileData.containsKey('status')) {
@@ -124,7 +124,7 @@ class _RestaurantOrderDetailsScreenState
               if (profileData.containsKey('items') &&
                   profileData['items'] != null) {
                 Map<String, dynamic> profileOrderData =
-                    _normalizeOrderData(profileData);
+                _normalizeOrderData(profileData);
                 orderData['items'] = profileOrderData['items'];
               }
             }
@@ -154,7 +154,7 @@ class _RestaurantOrderDetailsScreenState
       if (!dataFound) {
         final globalOrderPath = 'orders/${widget.orderId}';
         final globalOrderSnapshot =
-            await _databaseRef.child(globalOrderPath).get();
+        await _databaseRef.child(globalOrderPath).get();
 
         if (globalOrderSnapshot.exists && globalOrderSnapshot.value is Map) {
           _dataSourcePaths['global_orders'] = globalOrderPath;
@@ -293,8 +293,8 @@ class _RestaurantOrderDetailsScreenState
           'city': addressParts.length > 2 ? addressParts[2].split(' ')[0] : '',
           'zipCode': addressParts.length > 2
               ? addressParts[2].split(' ').length > 1
-                  ? addressParts[2].split(' ')[1]
-                  : ''
+              ? addressParts[2].split(' ')[1]
+              : ''
               : '',
           'phone': addressParts.length > 3
               ? addressParts[3].replaceAll('Phone: ', '')
@@ -414,8 +414,7 @@ class _RestaurantOrderDetailsScreenState
         } else {
           // All updates failed, show error
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text('Error updating order status: $errorMessage')),
+            SnackBar(content: Text('Error updating order status: $errorMessage')),
           );
         }
       }
@@ -558,98 +557,98 @@ class _RestaurantOrderDetailsScreenState
       body: _isLoading
           ? Center(child: CircularProgressIndicator(color: hangryYellow))
           : _errorMessage.isNotEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.error_outline, size: 48, color: Colors.red),
-                      SizedBox(height: 16),
-                      Text(
-                        'Error',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(_errorMessage),
-                      SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: _fetchOrderDetails,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: hangryYellow,
-                        ),
-                        child: Text('Try Again'),
-                      ),
-                    ],
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 48, color: Colors.red),
+            SizedBox(height: 16),
+            Text(
+              'Error',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(_errorMessage),
+            SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _fetchOrderDetails,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: hangryYellow,
+              ),
+              child: Text('Try Again'),
+            ),
+          ],
+        ),
+      )
+          : SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Status Banner
+            Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: _getStatusColor(
+                    _orderData['status']?.toString() ?? '')
+                    .withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: _getStatusColor(
+                      _orderData['status']?.toString() ?? '')
+                      .withOpacity(0.3),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    _getStatusIcon(
+                        _orderData['status']?.toString() ?? ''),
+                    color: _getStatusColor(
+                        _orderData['status']?.toString() ?? ''),
+                    size: 36,
                   ),
-                )
-              : SingleChildScrollView(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Status Banner
-                      Container(
-                        padding: EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: _getStatusColor(
-                                  _orderData['status']?.toString() ?? '')
-                              .withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _getStatusTitle(
+                              _orderData['status']?.toString() ?? ''),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                             color: _getStatusColor(
-                                    _orderData['status']?.toString() ?? '')
-                                .withOpacity(0.3),
+                                _orderData['status']?.toString() ??
+                                    ''),
                           ),
                         ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              _getStatusIcon(
-                                  _orderData['status']?.toString() ?? ''),
-                              color: _getStatusColor(
-                                  _orderData['status']?.toString() ?? ''),
-                              size: 36,
-                            ),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    _getStatusTitle(
-                                        _orderData['status']?.toString() ?? ''),
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: _getStatusColor(
-                                          _orderData['status']?.toString() ??
-                                              ''),
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    _getStatusDescription(
-                                        _orderData['status']?.toString() ?? ''),
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey[700],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                        SizedBox(height: 4),
+                        Text(
+                          _getStatusDescription(
+                              _orderData['status']?.toString() ?? ''),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[700],
+                          ),
                         ),
-                      ),
-
-                      // Rest of the build method...
-
-                      SizedBox(height: 50), // Space for the bottom button
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+                ],
+              ),
+            ),
+
+            // Rest of the build method...
+
+            SizedBox(height: 50), // Space for the bottom button
+          ],
+        ),
+      ),
       bottomNavigationBar: !_isLoading && _errorMessage.isEmpty
           ? _buildBottomActionButton()
           : null,
@@ -658,7 +657,7 @@ class _RestaurantOrderDetailsScreenState
 
   Widget _buildDeliveryAddress() {
     final deliveryAddress =
-        _orderData['deliveryAddress'] as Map<dynamic, dynamic>?;
+    _orderData['deliveryAddress'] as Map<dynamic, dynamic>?;
 
     if (deliveryAddress == null || deliveryAddress.isEmpty) {
       return Text('No delivery address provided');
@@ -873,7 +872,7 @@ class _RestaurantOrderDetailsScreenState
         nextStatus = 'ready_for_pickup';
         break;
       case 'ready_for_pickup':
-        // No action for ready_for_pickup as we're waiting for driver
+      // No action for ready_for_pickup as we're waiting for driver
         return Container(
           color: Colors.blue[50],
           padding: EdgeInsets.all(16),
@@ -888,7 +887,7 @@ class _RestaurantOrderDetailsScreenState
           ),
         );
       case 'on_the_way':
-        // No action for on_the_way as driver is delivering
+      // No action for on_the_way as driver is delivering
         return Container(
           color: Colors.purple[50],
           padding: EdgeInsets.all(16),
@@ -921,7 +920,7 @@ class _RestaurantOrderDetailsScreenState
       child: SafeArea(
         child: ElevatedButton(
           onPressed:
-              _updatingStatus ? null : () => _updateOrderStatus(nextStatus),
+          _updatingStatus ? null : () => _updateOrderStatus(nextStatus),
           style: ElevatedButton.styleFrom(
             backgroundColor: buttonColor,
             padding: EdgeInsets.symmetric(vertical: 12),
@@ -931,27 +930,27 @@ class _RestaurantOrderDetailsScreenState
           ),
           child: _updatingStatus
               ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        strokeWidth: 2,
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Text('Updating...'),
-                  ],
-                )
-              : Text(
-                  buttonText,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 2,
                 ),
+              ),
+              SizedBox(width: 12),
+              Text('Updating...'),
+            ],
+          )
+              : Text(
+            buttonText,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       ),
     );
