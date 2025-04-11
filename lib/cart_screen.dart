@@ -362,40 +362,40 @@ class _CartScreenState extends State<CartScreen> {
                     borderRadius: BorderRadius.circular(6),
                     child: item.imageUrl.isNotEmpty
                         ? CachedNetworkImage(
-                      imageUrl: item.imageUrl,
-                      width: 70,
-                      height: 70,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        width: 70,
-                        height: 70,
-                        color: Colors.grey[300],
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: hangryYellow,
-                            strokeWidth: 2,
-                          ),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        width: 70,
-                        height: 70,
-                        color: Colors.grey[300],
-                        child: Icon(
-                          Icons.fastfood,
-                          color: hangryYellow,
-                        ),
-                      ),
-                    )
+                            imageUrl: item.imageUrl,
+                            width: 70,
+                            height: 70,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              width: 70,
+                              height: 70,
+                              color: Colors.grey[300],
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: hangryYellow,
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              width: 70,
+                              height: 70,
+                              color: Colors.grey[300],
+                              child: Icon(
+                                Icons.fastfood,
+                                color: hangryYellow,
+                              ),
+                            ),
+                          )
                         : Container(
-                      width: 70,
-                      height: 70,
-                      color: Colors.grey[300],
-                      child: Icon(
-                        Icons.fastfood,
-                        color: hangryYellow,
-                      ),
-                    ),
+                            width: 70,
+                            height: 70,
+                            color: Colors.grey[300],
+                            child: Icon(
+                              Icons.fastfood,
+                              color: hangryYellow,
+                            ),
+                          ),
                   ),
                   SizedBox(width: 12),
                   Expanded(
@@ -464,7 +464,8 @@ class _CartScreenState extends State<CartScreen> {
                           _showItemCommentDialog(itemId, item);
                         },
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: item.comment?.isNotEmpty == true
                                 ? hangryYellow.withOpacity(0.2)
@@ -483,7 +484,9 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                               SizedBox(width: 4),
                               Text(
-                                item.comment?.isNotEmpty == true ? 'Edit' : 'Add Note',
+                                item.comment?.isNotEmpty == true
+                                    ? 'Edit'
+                                    : 'Add Note',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: item.comment?.isNotEmpty == true
@@ -543,7 +546,8 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   void _showItemCommentDialog(String itemId, CartItem item) {
-    final TextEditingController commentController = TextEditingController(text: item.comment ?? '');
+    final TextEditingController commentController =
+        TextEditingController(text: item.comment ?? '');
 
     showDialog(
       context: context,
@@ -567,7 +571,8 @@ class _CartScreenState extends State<CartScreen> {
                 decoration: InputDecoration(
                   hintText: 'Examples: No onions, Extra sauce, etc.',
                   border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
                 maxLines: 3,
               ),
@@ -691,7 +696,8 @@ class _CartScreenState extends State<CartScreen> {
           SizedBox(height: 12),
           _buildSummaryRow('Subtotal', '\$${_subtotal.toStringAsFixed(2)}'),
           _buildSummaryRow('Tax (15%)', '\$${_taxAmount.toStringAsFixed(2)}'),
-          _buildSummaryRow('Delivery Fee', '\$${_deliveryFee.toStringAsFixed(2)}'),
+          _buildSummaryRow(
+              'Delivery Fee', '\$${_deliveryFee.toStringAsFixed(2)}'),
           Divider(height: 24),
           _buildSummaryRow(
             'Total',

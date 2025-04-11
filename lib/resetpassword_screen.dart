@@ -35,7 +35,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -47,23 +48,24 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('images/assets/logobackground.png', width: 200, height: 150),
+              Image.asset('images/assets/logobackground.png',
+                  width: 200, height: 150),
               SizedBox(height: 20),
               Text(
                 "Forgot Password",
                 style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue[800],
-              ),
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue[800],
+                ),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 15),
               Text(
-                  "Enter your email address and we will send reset instructions.",
-                  style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                  textAlign: TextAlign.center,
-                 ),
+                "Enter your email address and we will send reset instructions.",
+                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                textAlign: TextAlign.center,
+              ),
               SizedBox(height: 20),
               TextField(
                 controller: _emailController,
@@ -78,17 +80,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                    onPressed: _resetPassword,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.amber, // Cor personalizada
-                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                    ),
+                onPressed: _resetPassword,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber, // Cor personalizada
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text("Reset Password",
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
+                ),
+                child: Text(
+                  "Reset Password",
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
               ),
             ],
           ),

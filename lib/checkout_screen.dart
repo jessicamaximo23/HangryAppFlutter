@@ -62,7 +62,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     // Stripe initialisation
     StripePaymentService.initialize();
-    
+
     // Initialize notes controller with order comments if any
     if (widget.orderComments.isNotEmpty) {
       _notesController.text = widget.orderComments;
@@ -77,14 +77,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       User? currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
-        DatabaseReference ref = FirebaseDatabase.instance.ref('users/${currentUser.uid}');
+        DatabaseReference ref =
+            FirebaseDatabase.instance.ref('users/${currentUser.uid}');
         DatabaseEvent event = await ref.once();
 
         if (event.snapshot.exists) {
-          Map<dynamic, dynamic> userData = event.snapshot.value as Map<dynamic, dynamic>;
+          Map<dynamic, dynamic> userData =
+              event.snapshot.value as Map<dynamic, dynamic>;
 
           if (userData.containsKey('profile') && userData['profile'] is Map) {
-            Map<dynamic, dynamic> profile = userData['profile'] as Map<dynamic, dynamic>;
+            Map<dynamic, dynamic> profile =
+                userData['profile'] as Map<dynamic, dynamic>;
 
             setState(() {
               _userProfile = Map<String, dynamic>.from(profile);
@@ -117,7 +120,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       try {
-        await FirebaseDatabase.instance.ref('users/${currentUser.uid}/profile').update({
+        await FirebaseDatabase.instance
+            .ref('users/${currentUser.uid}/profile')
+            .update({
           'address': _addressController.text,
           'city': _cityController.text,
           'zipCode': _postalCodeController.text,
@@ -162,10 +167,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       // Generate a unique order ID
       String orderId = _generateOrderId();
-      
+
       // Payment processing following credit card selection
       if (_selectedPaymentMethod == 'Credit Card') {
-        bool paymentSuccess = await StripePaymentService.processPayment(context, widget.total);
+        bool paymentSuccess =
+            await StripePaymentService.processPayment(context, widget.total);
         if (!paymentSuccess) {
           _showErrorSnackBar('Failed payment. Please try again.');
           setState(() {
@@ -176,7 +182,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       }
 
       // Format current date
-      String orderDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+      String orderDate =
+          DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
 
       // Convert cart items to a format suitable for the database
       // Include item-specific comments as well
@@ -204,7 +211,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'total': widget.total,
         'status': 'pending',
         'paymentMethod': _selectedPaymentMethod,
-        'paymentStatus': _selectedPaymentMethod == 'Credit Card' ? 'paid' : 'pending',
+        'paymentStatus':
+            _selectedPaymentMethod == 'Credit Card' ? 'paid' : 'pending',
         'deliveryAddress': {
           'address': _addressController.text,
           'city': _cityController.text,
@@ -221,12 +229,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       // Also save to restaurant's orders
       await FirebaseDatabase.instance
-          .ref('users/${widget.restaurantData['uid']}/orders/$orderId')
-          .set(orderData);
-
-      // Save to global orders collection for admin
-      await FirebaseDatabase.instance
-          .ref('orders/$orderId')
+          .ref('users/${widget.restaurantData['uid']}/profile/orders/$orderId')
           .set(orderData);
 
       // Navigate to order confirmation screen
@@ -239,9 +242,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             restaurantName: widget.restaurantData['name'],
           ),
         ),
-            (route) => false,
+        (route) => false,
       );
-
     } catch (error) {
       _showErrorSnackBar('Failed to place order: $error');
     } finally {
@@ -257,7 +259,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
     String prefix = DateFormat('yyyyMMdd').format(DateTime.now());
-    String randomPart = List.generate(8, (index) => chars[random.nextInt(chars.length)]).join();
+    String randomPart =
+        List.generate(8, (index) => chars[random.nextInt(chars.length)]).join();
 
     return '${prefix}_$randomPart';
   }
@@ -284,98 +287,102 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator(color: hangryYellow))
           : SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSectionTitle('Delivery Address'),
+              padding: EdgeInsets.all(16),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSectionTitle('Delivery Address'),
 
-              // Add option to use saved address or enter a new one
-              if (_userProfile != null &&
-                  _userProfile!['address'] != null &&
-                  _userProfile!['address'].toString().isNotEmpty)
-                _buildAddressToggle(),
+                    // Add option to use saved address or enter a new one
+                    if (_userProfile != null &&
+                        _userProfile!['address'] != null &&
+                        _userProfile!['address'].toString().isNotEmpty)
+                      _buildAddressToggle(),
 
-              // Only show form fields if not using saved address or there is no saved address
-              if (!_useSavedAddress || _userProfile == null ||
-                  _userProfile!['address'] == null ||
-                  _userProfile!['address'].toString().isEmpty)
-                ..._buildAddressForm()
-              else
-                _buildSavedAddressCard(),
+                    // Only show form fields if not using saved address or there is no saved address
+                    if (!_useSavedAddress ||
+                        _userProfile == null ||
+                        _userProfile!['address'] == null ||
+                        _userProfile!['address'].toString().isEmpty)
+                      ..._buildAddressForm()
+                    else
+                      _buildSavedAddressCard(),
 
-              SizedBox(height: 24),
+                    SizedBox(height: 24),
 
-              _buildSectionTitle('Payment Method'),
-              _buildPaymentMethodSelection(),
-              SizedBox(height: 24),
+                    _buildSectionTitle('Payment Method'),
+                    _buildPaymentMethodSelection(),
+                    SizedBox(height: 24),
 
-              _buildSectionTitle('Order Details'),
-              _buildOrderItemsList(),
-              SizedBox(height: 24),
+                    _buildSectionTitle('Order Details'),
+                    _buildOrderItemsList(),
+                    SizedBox(height: 24),
 
-              _buildTextFormField(
-                controller: _notesController,
-                labelText: 'Delivery Notes',
-                hintText: 'Any special instructions for delivery?',
-                validator: null,
-                icon: Icons.note,
-                maxLines: 3,
-              ),
-              SizedBox(height: 24),
-
-              _buildSectionTitle('Order Summary'),
-              SizedBox(height: 12),
-
-              _buildOrderSummaryItem('Items (${widget.cartItems.length})', '\$${widget.subtotal.toStringAsFixed(2)}'),
-              _buildOrderSummaryItem('Tax (15%)', '\$${widget.taxAmount.toStringAsFixed(2)}'),
-              _buildOrderSummaryItem('Delivery Fee', '\$${widget.deliveryFee.toStringAsFixed(2)}'),
-              Divider(height: 24),
-              _buildOrderSummaryItem(
-                'Total',
-                '\$${widget.total.toStringAsFixed(2)}',
-                isBold: true,
-              ),
-              SizedBox(height: 32),
-
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _placeOrder,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: hangryYellow,
-                    foregroundColor: Colors.black,
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
+                    _buildTextFormField(
+                      controller: _notesController,
+                      labelText: 'Delivery Notes',
+                      hintText: 'Any special instructions for delivery?',
+                      validator: null,
+                      icon: Icons.note,
+                      maxLines: 3,
                     ),
-                    disabledBackgroundColor: Colors.grey,
-                  ),
-                  child: _isLoading
-                      ? SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
+                    SizedBox(height: 24),
+
+                    _buildSectionTitle('Order Summary'),
+                    SizedBox(height: 12),
+
+                    _buildOrderSummaryItem('Items (${widget.cartItems.length})',
+                        '\$${widget.subtotal.toStringAsFixed(2)}'),
+                    _buildOrderSummaryItem('Tax (15%)',
+                        '\$${widget.taxAmount.toStringAsFixed(2)}'),
+                    _buildOrderSummaryItem('Delivery Fee',
+                        '\$${widget.deliveryFee.toStringAsFixed(2)}'),
+                    Divider(height: 24),
+                    _buildOrderSummaryItem(
+                      'Total',
+                      '\$${widget.total.toStringAsFixed(2)}',
+                      isBold: true,
                     ),
-                  )
-                      : Text(
-                    'Place Order',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                    SizedBox(height: 32),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _isLoading ? null : _placeOrder,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: hangryYellow,
+                          foregroundColor: Colors.black,
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          disabledBackgroundColor: Colors.grey,
+                        ),
+                        child: _isLoading
+                            ? SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                'Place Order',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      ),
                     ),
-                  ),
+                    SizedBox(height: 24),
+                  ],
                 ),
               ),
-              SizedBox(height: 24),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
@@ -440,7 +447,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ],
             ),
             SizedBox(height: 8),
-            Text(_userProfile!['address'] ?? '', style: TextStyle(fontSize: 16)),
+            Text(_userProfile!['address'] ?? '',
+                style: TextStyle(fontSize: 16)),
             SizedBox(height: 4),
             Text(
               '${_userProfile!['city'] ?? ''}, ${_userProfile!['postalCode'] ?? ''}',
@@ -502,7 +510,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   return 'Please enter postal code';
                 }
                 // Fixed regex for Canadian Postal Code
-                if (!RegExp(r'^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$|^\d{5}(?:[-\s]\d{4})?$').hasMatch(value)) {
+                if (!RegExp(
+                        r'^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$|^\d{5}(?:[-\s]\d{4})?$')
+                    .hasMatch(value)) {
                   return 'Invalid postal code';
                 }
                 return null;
@@ -523,7 +533,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             return 'Please enter your phone number';
           }
           // Fixed regex for Canada
-          if (!RegExp(r'^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$').hasMatch(value)) {
+          if (!RegExp(r'^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$')
+              .hasMatch(value)) {
             return 'Please enter a valid phone number';
           }
           return null;
@@ -704,7 +715,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Widget _buildOrderSummaryItem(String label, String value, {bool isBold = false}) {
+  Widget _buildOrderSummaryItem(String label, String value,
+      {bool isBold = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(

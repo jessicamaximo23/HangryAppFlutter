@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:async';
 import 'dart:math';
 import 'package:geolocator/geolocator.dart';
+import 'chat_service.dart';
+import 'chat_screen.dart';
 
 import 'order_tracking.dart';
 
@@ -47,6 +50,8 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
   bool _isLoading = true;
   String _errorMessage = '';
   DateTime? _estimatedArrival;
+  // Driver info
+  Map<String, dynamic>? driverInfo;
 
   @override
   void initState() {
@@ -91,7 +96,8 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
           return;
         }
 
-        Map<dynamic, dynamic> orderData = event.snapshot.value as Map<dynamic, dynamic>;
+        Map<dynamic, dynamic> orderData =
+            event.snapshot.value as Map<dynamic, dynamic>;
         Map<String, dynamic> formattedData = _formatOrderData(orderData);
 
         setState(() {
@@ -114,9 +120,11 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
         if (orderData.containsKey('tracking') &&
             orderData['tracking'] is Map &&
             orderData['tracking'].containsKey('estimatedArrivalTime')) {
-          final arrivalTimeMs = orderData['tracking']['estimatedArrivalTime'] as int;
+          final arrivalTimeMs =
+              orderData['tracking']['estimatedArrivalTime'] as int;
           setState(() {
-            _estimatedArrival = DateTime.fromMillisecondsSinceEpoch(arrivalTimeMs);
+            _estimatedArrival =
+                DateTime.fromMillisecondsSinceEpoch(arrivalTimeMs);
           });
         }
       });
@@ -145,7 +153,8 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
       formatted['isTracking'] = tracking['isTracking'] ?? false;
 
       // Driver location
-      if (tracking.containsKey('driverLocation') && tracking['driverLocation'] is Map) {
+      if (tracking.containsKey('driverLocation') &&
+          tracking['driverLocation'] is Map) {
         final location = tracking['driverLocation'] as Map<dynamic, dynamic>;
         formatted['driverLocation'] = {
           'lat': location['lat'] as double,
@@ -168,7 +177,8 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
     }
 
     // Process location data
-    if (data.containsKey('restaurantLocation') && data['restaurantLocation'] is Map) {
+    if (data.containsKey('restaurantLocation') &&
+        data['restaurantLocation'] is Map) {
       final location = data['restaurantLocation'] as Map<dynamic, dynamic>;
       formatted['restaurantLocation'] = {
         'lat': location['lat'] as double,
@@ -176,7 +186,8 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
       };
     }
 
-    if (data.containsKey('deliveryLocation') && data['deliveryLocation'] is Map) {
+    if (data.containsKey('deliveryLocation') &&
+        data['deliveryLocation'] is Map) {
       final location = data['deliveryLocation'] as Map<dynamic, dynamic>;
       formatted['deliveryLocation'] = {
         'lat': location['lat'] as double,
@@ -191,7 +202,8 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
     try {
       // Check if tracking is already enabled
       final trackingSnapshot = await _database
-          .child('users/${widget.userId}/profile/orders/${widget.orderId}/tracking')
+          .child(
+              'users/${widget.userId}/profile/orders/${widget.orderId}/tracking')
           .get();
 
       if (trackingSnapshot.exists) {
@@ -201,7 +213,8 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
 
       // Get delivery address
       final deliveryAddressSnapshot = await _database
-          .child('users/${widget.userId}/profile/orders/${widget.orderId}/deliveryAddress')
+          .child(
+              'users/${widget.userId}/profile/orders/${widget.orderId}/deliveryAddress')
           .get();
 
       if (!deliveryAddressSnapshot.exists) {
@@ -211,8 +224,10 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
         return;
       }
 
-      final deliveryAddress = deliveryAddressSnapshot.value as Map<dynamic, dynamic>;
-      final addressString = '${deliveryAddress['address']}, ${deliveryAddress['city'] ?? ''}, ${deliveryAddress['zipCode'] ?? ''}';
+      final deliveryAddress =
+          deliveryAddressSnapshot.value as Map<dynamic, dynamic>;
+      final addressString =
+          '${deliveryAddress['address']}, ${deliveryAddress['city'] ?? ''}, ${deliveryAddress['zipCode'] ?? ''}';
 
       // Default location (Montreal) in case geocoding fails
       Map<String, dynamic> deliveryLocation = {
@@ -228,21 +243,23 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
       };
 
       // Try to get actual restaurant location
-      final restaurantSnapshot = await _database
-          .child('users/${widget.restaurantId}/profile')
-          .get();
+      final restaurantSnapshot =
+          await _database.child('users/${widget.restaurantId}/profile').get();
 
       if (restaurantSnapshot.exists) {
-        final restaurantProfile = restaurantSnapshot.value as Map<dynamic, dynamic>?;
+        final restaurantProfile =
+            restaurantSnapshot.value as Map<dynamic, dynamic>?;
 
-        if (restaurantProfile != null && restaurantProfile.containsKey('location')) {
-          restaurantLocation = Map<String, dynamic>.from(
-              restaurantProfile['location'] as Map);
+        if (restaurantProfile != null &&
+            restaurantProfile.containsKey('location')) {
+          restaurantLocation =
+              Map<String, dynamic>.from(restaurantProfile['location'] as Map);
         } else if (restaurantProfile != null &&
             restaurantProfile.containsKey('address') &&
             restaurantProfile.containsKey('city')) {
           // Use restaurant address as fallback
-          restaurantLocation['address'] = '${restaurantProfile['address']}, ${restaurantProfile['city']}';
+          restaurantLocation['address'] =
+              '${restaurantProfile['address']}, ${restaurantProfile['city']}';
         }
       }
 
@@ -282,14 +299,24 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
       if (snapshot.exists) {
         final data = snapshot.value as Map<dynamic, dynamic>;
 
-        setState(() {
-          _driverName = data['name'] ?? 'Driver';
+        // Create driverInfo map
+        Map<String, dynamic> driver = {
+          'driverId': driverId,
+          'driverName': data['name'] ?? 'Driver',
+        };
 
-          if (data.containsKey('profile')) {
-            final profile = data['profile'] as Map<dynamic, dynamic>;
-            _driverVehicle = profile['carModel'] ?? '';
-            _driverPlate = profile['plateNumber'] ?? '';
-          }
+        // Update additional info
+        if (data.containsKey('profile')) {
+          final profile = data['profile'] as Map<dynamic, dynamic>;
+          driver['carModel'] = profile['carModel'] ?? '';
+          driver['plateNumber'] = profile['plateNumber'] ?? '';
+        }
+
+        setState(() {
+          _driverName = driver['driverName'];
+          _driverVehicle = driver['carModel'] ?? '';
+          _driverPlate = driver['plateNumber'] ?? '';
+          driverInfo = driver; // Store driver info
         });
       }
     } catch (e) {
@@ -297,13 +324,43 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
     }
   }
 
+  void _navigateToChat(BuildContext context) {
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('You need to be logged in to chat')),
+      );
+      return;
+    }
+
+    if (driverInfo != null && widget.orderId != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatScreen(
+            orderId: widget.orderId,
+            receiverId: driverInfo!['driverId'],
+            receiverName: driverInfo!['driverName'] ?? 'Driver',
+            orderStatus: _orderData?['status'] ?? 'pending',
+            userType: 'customer', // Fixed as customer in this screen
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Driver not assigned yet')),
+      );
+    }
+  }
+
   void _updateMarkers() {
     _markers = {};
 
     // Add restaurant marker
-    if (_orderData != null &&
-        _orderData!.containsKey('restaurantLocation')) {
-      final restaurantLocation = _orderData!['restaurantLocation'] as Map<String, dynamic>;
+    if (_orderData != null && _orderData!.containsKey('restaurantLocation')) {
+      final restaurantLocation =
+          _orderData!['restaurantLocation'] as Map<String, dynamic>;
       _markers.add(
         Marker(
           markerId: MarkerId('restaurant'),
@@ -318,9 +375,9 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
     }
 
     // Add customer marker
-    if (_orderData != null &&
-        _orderData!.containsKey('deliveryLocation')) {
-      final deliveryLocation = _orderData!['deliveryLocation'] as Map<String, dynamic>;
+    if (_orderData != null && _orderData!.containsKey('deliveryLocation')) {
+      final deliveryLocation =
+          _orderData!['deliveryLocation'] as Map<String, dynamic>;
       _markers.add(
         Marker(
           markerId: MarkerId('customer'),
@@ -328,16 +385,17 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
             deliveryLocation['lat'],
             deliveryLocation['lng'],
           ),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
           infoWindow: InfoWindow(title: 'Delivery Location'),
         ),
       );
     }
 
     // Add driver marker
-    if (_orderData != null &&
-        _orderData!.containsKey('driverLocation')) {
-      final driverLocation = _orderData!['driverLocation'] as Map<String, dynamic>;
+    if (_orderData != null && _orderData!.containsKey('driverLocation')) {
+      final driverLocation =
+          _orderData!['driverLocation'] as Map<String, dynamic>;
       _markers.add(
         Marker(
           markerId: MarkerId('driver'),
@@ -353,7 +411,8 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
 
       // Update polyline between driver and customer
       if (_orderData!.containsKey('deliveryLocation')) {
-        final deliveryLocation = _orderData!['deliveryLocation'] as Map<String, dynamic>;
+        final deliveryLocation =
+            _orderData!['deliveryLocation'] as Map<String, dynamic>;
         _polylines = {
           Polyline(
             polylineId: PolylineId('route'),
@@ -382,7 +441,8 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
 
     // Add restaurant location if available
     if (_orderData!.containsKey('restaurantLocation')) {
-      final location = _orderData!['restaurantLocation'] as Map<String, dynamic>;
+      final location =
+          _orderData!['restaurantLocation'] as Map<String, dynamic>;
       points.add(LatLng(location['lat'], location['lng']));
     }
 
@@ -452,211 +512,221 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator(color: hangryYellow))
           : _errorMessage.isNotEmpty
-          ? Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 48, color: Colors.red),
-            SizedBox(height: 16),
-            Text(
-              'Error',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(_errorMessage),
-            SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _setupTracking,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: hangryYellow,
-              ),
-              child: Text('Try Again'),
-            ),
-          ],
-        ),
-      )
-          : Column(
-        children: [
-          // Map takes 2/3 of the screen
-          Expanded(
-            flex: 2,
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: _getInitialMapPosition(),
-                zoom: 13,
-              ),
-              markers: _markers,
-              polylines: _polylines,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              onMapCreated: (GoogleMapController controller) {
-                _mapController = controller;
-                _updateMapView();
-              },
-            ),
-          ),
-
-          // Order info takes 1/3 of the screen
-          Expanded(
-            flex: 1,
-            child: Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius:
-                BorderRadius.vertical(top: Radius.circular(20)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: Offset(0, -3),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Status text
-                  Text(
-                    _getStatusDisplay(_orderData?['status'] ?? 'pending'),
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: hangryBlue,
-                    ),
-                  ),
-
-                  SizedBox(height: 8),
-
-                  // Estimated arrival
-                  Row(
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.access_time, color: Colors.teal),
-                      SizedBox(width: 8),
+                      Icon(Icons.error_outline, size: 48, color: Colors.red),
+                      SizedBox(height: 16),
                       Text(
-                        'Estimated arrival: ${_formatArrivalTime()}',
+                        'Error',
                         style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.teal,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ],
-                  ),
-
-                  SizedBox(height: 16),
-
-                  // Progress bar
-                  LinearProgressIndicator(
-                    value: _getProgressValue(),
-                    backgroundColor: Colors.grey[300],
-                    valueColor:
-                    AlwaysStoppedAnimation<Color>(hangryYellow),
-                  ),
-
-                  SizedBox(height: 16),
-
-                  // Status steps
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildStatusStep(
-                        'Preparing',
-                        Icons.restaurant,
-                        _isStatusActive('preparing'),
-                      ),
-                      _buildStatusStep(
-                        'On the way',
-                        Icons.delivery_dining,
-                        _isStatusActive('on_the_way'),
-                      ),
-                      _buildStatusStep(
-                        'Delivered',
-                        Icons.home,
-                        _isStatusActive('delivered'),
+                      SizedBox(height: 8),
+                      Text(_errorMessage),
+                      SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: _setupTracking,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: hangryYellow,
+                        ),
+                        child: Text('Try Again'),
                       ),
                     ],
                   ),
-
-                  Spacer(),
-
-                  // Driver info (if assigned)
-                  if (_orderData?['assignedDriver'] != null &&
-                      _driverName.isNotEmpty)
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 20,
-                            backgroundColor:
-                            hangryYellow.withOpacity(0.2),
-                            child: Icon(
-                              Icons.person,
-                              color: hangryYellow,
-                            ),
-                          ),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _driverName,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                if (_driverVehicle.isNotEmpty &&
-                                    _driverPlate.isNotEmpty)
-                                  Text(
-                                    '$_driverVehicle • $_driverPlate',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey[700],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.phone, color: hangryBlue),
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Call functionality coming soon!')),
-                              );
-                            },
-                          ),
-                        ],
+                )
+              : Column(
+                  children: [
+                    // Map takes 2/3 of the screen
+                    Expanded(
+                      flex: 2,
+                      child: GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: _getInitialMapPosition(),
+                          zoom: 13,
+                        ),
+                        markers: _markers,
+                        polylines: _polylines,
+                        myLocationEnabled: true,
+                        myLocationButtonEnabled: true,
+                        onMapCreated: (GoogleMapController controller) {
+                          _mapController = controller;
+                          _updateMapView();
+                        },
                       ),
                     ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+
+                    // Order info takes 1/3 of the screen
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(20)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 10,
+                              offset: Offset(0, -3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Status text
+                            Text(
+                              _getStatusDisplay(
+                                  _orderData?['status'] ?? 'pending'),
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: hangryBlue,
+                              ),
+                            ),
+
+                            SizedBox(height: 8),
+
+                            // Estimated arrival
+                            Row(
+                              children: [
+                                Icon(Icons.access_time, color: Colors.teal),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Estimated arrival: ${_formatArrivalTime()}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.teal,
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            SizedBox(height: 16),
+
+                            // Progress bar
+                            LinearProgressIndicator(
+                              value: _getProgressValue(),
+                              backgroundColor: Colors.grey[300],
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(hangryYellow),
+                            ),
+
+                            SizedBox(height: 16),
+
+                            // Status steps
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _buildStatusStep(
+                                  'Preparing',
+                                  Icons.restaurant,
+                                  _isStatusActive('preparing'),
+                                ),
+                                _buildStatusStep(
+                                  'On the way',
+                                  Icons.delivery_dining,
+                                  _isStatusActive('on_the_way'),
+                                ),
+                                _buildStatusStep(
+                                  'Delivered',
+                                  Icons.home,
+                                  _isStatusActive('delivered'),
+                                ),
+                              ],
+                            ),
+
+                            Spacer(),
+
+                            // Driver info (if assigned)
+                            if (_orderData?['assignedDriver'] != null &&
+                                _driverName.isNotEmpty)
+                              Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[100],
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 20,
+                                      backgroundColor:
+                                          hangryYellow.withOpacity(0.2),
+                                      child: Icon(
+                                        Icons.person,
+                                        color: hangryYellow,
+                                      ),
+                                    ),
+                                    SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            _driverName,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          if (_driverVehicle.isNotEmpty &&
+                                              _driverPlate.isNotEmpty)
+                                            Text(
+                                              '$_driverVehicle • $_driverPlate',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.grey[700],
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                    _buildChatButton(),
+                                    SizedBox(width: 8),
+                                    IconButton(
+                                      icon:
+                                          Icon(Icons.phone, color: hangryBlue),
+                                      onPressed: () {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                              content: Text(
+                                                  'Call functionality coming soon!')),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
     );
   }
 
   LatLng _getInitialMapPosition() {
     // Try to use delivery location
     if (_orderData != null && _orderData!.containsKey('deliveryLocation')) {
-      final deliveryLocation = _orderData!['deliveryLocation'] as Map<String, dynamic>;
+      final deliveryLocation =
+          _orderData!['deliveryLocation'] as Map<String, dynamic>;
       return LatLng(deliveryLocation['lat'], deliveryLocation['lng']);
     }
 
     // Fallback to restaurant location
     if (_orderData != null && _orderData!.containsKey('restaurantLocation')) {
-      final restaurantLocation = _orderData!['restaurantLocation'] as Map<String, dynamic>;
+      final restaurantLocation =
+          _orderData!['restaurantLocation'] as Map<String, dynamic>;
       return LatLng(restaurantLocation['lat'], restaurantLocation['lng']);
     }
 
@@ -764,6 +834,70 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildChatButton() {
+    final ChatService chatService = ChatService();
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      return SizedBox.shrink(); // Don't show if not logged in
+    }
+
+    return StreamBuilder<int>(
+      stream: Stream.periodic(Duration(seconds: 5)).asyncMap((_) {
+        if (widget.orderId != null && driverInfo != null) {
+          return chatService.getUnreadMessageCount(
+            orderId: widget.orderId,
+            userId: currentUser.uid,
+            userType: 'customer',
+          );
+        }
+        return Future.value(0);
+      }),
+      initialData: 0,
+      builder: (context, snapshot) {
+        final unreadCount = snapshot.data ?? 0;
+
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            FloatingActionButton(
+              heroTag: 'chatBtn',
+              onPressed: () => _navigateToChat(context),
+              backgroundColor: hangryYellow,
+              mini: true,
+              child: Icon(Icons.chat, color: Colors.black),
+            ),
+            if (unreadCount > 0)
+              Positioned(
+                right: -5,
+                top: -5,
+                child: Container(
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: BoxConstraints(
+                    minWidth: 18,
+                    minHeight: 18,
+                  ),
+                  child: Text(
+                    unreadCount.toString(),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }

@@ -6,13 +6,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class StripePaymentService {
   // Your Stripe API keys
-  static const String _publishableKey = "pk_test_51R6vLbFNw9lp138rinCEx1OsqiOLmXUiMmhMrC25g1cpa1jPFEoG6rWadbyCrTW409h4H6Gt0S038B25bunhtDdk00kXLNh9zk";
-  static const String _secretKey = "sk_test_51R6vLbFNw9lp138rL8MYJLz7DcnWZFL6TrWPAFO6uOxSLTBnWtF2y4P3YeGGh2xuEe5PfCtlCdDy94SE8SXqVmbp00i6RabSAU";
+  static const String _publishableKey =
+      "pk_test_51R6vLbFNw9lp138rinCEx1OsqiOLmXUiMmhMrC25g1cpa1jPFEoG6rWadbyCrTW409h4H6Gt0S038B25bunhtDdk00kXLNh9zk";
+  static const String _secretKey =
+      "sk_test_51R6vLbFNw9lp138rL8MYJLz7DcnWZFL6TrWPAFO6uOxSLTBnWtF2y4P3YeGGh2xuEe5PfCtlCdDy94SE8SXqVmbp00i6RabSAU";
 
   // API URLs
   static const String _customersUrl = "https://api.stripe.com/v1/customers";
-  static const String _ephemeralKeysUrl = "https://api.stripe.com/v1/ephemeral_keys";
-  static const String _paymentIntentsUrl = "https://api.stripe.com/v1/payment_intents";
+  static const String _ephemeralKeysUrl =
+      "https://api.stripe.com/v1/ephemeral_keys";
+  static const String _paymentIntentsUrl =
+      "https://api.stripe.com/v1/payment_intents";
 
   // Initialize Stripe
   static Future<void> initialize() async {
@@ -70,7 +74,8 @@ class StripePaymentService {
       final response = await _callStripeApi(
         url: _ephemeralKeysUrl,
         body: {'customer': customerId},
-        stripeVersion: "2022-11-15", // Make sure to use the correct Stripe API version
+        stripeVersion:
+            "2022-11-15", // Make sure to use the correct Stripe API version
       );
 
       return response['id'];
@@ -80,7 +85,8 @@ class StripePaymentService {
   }
 
   // Create a payment intent
-  static Future<String> createPaymentIntent(String customerId, int amount, String currency) async {
+  static Future<String> createPaymentIntent(
+      String customerId, int amount, String currency) async {
     try {
       final response = await _callStripeApi(
         url: _paymentIntentsUrl,
@@ -99,7 +105,8 @@ class StripePaymentService {
   }
 
   // Process the payment
-  static Future<bool> processPayment(BuildContext context, double amount) async {
+  static Future<bool> processPayment(
+      BuildContext context, double amount) async {
     try {
       // Show loading indicator
       showDialog(
@@ -120,7 +127,8 @@ class StripePaymentService {
 
       // 3. Create a payment intent (convert amount to cents)
       final amountInCents = (amount * 100).round();
-      final clientSecret = await createPaymentIntent(customerId, amountInCents, 'cad');
+      final clientSecret =
+          await createPaymentIntent(customerId, amountInCents, 'cad');
       print('Client secret created: $clientSecret');
 
       // Close loading dialog
@@ -138,7 +146,8 @@ class StripePaymentService {
       );
 
       if (paymentSheetResult != null) {
-        throw Exception('Failed to initialize payment sheet: $paymentSheetResult');
+        throw Exception(
+            'Failed to initialize payment sheet: $paymentSheetResult');
       }
 
       // Present the payment sheet to the user

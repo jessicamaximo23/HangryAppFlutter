@@ -10,10 +10,12 @@ class DriverAvailableOrdersScreen extends StatefulWidget {
   const DriverAvailableOrdersScreen({Key? key}) : super(key: key);
 
   @override
-  _DriverAvailableOrdersScreenState createState() => _DriverAvailableOrdersScreenState();
+  _DriverAvailableOrdersScreenState createState() =>
+      _DriverAvailableOrdersScreenState();
 }
 
-class _DriverAvailableOrdersScreenState extends State<DriverAvailableOrdersScreen> {
+class _DriverAvailableOrdersScreenState
+    extends State<DriverAvailableOrdersScreen> {
   final Color hangryYellow = Color(0xFFFCBF49);
   final Color hangryBlue = Color(0xFF003049);
 
@@ -54,18 +56,20 @@ class _DriverAvailableOrdersScreenState extends State<DriverAvailableOrdersScree
       }
 
       List<Map<String, dynamic>> availableOrders = [];
-      final Map<dynamic, dynamic> restaurants = restaurantsSnapshot.value as Map<dynamic, dynamic>;
+      final Map<dynamic, dynamic> restaurants =
+          restaurantsSnapshot.value as Map<dynamic, dynamic>;
 
       // For each restaurant, check their orders
       await Future.forEach(restaurants.entries, (MapEntry restaurant) async {
         final restaurantId = restaurant.key;
-        final restaurantName = (restaurant.value as Map<dynamic, dynamic>)['name'] ?? 'Unknown Restaurant';
+        final restaurantName =
+            (restaurant.value as Map<dynamic, dynamic>)['name'] ??
+                'Unknown Restaurant';
 
         // Get restaurant profile for address
         Map<String, dynamic> restaurantProfile = {};
-        final restaurantProfileSnapshot = await _databaseRef
-            .child('users/$restaurantId/profile')
-            .get();
+        final restaurantProfileSnapshot =
+            await _databaseRef.child('users/$restaurantId/profile').get();
 
         if (restaurantProfileSnapshot.exists) {
           restaurantProfile = Map<String, dynamic>.from(
@@ -73,18 +77,17 @@ class _DriverAvailableOrdersScreenState extends State<DriverAvailableOrdersScree
         }
 
         // Get orders for this restaurant
-        final ordersSnapshot = await _databaseRef
-            .child('users/$restaurantId/orders')
-            .get();
+        final ordersSnapshot =
+            await _databaseRef.child('users/$restaurantId/orders').get();
 
         if (ordersSnapshot.exists) {
-          final Map<dynamic, dynamic> orders = ordersSnapshot.value as Map<dynamic, dynamic>;
+          final Map<dynamic, dynamic> orders =
+              ordersSnapshot.value as Map<dynamic, dynamic>;
 
           orders.forEach((orderId, orderData) {
             if (orderData is Map &&
                 orderData['status'] == 'ready_for_pickup' &&
                 !orderData.containsKey('assignedDriver')) {
-
               // Calculate approximate distance (can be enhanced with actual geolocation)
               double distance = 0.0;
 
@@ -97,8 +100,10 @@ class _DriverAvailableOrdersScreenState extends State<DriverAvailableOrdersScree
                 'total': orderData['total'] ?? 0.0,
                 'items': orderData['items'] ?? {},
                 'distance': distance,
-                'estimatedTime': '15-25 min', // Could be calculated based on distance
-                'restaurantAddress': restaurantProfile['address'] ?? 'No address available',
+                'estimatedTime':
+                    '15-25 min', // Could be calculated based on distance
+                'restaurantAddress':
+                    restaurantProfile['address'] ?? 'No address available',
               };
 
               if (orderData.containsKey('deliveryAddress')) {
@@ -199,7 +204,6 @@ class _DriverAvailableOrdersScreenState extends State<DriverAvailableOrdersScree
           ),
         ),
       ).then((_) => _fetchAvailableOrders());
-
     } catch (error) {
       _showErrorSnackBar('Error accepting order: $error');
     } finally {
@@ -246,21 +250,21 @@ class _DriverAvailableOrdersScreenState extends State<DriverAvailableOrdersScree
       body: _isLoading
           ? Center(child: CircularProgressIndicator(color: hangryYellow))
           : _errorMessage.isNotEmpty
-          ? _buildErrorWidget()
-          : _availableOrders.isEmpty
-          ? _buildEmptyStateWidget()
-          : RefreshIndicator(
-        onRefresh: _fetchAvailableOrders,
-        color: hangryYellow,
-        child: ListView.builder(
-          itemCount: _availableOrders.length,
-          padding: EdgeInsets.all(16),
-          itemBuilder: (context, index) {
-            final order = _availableOrders[index];
-            return _buildOrderCard(context, order);
-          },
-        ),
-      ),
+              ? _buildErrorWidget()
+              : _availableOrders.isEmpty
+                  ? _buildEmptyStateWidget()
+                  : RefreshIndicator(
+                      onRefresh: _fetchAvailableOrders,
+                      color: hangryYellow,
+                      child: ListView.builder(
+                        itemCount: _availableOrders.length,
+                        padding: EdgeInsets.all(16),
+                        itemBuilder: (context, index) {
+                          final order = _availableOrders[index];
+                          return _buildOrderCard(context, order);
+                        },
+                      ),
+                    ),
     );
   }
 
@@ -412,7 +416,8 @@ class _DriverAvailableOrdersScreenState extends State<DriverAvailableOrdersScree
 
                 // Delivery details
                 if (order.containsKey('deliveryAddress'))
-                  _buildAddressSection('Delivery address', order['deliveryAddress']),
+                  _buildAddressSection(
+                      'Delivery address', order['deliveryAddress']),
 
                 SizedBox(height: 12),
 

@@ -38,9 +38,11 @@ class OrderTracking {
       deliveryLocation: map['deliveryLocation'] != null
           ? Location.fromMap(map['deliveryLocation'])
           : null,
-      estimatedArrival: tracking != null && tracking['estimatedArrivalTime'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(tracking['estimatedArrivalTime'])
-          : null,
+      estimatedArrival:
+          tracking != null && tracking['estimatedArrivalTime'] != null
+              ? DateTime.fromMillisecondsSinceEpoch(
+                  tracking['estimatedArrivalTime'])
+              : null,
     );
   }
 }
@@ -78,7 +80,7 @@ class DriverLocation extends Location {
     return DriverLocation(
       latitude: map['lat'] as double,
       longitude: map['lng'] as double,
-      lastUpdated: DateTime.now(), // Firebase doesn't always include this
+      lastUpdated: DateTime.now(),
     );
   }
 }

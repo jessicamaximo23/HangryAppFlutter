@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 
-
 class AuthenticationManager extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseReference _database = FirebaseDatabase.instance.ref();
@@ -22,21 +21,19 @@ class AuthenticationManager extends ChangeNotifier {
   String? get authErrorMessage => _authErrorMessage;
 
   AuthenticationManager() {
-
     _auth.authStateChanges().listen((user) async {
       _user = user;
 
       if (user != null) {
-    bool isValid = await _validateUserStatus(user.uid);
+        bool isValid = await _validateUserStatus(user.uid);
 
-    if (!isValid) {
+        if (!isValid) {
+          await signOut();
+          return;
+        }
 
-    await signOut();
-    return;
-      }
-
-    _isAuthenticated = true;
-    await _fetchAccountType(user.uid);
+        _isAuthenticated = true;
+        await _fetchAccountType(user.uid);
       } else {
         _accountType = null;
         _isAuthenticated = false;
@@ -48,21 +45,6 @@ class AuthenticationManager extends ChangeNotifier {
     });
   }
 
-
-
-  //     _isAuthenticated = user != null;
-  //     notifyListeners();
-  //
-  //     if (user != null) {
-  //       _fetchAccountType(user.uid);
-  //     } else {
-  //       _accountType = null;
-  //       _onLogoutCallback?.call();
-  //     }
-  //   });
-  // }
-
-
   void setOnLogoutCallback(VoidCallback callback) {
     _onLogoutCallback = callback;
   }
@@ -73,7 +55,8 @@ class AuthenticationManager extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final result = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
       _user = result.user;
 
       if (_user != null) {
@@ -102,16 +85,7 @@ class AuthenticationManager extends ChangeNotifier {
       notifyListeners();
     }
   }
-  //     if (_user != null) {
-  //       await _fetchAccountType(_user!.uid);
-  //     }
-  //   } catch (error) {
-  //     rethrow;
-  //   } finally {
-  //     _isLoading = false;
-  //     notifyListeners();
-  //   }
-  // }
+
   Future<bool> _validateUserStatus(String userId) async {
     try {
       print("Validating user status for: $userId");
@@ -123,7 +97,8 @@ class AuthenticationManager extends ChangeNotifier {
         return false;
       }
 
-      Map<dynamic, dynamic> userData = userSnapshot.value as Map<dynamic, dynamic>;
+      Map<dynamic, dynamic> userData =
+          userSnapshot.value as Map<dynamic, dynamic>;
       print("User data: $userData");
 
       // Check if account is active
@@ -131,7 +106,8 @@ class AuthenticationManager extends ChangeNotifier {
       print("User status: $status");
       if (status != 'active') {
         print("User is inactive");
-        _authErrorMessage = 'Your account has been deactivated. Please contact support.';
+        _authErrorMessage =
+            'Your account has been deactivated. Please contact support.';
         return false;
       }
 
@@ -140,9 +116,11 @@ class AuthenticationManager extends ChangeNotifier {
       print("Account type: $accountType");
       bool isApproved = userData['isApproved'] ?? false;
       print("Is approved: $isApproved");
-      if ((accountType == 'driver' || accountType == 'restaurant') && !isApproved) {
+      if ((accountType == 'driver' || accountType == 'restaurant') &&
+          !isApproved) {
         print("User is not approved");
-        _authErrorMessage = 'Your account is pending approval. Please check back later.';
+        _authErrorMessage =
+            'Your account is pending approval. Please check back later.';
         return false;
       }
 
@@ -158,7 +136,11 @@ class AuthenticationManager extends ChangeNotifier {
 
   Future<void> _fetchAccountType(String userId) async {
     try {
-      final snapshot = await _database.child('users').child(userId).child('accountType').get();
+      final snapshot = await _database
+          .child('users')
+          .child(userId)
+          .child('accountType')
+          .get();
       if (snapshot.exists) {
         _accountType = snapshot.value as String?;
       } else {
@@ -170,31 +152,29 @@ class AuthenticationManager extends ChangeNotifier {
     }
   }
 
-Future<void> signOut() async {
-  try {
-    await _auth.signOut();
-    _user = null;
-    _accountType = null;
-    _isAuthenticated = false;
-    _authErrorMessage = null;
-    notifyListeners();
-    // Call the logout callback after logout is completed
-    _onLogoutCallback?.call();
-  } catch (error) {
-    debugPrint('Error signing out: $error');
-    rethrow;
+  Future<void> signOut() async {
+    try {
+      await _auth.signOut();
+      _user = null;
+      _accountType = null;
+      _isAuthenticated = false;
+      _authErrorMessage = null;
+      notifyListeners();
+      // Call the logout callback after logout is completed
+      _onLogoutCallback?.call();
+    } catch (error) {
+      debugPrint('Error signing out: $error');
+      rethrow;
+    }
   }
-}
 
-
-
-Future<bool> resetPassword(String email) async {
-  try {
-    await _auth.sendPasswordResetEmail(email: email);
-    return true;
-  } catch (error) {
-    debugPrint('Error resetting password: $error');
-    return false;
+  Future<bool> resetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      return true;
+    } catch (error) {
+      debugPrint('Error resetting password: $error');
+      return false;
+    }
   }
-}
 }

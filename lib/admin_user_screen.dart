@@ -29,14 +29,12 @@ class _AdminUserScreenState extends State<AdminUserScreen> {
         _isLoading = true;
       });
 
-      DatabaseEvent event = await _databaseRef
-          .orderByChild('accountType')
-          .equalTo('user')
-          .once();
+      DatabaseEvent event =
+          await _databaseRef.orderByChild('accountType').equalTo('user').once();
 
       if (event.snapshot.value != null) {
         Map<dynamic, dynamic> usersMap =
-        event.snapshot.value as Map<dynamic, dynamic>;
+            event.snapshot.value as Map<dynamic, dynamic>;
 
         List<Map<String, dynamic>> fetchedUsers = [];
 
@@ -47,7 +45,8 @@ class _AdminUserScreenState extends State<AdminUserScreen> {
             'email': value['email'] ?? '',
             'isActive': value['status'] == 'active',
             'profileImageUrl': value['profileImageUrl'] ?? '',
-            'isApproved': value['isApproved'] ?? true, // Users are typically approved by default
+            'isApproved': value['isApproved'] ??
+                true, // Users are typically approved by default
           });
         });
         setState(() {
@@ -149,107 +148,114 @@ class _AdminUserScreenState extends State<AdminUserScreen> {
               ),
             )
           else if (users.isEmpty)
-              Expanded(
-                child: Center(
-                  child: Text(
-                    'No users found',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-              )
-            else
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: () async {
-                    fetchUsers();
-                  },
-                  color: hangryYellow,
-                  child: ListView.builder(
-                    itemCount: users.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: ListTile(
-                          contentPadding: EdgeInsets.all(12),
-                          leading: users[index]['profileImageUrl'].isNotEmpty
-                              ? ClipRRect(
-                            borderRadius: BorderRadius.circular(25),
-                            child: CachedNetworkImage(
-                              imageUrl: users[index]['profileImageUrl'],
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => CircularProgressIndicator(
-                                color: hangryYellow,
-                                strokeWidth: 2,
-                              ),
-                              errorWidget: (context, url, error) => CircleAvatar(
-                                backgroundColor: hangryYellow.withOpacity(0.2),
-                                child: Icon(Icons.person, color: hangryYellow),
-                              ),
-                            ),
-                          )
-                              : CircleAvatar(
-                            backgroundColor: hangryYellow.withOpacity(0.2),
-                            radius: 25,
-                            child: Icon(Icons.person, color: hangryYellow),
-                          ),
-                          title: Text(
-                            users[index]['name'],
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'RammettoOne-Regular',
-                            ),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(height: 4),
-                              Text(users[index]['email']),
-                              SizedBox(height: 8),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: users[index]['isActive']
-                                      ? Colors.green.withOpacity(0.2)
-                                      : Colors.red.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  users[index]['isActive'] ? 'Active' : 'Inactive',
-                                  style: TextStyle(
-                                    color: users[index]['isActive']
-                                        ? Colors.green[800]
-                                        : Colors.red[800],
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          trailing: Switch(
-                            value: users[index]['isActive'],
-                            onChanged: (value) {
-                              toggleUserStatus(index);
-                            },
-                            activeColor: hangryYellow,
-                            activeTrackColor: hangryYellow.withOpacity(0.5),
-                          ),
-                          onTap: () {
-                            navigateToUserDetails(index);
-                          },
-                        ),
-                      );
-                    },
-                  ),
+            Expanded(
+              child: Center(
+                child: Text(
+                  'No users found',
+                  style: TextStyle(fontSize: 18),
                 ),
               ),
+            )
+          else
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  fetchUsers();
+                },
+                color: hangryYellow,
+                child: ListView.builder(
+                  itemCount: users.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.all(12),
+                        leading: users[index]['profileImageUrl'].isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(25),
+                                child: CachedNetworkImage(
+                                  imageUrl: users[index]['profileImageUrl'],
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) =>
+                                      CircularProgressIndicator(
+                                    color: hangryYellow,
+                                    strokeWidth: 2,
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      CircleAvatar(
+                                    backgroundColor:
+                                        hangryYellow.withOpacity(0.2),
+                                    child:
+                                        Icon(Icons.person, color: hangryYellow),
+                                  ),
+                                ),
+                              )
+                            : CircleAvatar(
+                                backgroundColor: hangryYellow.withOpacity(0.2),
+                                radius: 25,
+                                child: Icon(Icons.person, color: hangryYellow),
+                              ),
+                        title: Text(
+                          users[index]['name'],
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'RammettoOne-Regular',
+                          ),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 4),
+                            Text(users[index]['email']),
+                            SizedBox(height: 8),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: users[index]['isActive']
+                                    ? Colors.green.withOpacity(0.2)
+                                    : Colors.red.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                users[index]['isActive']
+                                    ? 'Active'
+                                    : 'Inactive',
+                                style: TextStyle(
+                                  color: users[index]['isActive']
+                                      ? Colors.green[800]
+                                      : Colors.red[800],
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        trailing: Switch(
+                          value: users[index]['isActive'],
+                          onChanged: (value) {
+                            toggleUserStatus(index);
+                          },
+                          activeColor: hangryYellow,
+                          activeTrackColor: hangryYellow.withOpacity(0.5),
+                        ),
+                        onTap: () {
+                          navigateToUserDetails(index);
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -291,10 +297,12 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
 
   void _loadUserData() async {
     try {
-      final userSnapshot = await _databaseRef.child('users/${widget.userUid}').get();
+      final userSnapshot =
+          await _databaseRef.child('users/${widget.userUid}').get();
 
       if (userSnapshot.exists) {
-        Map<dynamic, dynamic> userData = userSnapshot.value as Map<dynamic, dynamic>;
+        Map<dynamic, dynamic> userData =
+            userSnapshot.value as Map<dynamic, dynamic>;
         Map<String, dynamic> formattedData = {};
 
         // Format basic user data
@@ -305,11 +313,13 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
 
         // Get profile data if it exists
         if (userData.containsKey('profile') && userData['profile'] is Map) {
-          Map<dynamic, dynamic> profileData = userData['profile'] as Map<dynamic, dynamic>;
+          Map<dynamic, dynamic> profileData =
+              userData['profile'] as Map<dynamic, dynamic>;
           formattedData['profile'] = Map<String, dynamic>.from(profileData);
 
           // Set up controllers for editing
-          _nameController.text = profileData['fullName'] ?? formattedData['name'];
+          _nameController.text =
+              profileData['fullName'] ?? formattedData['name'];
           _phoneController.text = profileData['phoneNumber'] ?? '';
           _addressController.text = profileData['address'] ?? '';
           _cityController.text = profileData['city'] ?? '';
@@ -319,7 +329,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
         // Get orders if they exist
         List<Map<String, dynamic>> orders = [];
         if (userData.containsKey('orders') && userData['orders'] is Map) {
-          Map<dynamic, dynamic> ordersData = userData['orders'] as Map<dynamic, dynamic>;
+          Map<dynamic, dynamic> ordersData =
+              userData['orders'] as Map<dynamic, dynamic>;
           ordersData.forEach((key, value) {
             if (value is Map) {
               orders.add({
@@ -369,7 +380,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('User status updated to ${newStatus.toUpperCase()}')),
+        SnackBar(
+            content: Text('User status updated to ${newStatus.toUpperCase()}')),
       );
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -403,7 +415,6 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
         _isEditing = false;
       });
       _loadUserData();
-
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to update user information: $error')),
@@ -440,14 +451,16 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
               children: [
                 _userData!['profileImageUrl'].isNotEmpty
                     ? CircleAvatar(
-                  radius: 60,
-                  backgroundImage: NetworkImage(_userData!['profileImageUrl']),
-                )
+                        radius: 60,
+                        backgroundImage:
+                            NetworkImage(_userData!['profileImageUrl']),
+                      )
                     : CircleAvatar(
-                  radius: 60,
-                  backgroundColor: hangryYellow.withOpacity(0.2),
-                  child: Icon(Icons.person, size: 60, color: hangryYellow),
-                ),
+                        radius: 60,
+                        backgroundColor: hangryYellow.withOpacity(0.2),
+                        child:
+                            Icon(Icons.person, size: 60, color: hangryYellow),
+                      ),
                 SizedBox(height: 16),
                 Text(
                   _userData!['name'],
@@ -478,7 +491,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                   child: Text(
                     _userData!['status'] == 'active' ? 'Active' : 'Inactive',
                     style: TextStyle(
-                      color: _userData!['status'] == 'active' ? Colors.green[800] : Colors.red[800],
+                      color: _userData!['status'] == 'active'
+                          ? Colors.green[800]
+                          : Colors.red[800],
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -492,10 +507,15 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
           // Admin actions
           Center(
             child: ElevatedButton.icon(
-              icon: Icon(_userData!['status'] == 'active' ? Icons.block : Icons.check_circle),
-              label: Text(_userData!['status'] == 'active' ? 'Deactivate' : 'Activate'),
+              icon: Icon(_userData!['status'] == 'active'
+                  ? Icons.block
+                  : Icons.check_circle),
+              label: Text(
+                  _userData!['status'] == 'active' ? 'Deactivate' : 'Activate'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: _userData!['status'] == 'active' ? Colors.red : Colors.green,
+                backgroundColor: _userData!['status'] == 'active'
+                    ? Colors.red
+                    : Colors.green,
                 foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
@@ -543,11 +563,16 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
             _buildEditTextField('Zip Code', _zipCodeController),
           ] else if (_userData!.containsKey('profile')) ...[
             // Read-only profile data
-            _buildDetailItem('Full Name', _userData!['profile']['fullName'] ?? 'Not provided'),
-            _buildDetailItem('Phone Number', _userData!['profile']['phoneNumber'] ?? 'Not provided'),
-            _buildDetailItem('Address', _userData!['profile']['address'] ?? 'Not provided'),
-            _buildDetailItem('City', _userData!['profile']['city'] ?? 'Not provided'),
-            _buildDetailItem('Zip Code', _userData!['profile']['zipCode'] ?? 'Not provided'),
+            _buildDetailItem('Full Name',
+                _userData!['profile']['fullName'] ?? 'Not provided'),
+            _buildDetailItem('Phone Number',
+                _userData!['profile']['phoneNumber'] ?? 'Not provided'),
+            _buildDetailItem(
+                'Address', _userData!['profile']['address'] ?? 'Not provided'),
+            _buildDetailItem(
+                'City', _userData!['profile']['city'] ?? 'Not provided'),
+            _buildDetailItem(
+                'Zip Code', _userData!['profile']['zipCode'] ?? 'Not provided'),
           ],
         ],
       ),
@@ -598,7 +623,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   }
 
   Widget _buildOrdersScreen() {
-    if (_userData == null || !_userData!.containsKey('orders') || (_userData!['orders'] as List).isEmpty) {
+    if (_userData == null ||
+        !_userData!.containsKey('orders') ||
+        (_userData!['orders'] as List).isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -625,7 +652,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
       );
     }
 
-    List<Map<String, dynamic>> orders = _userData!['orders'] as List<Map<String, dynamic>>;
+    List<Map<String, dynamic>> orders =
+        _userData!['orders'] as List<Map<String, dynamic>>;
 
     return ListView.builder(
       padding: EdgeInsets.all(16),
@@ -655,7 +683,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: _getOrderStatusColor(orders[index]['status']).withOpacity(0.2),
+                        color: _getOrderStatusColor(orders[index]['status'])
+                            .withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(

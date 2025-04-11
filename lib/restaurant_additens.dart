@@ -73,7 +73,8 @@ class _Restaurant_addItemsState extends State<Restaurant_addItems> {
 
   Future<String> _uploadImageToStorage(File image) async {
     try {
-      final storageRef = _storage.ref().child('menu_images/${DateTime.now().toString()}');
+      final storageRef =
+          _storage.ref().child('menu_images/${DateTime.now().toString()}');
       final uploadTask = storageRef.putFile(image);
       final snapshot = await uploadTask;
       final downloadUrl = await snapshot.ref.getDownloadURL();
@@ -241,252 +242,278 @@ class _Restaurant_addItemsState extends State<Restaurant_addItems> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.item == null ? 'Add Item' : 'Edit Item', style: TextStyle(color: Colors.black)),
+        title: Text(widget.item == null ? 'Add Item' : 'Edit Item',
+            style: TextStyle(color: Colors.black)),
         backgroundColor: Color(0xFFFCBF49),
         iconTheme: IconThemeData(color: Colors.black),
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Name',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(color: Colors.black, width: 1.0)),
-                ),
-                child: TextFormField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter item name',
-                    border: InputBorder.none,
-                  ),
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter the dish name';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              SizedBox(height: 20),
-
-              // Price field
-              Text(
-                'Price',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(color: Colors.black, width: 1.0)),
-                ),
-                child: TextFormField(
-                  controller: _priceController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter price',
-                    prefixText: '\$ ',
-                    border: InputBorder.none,
-                  ),
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter the price';
-                    }
-                    if (double.tryParse(value) == null) {
-                      return 'Please enter a valid number';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              SizedBox(height: 20),
-
-              // Description field
-              Text(
-                'Description',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(color: Colors.black, width: 1.0)),
-                ),
-                child: TextFormField(
-                  controller: _descriptionController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter description',
-                    border: InputBorder.none,
-                  ),
-                  style: TextStyle(fontSize: 16),
-                  maxLines: 3,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter the description';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              SizedBox(height: 20),
-
-              // Category dropdown
-              Text(
-                'Category',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 10),
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: DropdownButton<String>(
-                  value: _selectedCategory,
-                  isExpanded: true,
-                  underline: SizedBox(),
-                  icon: Icon(Icons.keyboard_arrow_down),
-                  items: _categories.map((String category) {
-                    return DropdownMenuItem<String>(
-                      value: category,
-                      child: Text(category, style: TextStyle(fontSize: 18)),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        _selectedCategory = newValue;
-                      });
-                    }
-                  },
-                ),
-              ),
-              SizedBox(height: 20),
-
-              // Availability dropdown
-              Text(
-                'Available',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 10),
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: DropdownButton<String>(
-                  value: _availability,
-                  isExpanded: true,
-                  underline: SizedBox(),
-                  icon: Icon(Icons.keyboard_arrow_down),
-                  items: _availabilityOptions.map((String option) {
-                    return DropdownMenuItem<String>(
-                      value: option,
-                      child: Text(option, style: TextStyle(fontSize: 18)),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        _availability = newValue;
-                      });
-                    }
-                  },
-                ),
-              ),
-              SizedBox(height: 30),
-
-              // Image section
-              Center(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text(
+                      'Name',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
                     Container(
-                      width: 200,
-                      height: 200,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
+                        border: Border(
+                            bottom:
+                                BorderSide(color: Colors.black, width: 1.0)),
                       ),
-                      child: _image != null
-                          ? ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.file(_image!, fit: BoxFit.cover),
-                      )
-                          : widget.item != null && widget.item!['imageUrl'] != null
-                          ? ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.network(widget.item!['imageUrl'], fit: BoxFit.cover),
-                      )
-                          : Center(
-                        child: Icon(Icons.photo_library, size: 80, color: Colors.grey.shade400),
+                      child: TextFormField(
+                        controller: _nameController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter item name',
+                          border: InputBorder.none,
+                        ),
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the dish name';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                     SizedBox(height: 20),
-                    // Pick Image button as shown in your design
+
+                    // Price field
+                    Text(
+                      'Price',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                            bottom:
+                                BorderSide(color: Colors.black, width: 1.0)),
+                      ),
+                      child: TextFormField(
+                        controller: _priceController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter price',
+                          prefixText: '\$ ',
+                          border: InputBorder.none,
+                        ),
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the price';
+                          }
+                          if (double.tryParse(value) == null) {
+                            return 'Please enter a valid number';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 20),
+
+                    // Description field
+                    Text(
+                      'Description',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                            bottom:
+                                BorderSide(color: Colors.black, width: 1.0)),
+                      ),
+                      child: TextFormField(
+                        controller: _descriptionController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter description',
+                          border: InputBorder.none,
+                        ),
+                        style: TextStyle(fontSize: 16),
+                        maxLines: 3,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the description';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 20),
+
+                    // Category dropdown
+                    Text(
+                      'Category',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: DropdownButton<String>(
+                        value: _selectedCategory,
+                        isExpanded: true,
+                        underline: SizedBox(),
+                        icon: Icon(Icons.keyboard_arrow_down),
+                        items: _categories.map((String category) {
+                          return DropdownMenuItem<String>(
+                            value: category,
+                            child:
+                                Text(category, style: TextStyle(fontSize: 18)),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            setState(() {
+                              _selectedCategory = newValue;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 20),
+
+                    // Availability dropdown
+                    Text(
+                      'Available',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: DropdownButton<String>(
+                        value: _availability,
+                        isExpanded: true,
+                        underline: SizedBox(),
+                        icon: Icon(Icons.keyboard_arrow_down),
+                        items: _availabilityOptions.map((String option) {
+                          return DropdownMenuItem<String>(
+                            value: option,
+                            child: Text(option, style: TextStyle(fontSize: 18)),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            setState(() {
+                              _availability = newValue;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 30),
+
+                    // Image section
+                    Center(
+                      child: Column(
+                        children: [
+                          Container(
+                            width: 200,
+                            height: 200,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade300),
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                            ),
+                            child: _image != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child:
+                                        Image.file(_image!, fit: BoxFit.cover),
+                                  )
+                                : widget.item != null &&
+                                        widget.item!['imageUrl'] != null
+                                    ? ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Image.network(
+                                            widget.item!['imageUrl'],
+                                            fit: BoxFit.cover),
+                                      )
+                                    : Center(
+                                        child: Icon(Icons.photo_library,
+                                            size: 80,
+                                            color: Colors.grey.shade400),
+                                      ),
+                          ),
+                          SizedBox(height: 20),
+                          // Pick Image button as shown in your design
+                          Container(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _pickImage,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Color(0xFF0A3A52), // Dark blue as in image
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: Text('Pick Image',
+                                  style: TextStyle(fontSize: 18)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20),
+
+                    // Save Item button as shown in your design
                     Container(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: _pickImage,
+                        onPressed: _saveItem,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF0A3A52), // Dark blue as in image
-                          foregroundColor: Colors.white,
+                          backgroundColor: hangryYellow,
+                          foregroundColor: Colors.black,
                           padding: EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        child: Text('Pick Image', style: TextStyle(fontSize: 18)),
+                        child: Text('Save Item',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
                       ),
                     ),
+                    SizedBox(height: 40),
                   ],
                 ),
               ),
-              SizedBox(height: 20),
-
-              // Save Item button as shown in your design
-              Container(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _saveItem,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: hangryYellow,
-                    foregroundColor: Colors.black,
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: Text('Save Item', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                ),
-              ),
-              SizedBox(height: 40),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

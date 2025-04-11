@@ -1,5 +1,4 @@
 import 'dart:math' as Math;
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -533,9 +532,18 @@ class _RestaurantEarningsScreenState extends State<RestaurantEarningsScreen>
     }
 
     // Find min and max values for y-axis
-    double maxY =
-        filteredData.map((data) => data.amount).reduce((a, b) => a > b ? a : b);
-    maxY = (maxY * 1.2).ceilToDouble(); // Add 20% padding to top
+    double maxY = filteredData.isEmpty
+        ? 100 // Default value if no data
+        : filteredData
+            .map((data) => data.amount)
+            .reduce((a, b) => a > b ? a : b);
+
+    // Add padding and ensure it's at least 10
+    maxY = Math.max((maxY * 1.2).ceilToDouble(), 10.0);
+
+    // Calculate safe intervals that can't be zero
+    double horizontalInterval = Math.max(maxY / 4, 1.0);
+    double leftTitleInterval = Math.max(maxY / 4, 1.0);
 
     return Container(
       height: 250,
@@ -570,7 +578,7 @@ class _RestaurantEarningsScreenState extends State<RestaurantEarningsScreen>
                 gridData: FlGridData(
                   show: true,
                   drawVerticalLine: false,
-                  horizontalInterval: maxY / 5,
+                  horizontalInterval: horizontalInterval, // Safe value
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
                       color: Colors.grey[300],
@@ -585,27 +593,30 @@ class _RestaurantEarningsScreenState extends State<RestaurantEarningsScreen>
                       reservedSize: 40,
                       getTitlesWidget: (value, meta) {
                         return Text(
-                          '\${value.toInt()}',
+                          '\$${value.toInt()}',
                           style: const TextStyle(
                             color: Color(0xff68737d),
                             fontSize: 10,
                           ),
                         );
                       },
-                      interval: maxY / 5,
+                      interval: leftTitleInterval, // Safe value
                     ),
                   ),
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
                       reservedSize: 30,
+                      interval: 1, // Safe default interval for x-axis
                       getTitlesWidget: (value, meta) {
                         // Show date labels for x-axis
                         final index = value.toInt();
                         if (index >= 0 && index < filteredData.length) {
                           // Skip some dates to avoid overcrowding
                           if (filteredData.length > 10) {
-                            if (index % (filteredData.length ~/ 5) == 0) {
+                            if (index %
+                                    Math.max((filteredData.length ~/ 5), 1) ==
+                                0) {
                               return Text(
                                 DateFormat('MM/dd')
                                     .format(filteredData[index].date),
@@ -642,7 +653,7 @@ class _RestaurantEarningsScreenState extends State<RestaurantEarningsScreen>
                   border: Border.all(color: Colors.grey[300]!, width: 1),
                 ),
                 minX: 0,
-                maxX: (filteredData.length - 1).toDouble(),
+                maxX: Math.max((filteredData.length - 1).toDouble(), 0),
                 minY: 0,
                 maxY: maxY,
                 lineBarsData: [
