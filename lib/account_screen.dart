@@ -3,10 +3,6 @@ import 'package:hangry_app_flutter/signin_screen.dart';
 import 'package:hangry_app_flutter/signup_screen.dart';
 import 'package:hangry_app_flutter/resetpassword_screen.dart';
 
-// void main() {
-//   runApp(AccountScreen());
-// }
-
 class AccountScreen extends StatelessWidget {
   const AccountScreen({Key? key}) : super(key: key);
 
@@ -64,8 +60,6 @@ class AccountScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      //IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                      //need to find a way to not pass accountType here.
                       builder: (context) => SignInScreen(
                         accountType: "",
                       ),

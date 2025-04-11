@@ -53,7 +53,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               height: 150,
             ),
             const SizedBox(height: 20),
-            Text('Welcome to Hangry!',
+            Text(
+              'Welcome to Hangry!',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -62,7 +63,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-            Text('Admin Dashboard',
+            Text(
+              'Admin Dashboard',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -82,7 +84,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     icon: Icons.drive_eta,
                     title: 'Driver',
                     onTap: () {
-
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -101,7 +102,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                           builder: (context) => AdminRestaurantScreen(),
                         ),
                       );
-
                     },
                   ),
                   _buildDashboardCard(
@@ -109,20 +109,16 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     title: 'User',
                     onTap: () {
                       Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AdminUserScreen(),
-                        )
-                      );
-
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AdminUserScreen(),
+                          ));
                     },
                   ),
                   _buildDashboardCard(
                     icon: Icons.settings,
                     title: 'Settings',
-                    onTap: () {
-
-                    },
+                    onTap: () {},
                   ),
                 ],
               ),
@@ -174,7 +170,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 40, color: hangryYellow), // Use custom yellow color
+              Icon(icon,
+                  size: 40, color: hangryYellow), // Use custom yellow color
               const SizedBox(height: 10),
               Text(
                 title,

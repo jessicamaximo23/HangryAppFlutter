@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math' as Math;
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
